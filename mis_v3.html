@@ -1,0 +1,3075 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>digitalDigm MIS</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+/* ── DESIGN TOKENS ── */
+:root {
+  --bg:       #F6F7F9;
+  --surface:  #FFFFFF;
+  --border:   #E5E7EB;
+  --border2:  #F3F4F6;
+
+  --ink1:  #111827;   /* headings, big numbers */
+  --ink2:  #374151;   /* body text */
+  --ink3:  #6B7280;   /* labels, captions */
+  --ink4:  #9CA3AF;   /* disabled, placeholder */
+
+  --blue:      #2563EB;   /* primary accent — ONE blue */
+  --blue-tint: #EFF6FF;
+  --green:     #16A34A;
+  --green-tint:#DCFCE7;
+  --red:       #DC2626;
+  --red-tint:  #FEF2F2;
+  --amber:     #D97706;
+  --amber-tint:#FFFBEB;
+
+  --shadow-xs: 0 1px 2px rgba(0,0,0,.05);
+  --shadow-sm: 0 1px 3px rgba(0,0,0,.07), 0 4px 16px rgba(0,0,0,.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,.09), 0 8px 32px rgba(0,0,0,.06);
+  --r:  12px;
+  --r2: 8px;
+  --sw: 220px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+
+body {
+  font-family: 'Inter', 'Apple SD Gothic Neo', -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--ink1);
+  display: flex;
+  overflow: hidden;
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─────────── SIDEBAR ─────────── */
+.sidebar {
+  width: var(--sw);
+  min-width: var(--sw);
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.logo-area {
+  padding: 22px 18px 18px;
+  border-bottom: 1px solid var(--border2);
+}
+.logo-mark {
+  display: flex; align-items: center; gap: 9px; margin-bottom: 3px;
+}
+.logo-sq {
+  width: 28px; height: 28px; border-radius: 6px;
+  background: var(--ink1);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 800; color: #fff; letter-spacing: -.03em;
+}
+.logo-text { font-size: 15px; font-weight: 700; color: var(--ink1); }
+.logo-sub  { font-size: 12px; color: var(--ink4); padding-left: 37px; }
+
+.nav-group { padding: 14px 10px 4px; }
+.nav-label { font-size: 11px; font-weight: 600; color: var(--ink4); letter-spacing: .08em; text-transform: uppercase; padding: 0 8px; margin-bottom: 4px; }
+
+.nav-item {
+  display: flex; align-items: center; gap: 9px;
+  padding: 8px 10px; border-radius: var(--r2);
+  cursor: pointer; font-size: 14px; font-weight: 500; color: var(--ink3);
+  transition: background .12s, color .12s;
+}
+.nav-item:hover { background: var(--bg); color: var(--ink1); }
+.nav-item.active { background: var(--blue-tint); color: var(--blue); font-weight: 600; }
+.nav-dot {
+  width: 5px; height: 5px; border-radius: 50%; background: var(--border);
+  flex-shrink: 0;
+}
+.nav-item.active .nav-dot { background: var(--blue); }
+.nav-badge {
+  margin-left: auto; font-size: 11px; font-weight: 700;
+  background: var(--red); color: #fff;
+  padding: 1px 6px; border-radius: 20px;
+}
+
+.sidebar-bottom {
+  margin-top: auto; padding: 14px 18px 18px;
+  border-top: 1px solid var(--border2);
+}
+.sync-line { font-size: 12px; color: var(--ink4); display: flex; align-items: center; gap: 5px; }
+.sync-line::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--green); flex-shrink: 0; }
+.sync-line + .sync-line { margin-top: 4px; }
+
+/* ─────────── MAIN ─────────── */
+.main { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
+
+/* ─────────── TOPBAR ─────────── */
+.topbar {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 0 24px;
+  height: 56px;
+  display: flex; align-items: center; gap: 14px;
+  flex-shrink: 0;
+}
+.topbar-title { font-size: 17px; font-weight: 700; flex: 1; }
+.topbar-meta  { font-size: 12px; color: var(--ink4); }
+.topbar-actions { display: flex; align-items: center; gap: 8px; }
+
+.btn {
+  padding: 6px 13px; border-radius: var(--r2);
+  font-size: 13px; font-weight: 600; cursor: pointer;
+  border: 1px solid var(--border); background: var(--surface);
+  color: var(--ink2); transition: all .12s; font-family: inherit;
+  white-space: nowrap;
+}
+.btn:hover { background: var(--bg); border-color: var(--ink4); }
+.btn-primary { background: var(--ink1); color: #fff; border-color: var(--ink1); }
+.btn-primary:hover { background: #374151; border-color: #374151; }
+
+.role-sel {
+  display: flex; align-items: center; gap: 7px;
+  border: 1px solid var(--border); border-radius: var(--r2);
+  padding: 5px 10px; background: var(--bg); cursor: pointer;
+}
+.role-av {
+  width: 22px; height: 22px; border-radius: 50%;
+  background: var(--ink1); color: #fff;
+  font-size: 11px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+}
+.role-sel select {
+  background: transparent; border: none; font-size: 13px;
+  font-weight: 600; color: var(--ink1); cursor: pointer; outline: none;
+  font-family: inherit;
+}
+
+.notif-btn {
+  position: relative; width: 34px; height: 34px; border-radius: var(--r2);
+  border: 1px solid var(--border); background: var(--surface);
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  font-size: 15px; color: var(--ink3);
+}
+.notif-btn::after {
+  content: '4';
+  position: absolute; top: -4px; right: -4px;
+  background: var(--red); color: #fff;
+  font-size: 10px; font-weight: 700;
+  padding: 1px 4px; border-radius: 20px;
+  border: 1.5px solid var(--surface);
+  font-family: inherit;
+}
+
+/* ─────────── SCROLL AREA ─────────── */
+.scroll-area { flex: 1; overflow-y: auto; padding: 22px 24px; }
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+/* ─────────── VIEW PANES ─────────── */
+.view-pane { display: none; }
+.view-pane.active { display: block; }
+
+/* ─────────── SECTION HEADER ─────────── */
+.sh { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 14px; }
+.sh-title { font-size: 13px; font-weight: 600; color: var(--ink3); text-transform: uppercase; letter-spacing: .07em; }
+.sh-action { font-size: 13px; font-weight: 600; color: var(--blue); cursor: pointer; }
+
+/* ─────────── KPI CARDS ─────────── */
+.kpi-grid { display: grid; gap: 12px; margin-bottom: 16px; }
+.g4 { grid-template-columns: repeat(4, 1fr); }
+.g5 { grid-template-columns: repeat(5, 1fr); }
+.g6 { grid-template-columns: repeat(6, 1fr); }
+.g3 { grid-template-columns: repeat(3, 1fr); }
+.g2 { grid-template-columns: 1fr 1fr; }
+
+.kpi {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 18px 20px 16px;
+  cursor: pointer;
+  transition: box-shadow .15s, transform .15s;
+}
+.kpi:hover { box-shadow: var(--shadow-sm); transform: translateY(-1px); }
+
+.kpi-lbl { font-size: 12px; font-weight: 500; color: var(--ink3); margin-bottom: 8px; text-transform: uppercase; letter-spacing: .04em; }
+.kpi-val { font-size: 38px; font-weight: 800; line-height: 1; color: var(--ink1); letter-spacing: -.03em; }
+.kpi-unit { font-size: 17px; font-weight: 600; color: var(--ink3); }
+.kpi-chg { display: flex; align-items: center; gap: 4px; margin-top: 8px; font-size: 13px; font-weight: 500; }
+.kpi-chg.up   { color: var(--green); }
+.kpi-chg.down { color: var(--red); }
+.kpi-chg.flat { color: var(--ink3); }
+.kpi-hint { font-size: 11px; color: var(--blue); margin-top: 4px; font-weight: 500; }
+
+.kpi.accent { border-color: var(--blue); background: var(--blue-tint); }
+.kpi.accent .kpi-val { color: var(--blue); }
+
+.kpi.warn  { border-left: 3px solid var(--amber); }
+.kpi.danger { border-left: 3px solid var(--red); }
+
+/* ─────────── CARD ─────────── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 18px 20px;
+}
+.card-hd { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.card-title { font-size: 15px; font-weight: 700; color: var(--ink1); }
+.card-sub   { font-size: 12px; color: var(--ink4); margin-top: 2px; }
+
+/* ─────────── ALERT STRIP ─────────── */
+.alert-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+.alert {
+  border-radius: var(--r2);
+  padding: 12px 15px;
+  border-left: 3px solid transparent;
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+.alert.danger { border-left: 3px solid var(--red); background: var(--red-tint); border-color: #FECACA; }
+.alert.warn   { border-left: 3px solid var(--amber); background: var(--amber-tint); border-color: #FDE68A; }
+.alert.ok     { border-left: 3px solid var(--green); background: var(--green-tint); border-color: #BBF7D0; }
+.alert.info   { border-left: 3px solid var(--blue); background: var(--blue-tint); border-color: #BFDBFE; }
+.alert-tag  { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 4px; }
+.alert.danger .alert-tag { color: var(--red); }
+.alert.warn   .alert-tag { color: var(--amber); }
+.alert.ok     .alert-tag { color: var(--green); }
+.alert.info   .alert-tag { color: var(--blue); }
+.alert-msg  { font-size: 14px; color: var(--ink2); font-weight: 500; }
+.alert-detail { font-size: 13px; color: var(--ink3); margin-top: 3px; }
+
+/* ─────────── TABLE ─────────── */
+.tbl { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+.tbl th {
+  padding: 8px 10px; font-size: 11.5px; font-weight: 600;
+  color: var(--ink4); text-align: left; border-bottom: 1px solid var(--border);
+  text-transform: uppercase; letter-spacing: .05em;
+}
+.tbl td { padding: 11px 10px; border-bottom: 1px solid var(--border2); vertical-align: middle; }
+.tbl tr:last-child td { border-bottom: none; }
+.tbl tr:hover td { background: var(--bg); }
+.td-num { font-weight: 700; font-size: 14.5px; }
+.td-hi  { font-weight: 700; color: var(--blue); }
+
+/* ─────────── BADGE ─────────── */
+.bx {
+  display: inline-flex; align-items: center;
+  padding: 3px 9px; border-radius: 20px;
+  font-size: 11.5px; font-weight: 700; letter-spacing: .02em;
+}
+.bx-green  { background: var(--green-tint); color: var(--green); }
+.bx-red    { background: var(--red-tint);   color: var(--red); }
+.bx-amber  { background: var(--amber-tint); color: var(--amber); }
+.bx-blue   { background: var(--blue-tint);  color: var(--blue); }
+.bx-gray   { background: var(--border2);    color: var(--ink3); }
+.bx-ink    { background: var(--ink1);       color: #fff; }
+.proj-row  { display: flex; align-items: center; justify-content: space-between; padding: 5px 0; }
+.proj-row + .proj-row { border-top: 1px solid var(--border2); }
+.proj-lbl  { font-size: 13px; color: var(--ink2); }
+.proj-chips { display: flex; gap: 5px; flex-wrap: wrap; }
+.proj-num  { display: inline-flex; align-items: center; gap: 3px; padding: 2px 8px; border-radius: 20px; font-size: 12px; font-weight: 700; }
+.proj-num.blue  { background: var(--blue-tint); color: var(--blue); }
+.proj-num.green { background: var(--green-tint); color: var(--green); }
+.proj-num.red   { background: var(--red-tint); color: var(--red); }
+.proj-num.gray  { background: var(--border2); color: var(--ink3); }
+
+/* ─────────── 설정 페이지 ─────────── */
+.cfg-layout { display: grid; grid-template-columns: 190px 1fr; gap: 14px; align-items: start; }
+.cfg-nav-item {
+  display: flex; align-items: center; gap: 9px;
+  padding: 9px 12px; border-radius: 8px; cursor: pointer;
+  font-size: 13px; color: var(--ink2); font-weight: 500;
+  transition: background .12s, color .12s;
+}
+.cfg-nav-item:hover { background: var(--bg); color: var(--ink1); }
+.cfg-nav-item.active { background: var(--blue-tint); color: var(--blue); font-weight: 700; }
+.cfg-nav-icon { font-size: 15px; width: 20px; text-align: center; }
+.cfg-sec { display: none; }
+.cfg-sec.active { display: block; }
+.cfg-field { margin-bottom: 16px; }
+.cfg-label { font-size: 12px; font-weight: 600; color: var(--ink3); margin-bottom: 5px; text-transform: uppercase; letter-spacing: .04em; }
+.cfg-input { width: 100%; padding: 8px 11px; border: 1px solid var(--border); border-radius: 7px; font-size: 13px; color: var(--ink1); background: var(--surface); box-sizing: border-box; }
+.cfg-input:focus { outline: none; border-color: var(--blue); box-shadow: 0 0 0 3px var(--blue-tint); }
+.cfg-textarea { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 7px; font-size: 13px; color: var(--ink1); background: var(--surface); resize: vertical; min-height: 100px; box-sizing: border-box; }
+.cfg-status { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; padding: 5px 10px; border-radius: 20px; }
+.cfg-status.ok { background: var(--green-tint); color: var(--green); }
+.cfg-status.warn { background: var(--amber-tint); color: var(--amber); }
+.cfg-status.err { background: var(--red-tint); color: var(--red); }
+/* 멤버 테이블 */
+.member-row { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--border2); }
+.member-row:last-child { border: none; }
+.member-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--blue-tint); color: var(--blue); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0; }
+.member-name { font-size: 13px; font-weight: 600; color: var(--ink1); }
+.member-role { font-size: 12px; color: var(--ink4); }
+.role-select { border: 1px solid var(--border); border-radius: 6px; padding: 3px 7px; font-size: 12px; color: var(--ink1); background: var(--surface); cursor: pointer; }
+/* 프로젝트 카드 그리드 */
+.card-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(280px,1fr)); gap: 12px; }
+.pcard { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 14px 16px; }
+.pcard-hd { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 10px; gap: 8px; }
+.pcard-name { font-size: 13px; font-weight: 700; color: var(--ink1); line-height: 1.35; }
+.pcard-client { font-size: 12px; color: var(--ink4); margin-top: 2px; }
+.pcard-row { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; border-bottom: 1px solid var(--border2); }
+.pcard-row:last-child { border: none; }
+.pcard-key { font-size: 12px; color: var(--ink3); }
+.pcard-val { font-size: 12px; font-weight: 600; color: var(--ink1); }
+/* 편집 드로어 */
+.edit-drawer {
+  position: fixed; right: 0; top: 0; height: 100vh; width: 440px;
+  background: var(--surface); border-left: 1px solid var(--border);
+  box-shadow: -6px 0 24px rgba(0,0,0,.10); z-index: 250;
+  transform: translateX(100%); transition: transform .22s ease;
+  display: flex; flex-direction: column; overflow: hidden;
+}
+.edit-drawer.open { transform: translateX(0); }
+.drawer-hd { padding: 18px 20px 14px; border-bottom: 1px solid var(--border2); flex-shrink: 0; }
+.drawer-title { font-size: 15px; font-weight: 800; color: var(--ink1); }
+.drawer-sub { font-size: 12px; color: var(--ink4); margin-top: 2px; }
+.drawer-body { flex: 1; overflow-y: auto; padding: 18px 20px; }
+.drawer-ft { padding: 14px 20px; border-top: 1px solid var(--border2); display: flex; gap: 8px; justify-content: flex-end; flex-shrink: 0; }
+.drawer-ov { position: fixed; inset: 0; background: rgba(0,0,0,.15); z-index: 249; display: none; }
+.drawer-ov.open { display: block; }
+/* 연동 목록 row */
+.conn-row { display:flex; align-items:center; gap:10px; padding:10px 0; border-bottom:1px solid var(--border2); flex-wrap:wrap; }
+.conn-row:last-child { border:none; }
+.conn-icon { width:36px; height:36px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:800; flex-shrink:0; }
+.conn-name { font-size:13px; font-weight:700; color:var(--ink1); }
+.conn-meta { font-size:12px; color:var(--ink4); margin-top:2px; }
+.conn-url { font-size:11px; color:var(--ink4); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:280px; margin-top:1px; }
+/* 영업관리 상태 배지 */
+.sb-검토중{background:#EFF6FF;color:#1D4ED8;} .sb-제안중{background:#FFF7ED;color:#C2410C;}
+.sb-PT준비{background:#FDF4FF;color:#7E22CE;} .sb-수주{background:#F0FDF4;color:#15803D;}
+.sb-탈락{background:#FEF2F2;color:#B91C1C;} .sb-보류{background:#F9FAFB;color:#6B7280;}
+.stat-badge{display:inline-block;padding:2px 9px;border-radius:12px;font-size:11px;font-weight:700;}
+/* 드로어 탭 */
+.dtab-nav{display:flex;gap:4px;padding:0 0 12px;border-bottom:1px solid var(--border2);margin-bottom:14px;}
+.dtab{padding:6px 13px;border-radius:7px;font-size:12px;font-weight:600;color:var(--ink3);cursor:pointer;border:none;background:transparent;}
+.dtab:hover{background:var(--bg);color:var(--ink1);}
+.dtab.active{background:var(--blue-tint);color:var(--blue);}
+.dtab-sec{display:none;} .dtab-sec.active{display:block;}
+/* 실적 비교 테이블 */
+.perf-tbl{width:100%;border-collapse:collapse;font-size:12px;}
+.perf-tbl th{background:var(--bg);padding:7px 8px;font-weight:700;color:var(--ink3);text-align:left;border-bottom:1px solid var(--border);}
+.perf-tbl td{padding:8px 8px;border-bottom:1px solid var(--border2);}
+.perf-tbl tr.plan-row td{font-weight:700;color:var(--ink1);}
+.perf-tbl tr.act-row td{color:var(--blue);}
+.perf-tbl tr.est-row td{color:var(--green);}
+/* 영업관리 */
+.sales-tbl{width:100%;border-collapse:collapse;font-size:12px;}
+.sales-tbl th{background:var(--bg);padding:8px 10px;font-weight:700;color:var(--ink3);border-bottom:2px solid var(--border);white-space:nowrap;text-align:left;}
+.sales-tbl td{padding:8px 10px;border-bottom:1px solid var(--border2);vertical-align:middle;}
+.sales-tbl tr:hover td{background:var(--bg);}
+
+
+/* ─────────── PROGRESS ─────────── */
+.bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 9px; }
+.bar-lbl  { font-size: 13px; font-weight: 500; color: var(--ink2); min-width: 40px; }
+.bar-track { flex: 1; height: 6px; background: var(--border2); border-radius: 20px; overflow: hidden; }
+.bar-fill  { height: 100%; border-radius: 20px; background: var(--blue); transition: width .4s; }
+.bar-fill.green { background: var(--green); }
+.bar-fill.red   { background: var(--red); }
+.bar-fill.amber { background: var(--amber); }
+.bar-val   { font-size: 13px; font-weight: 700; min-width: 34px; text-align: right; color: var(--ink1); }
+
+/* ─────────── STAT STRIP ─────────── */
+.stat-strip { display: flex; border: 1px solid var(--border); border-radius: var(--r2); overflow: hidden; }
+.stat-item { flex: 1; padding: 12px 14px; border-right: 1px solid var(--border); }
+.stat-item:last-child { border-right: none; }
+.stat-lbl { font-size: 11.5px; color: var(--ink4); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 4px; }
+.stat-val  { font-size: 24px; font-weight: 800; color: var(--ink1); letter-spacing: -.02em; }
+.stat-unit { font-size: 13px; font-weight: 600; color: var(--ink3); }
+
+/* ─────────── FORECAST TABLE ─────────── */
+.fc { width: 100%; border-collapse: collapse; }
+.fc th { padding: 6px 8px; font-size: 11.5px; font-weight: 600; color: var(--ink4); text-transform: uppercase; letter-spacing: .04em; border-bottom: 1px solid var(--border); text-align: left; }
+.fc td { padding: 10px 8px; border-bottom: 1px solid var(--border2); font-size: 14px; vertical-align: middle; }
+.fc tr:last-child td { border-bottom: none; font-weight: 700; border-top: 1.5px solid var(--ink1); }
+.fc .num { font-weight: 700; font-size: 15px; }
+.fc .ai  { color: var(--blue); font-weight: 600; }
+.fc .gap-up   { color: var(--green); font-weight: 700; }
+.fc .gap-down { color: var(--red);   font-weight: 700; }
+
+/* ─────────── GRID LAYOUTS ─────────── */
+.row { display: grid; gap: 12px; margin-bottom: 12px; }
+.col-21 { grid-template-columns: 2fr 1fr; }
+.col-12 { grid-template-columns: 1fr 2fr; }
+.col-3  { grid-template-columns: 1fr 1fr 1fr; }
+.col-2  { grid-template-columns: 1fr 1fr; }
+.col-32 { grid-template-columns: 3fr 2fr; }
+
+/* ─────────── CHART ─────────── */
+.ch { position: relative; }
+
+
+/* ─────────── AI 도입 근거 툴팁 ─────────── */
+.ai-ev { position: relative; display: inline-flex; align-items: center; gap: 5px; }
+.ai-src {
+  font-size: 10px; color: var(--ink4); cursor: help;
+  border-bottom: 1px dashed var(--ink4); white-space: nowrap;
+}
+.ai-tt {
+  display: none; position: absolute; bottom: calc(100% + 6px); left: 0;
+  width: 230px; background: #1F2937; color: #F9FAFB;
+  font-size: 11px; line-height: 1.55; padding: 8px 10px;
+  border-radius: 7px; z-index: 300; white-space: normal;
+  box-shadow: 0 4px 14px rgba(0,0,0,.25);
+}
+.ai-tt::after {
+  content: ''; position: absolute; top: 100%; left: 14px;
+  border: 5px solid transparent; border-top-color: #1F2937;
+}
+.ai-ev:hover .ai-tt { display: block; }
+
+/* ─────────── NOTIF PANEL ─────────── */
+.notif-panel {
+  position: fixed; top: 56px; right: 0; width: 300px;
+  background: var(--surface); border-left: 1px solid var(--border);
+  border-bottom-left-radius: var(--r); z-index: 200;
+  display: none; box-shadow: var(--shadow-md);
+}
+.notif-panel.open { display: block; }
+.notif-hd { padding: 12px 16px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+.notif-hd span { font-size: 14px; font-weight: 700; }
+.notif-close { font-size: 12px; color: var(--ink3); cursor: pointer; }
+.notif-item { padding: 11px 16px; border-bottom: 1px solid var(--border2); cursor: pointer; }
+.notif-item:hover { background: var(--bg); }
+.notif-item:last-child { border: none; }
+.notif-tag  { font-size: 11px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--ink4); }
+.notif-msg  { font-size: 13.5px; color: var(--ink1); font-weight: 500; margin-top: 3px; }
+.notif-time { font-size: 11.5px; color: var(--ink4); margin-top: 2px; }
+
+/* ─────────── MODAL ─────────── */
+.modal-ov { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.3); z-index: 300; align-items: center; justify-content: center; backdrop-filter: blur(2px); }
+.modal-ov.open { display: flex; }
+.modal {
+  background: var(--surface); border-radius: 16px;
+  width: 680px; max-width: 95vw; max-height: 88vh; overflow-y: auto;
+  padding: 26px 28px; box-shadow: var(--shadow-md);
+  border: 1px solid var(--border);
+}
+.modal-hd { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+.modal-title { font-size: 17px; font-weight: 800; }
+.modal-sub   { font-size: 12px; color: var(--ink4); margin-top: 3px; }
+.modal-x { width: 26px; height: 26px; border-radius: 6px; border: 1px solid var(--border); background: var(--bg); cursor: pointer; font-size: 14px; color: var(--ink3); font-family: inherit; }
+
+.tab-row { display: flex; gap: 0; margin-bottom: 16px; border: 1px solid var(--border); border-radius: var(--r2); overflow: hidden; }
+.tab-btn { flex: 1; padding: 7px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; background: transparent; color: var(--ink3); font-family: inherit; border-right: 1px solid var(--border); transition: all .12s; }
+.tab-btn:last-child { border-right: none; }
+.tab-btn.active { background: var(--ink1); color: #fff; }
+
+/* FORM */
+.f-row   { margin-bottom: 12px; }
+.f-label { font-size: 12px; font-weight: 600; color: var(--ink3); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 5px; }
+.f-input { width: 100%; border: 1px solid var(--border); border-radius: var(--r2); padding: 8px 12px; font-size: 14px; font-family: inherit; outline: none; }
+.f-input:focus { border-color: var(--blue); }
+.f-diff { background: var(--bg); border-radius: var(--r2); padding: 10px 14px; font-size: 13.5px; border-left: 3px solid var(--blue); }
+.f-diff .old { color: var(--red); text-decoration: line-through; }
+.f-diff .new { color: var(--green); font-weight: 700; }
+.modal-ft { display: flex; justify-content: flex-end; gap: 8px; margin-top: 20px; }
+
+/* ─────────── BU DRILLDOWN POPUP ─────────── */
+.bu-popup {
+  position: fixed; z-index: 260;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 16px 20px;
+  box-shadow: var(--shadow-md); min-width: 230px;
+  animation: buFade .1s ease;
+}
+@keyframes buFade { from { opacity:0; transform:translateY(-4px); } to { opacity:1; transform:translateY(0); } }
+.bu-popup-title { font-size: 11px; font-weight: 700; color: var(--ink3); text-transform: uppercase; letter-spacing: .07em; margin-bottom: 12px; border-bottom: 1px solid var(--border2); padding-bottom: 8px; }
+.bu-row { display: flex; align-items: center; gap: 10px; padding: 7px 0; border-bottom: 1px solid var(--border2); }
+.bu-row:last-child { border: none; padding-bottom: 0; }
+.bu-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.bu-name { font-size: 13px; color: var(--ink2); font-weight: 500; flex: 1; }
+.bu-share { font-size: 11px; color: var(--ink4); min-width: 32px; text-align: right; }
+.bu-val { font-size: 15px; font-weight: 800; min-width: 56px; text-align: right; }
+.bu-total { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; padding-top: 8px; border-top: 2px solid var(--ink1); }
+.bu-total-lbl { font-size: 12px; font-weight: 700; color: var(--ink2); }
+.bu-total-val { font-size: 17px; font-weight: 900; color: var(--ink1); }
+
+/* kpi hover hint */
+.kpi { position: relative; }
+.kpi::after { content: '사업부별 ›'; position: absolute; bottom: 10px; right: 14px; font-size: 10px; color: var(--ink4); font-weight: 500; opacity: 0; transition: opacity .15s; }
+.kpi:hover::after { opacity: 1; }
+
+/* ─────────── INSIGHT BLOCK ─────────── */
+.insight-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 16px; }
+.insight {
+  border-radius: var(--r2); padding: 14px;
+  border: 1px solid var(--border); background: var(--surface);
+}
+.ins-tag  { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; margin-bottom: 7px; }
+.ins-title { font-size: 14px; font-weight: 700; color: var(--ink1); margin-bottom: 5px; }
+.ins-body  { font-size: 13px; color: var(--ink2); line-height: 1.6; }
+.ins-danger { border-left: 3px solid var(--red); }   .ins-danger .ins-tag { color: var(--red); }
+.ins-warn   { border-left: 3px solid var(--amber); } .ins-warn   .ins-tag { color: var(--amber); }
+.ins-ok     { border-left: 3px solid var(--green); } .ins-ok     .ins-tag { color: var(--green); }
+.ins-info   { border-left: 3px solid var(--blue); }  .ins-info   .ins-tag { color: var(--blue); }
+
+/* ─────────── AI SCORE ─────────── */
+.ai-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 8px; margin-bottom: 12px; }
+.ai-sc { background: var(--bg); border-radius: var(--r2); padding: 12px; text-align: center; border: 1px solid var(--border); }
+.ai-sc-name { font-size: 11.5px; color: var(--ink4); margin-bottom: 5px; font-weight: 500; }
+.ai-sc-val  { font-size: 25px; font-weight: 800; color: var(--ink1); letter-spacing: -.02em; }
+.ai-sc-lv   { font-size: 11px; color: var(--ink3); margin-top: 2px; }
+.ai-sc.hi   { border-color: var(--green); } .ai-sc.hi .ai-sc-val { color: var(--green); }
+.ai-sc.lo   { border-color: var(--red); }   .ai-sc.lo .ai-sc-val { color: var(--red); }
+.ai-sc.me   { border-color: var(--blue); }  .ai-sc.me .ai-sc-val { color: var(--blue); }
+
+/* ─────────── Q bars ─────────── */
+.q-row { display: flex; align-items: center; gap: 10px; padding: 5px 0; border-bottom: 1px solid var(--border2); }
+.q-row:last-child { border: none; }
+.q-lbl { font-size: 13px; color: var(--ink2); min-width: 168px; }
+.q-track { flex: 1; height: 5px; background: var(--border2); border-radius: 20px; overflow: hidden; }
+.q-fill  { height: 100%; border-radius: 20px; }
+.q-num   { font-size: 13px; font-weight: 700; min-width: 30px; text-align: right; }
+
+/* Present mode */
+body.present .sidebar  { display: none; }
+body.present .notif-panel { display: none !important; }
+
+/* mini-stats */
+.mini-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 14px; }
+.mini { background: var(--bg); border: 1px solid var(--border); border-radius: var(--r2); padding: 12px 14px; }
+.mini-val { font-size: 26px; font-weight: 800; color: var(--ink1); letter-spacing: -.02em; }
+.mini-lbl { font-size: 12px; color: var(--ink4); margin-top: 3px; }
+</style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body id="body">
+
+<!-- ──────────── 로그인 화면 ──────────── -->
+<div id="loginScreen" style="display:none"></div>
+
+
+<!-- ──────────────────── SIDEBAR ──────────────────── -->
+<div id="app" style="display:flex;width:100%;height:100%;flex:1;overflow:hidden"><aside class="sidebar">
+  <div class="logo-area">
+    <div class="logo-mark">
+      <div class="logo-sq">d2</div>
+      <div class="logo-text">digitalDigm</div>
+    </div>
+    <div class="logo-sub">Management Information System</div>
+  </div>
+
+  <div class="nav-group">
+    <div class="nav-label">Dashboard</div>
+    <div class="nav-item active" id="nav-sm" onclick="sw('sm')"><div class="nav-dot"></div>SM 총괄</div>
+    <div class="nav-item" id="nav-dx" onclick="sw('dx')"><div class="nav-dot"></div>DX 사업부</div>
+    <div class="nav-item" id="nav-ad" onclick="sw('ad')"><div class="nav-dot"></div>AD 사업부</div>
+    <div class="nav-item" id="nav-pez" onclick="sw('pez')"><div class="nav-dot"></div>대관사업부</div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-label">인텔리전스</div>
+    <div class="nav-item" id="nav-proj" onclick="sw('proj')"><div class="nav-dot"></div>프로젝트 분석</div>
+    <div class="nav-item" id="nav-ai" onclick="sw('ai')"><div class="nav-dot"></div>AI / MCP 현황</div>
+    <div class="nav-item" id="nav-mkt" onclick="sw('mkt')"><div class="nav-dot"></div>시장 & 경쟁사</div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-label">영업</div>
+    <div class="nav-item" id="nav-sales" onclick="sw('sales')"><div class="nav-dot"></div>제안 관리</div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-label">관리</div>
+    <div class="nav-item" onclick="openEdit('수정 요청')">수정 요청 <span class="nav-badge" style="margin-left:auto">3</span></div>
+    <div class="nav-item" onclick="openHist('매출','전사 5개년 매출')">5개년 추이</div>
+    <div class="nav-item" id="nav-cfg" onclick="sw('cfg')"><div class="nav-dot"></div>설정</div>
+  </div>
+
+  <div class="sidebar-bottom">
+    <div class="sync-line" id="dbSyncLine">● DB 연결 중...</div>
+    <div class="sync-line" id="userInfoLine">사용자 확인 중</div>
+  </div>
+</aside>
+
+<!-- ──────────────────── MAIN ──────────────────── -->
+<div class="main">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div>
+      <div class="topbar-title" id="topTitle">SM 총괄 — 전사 통합 현황</div>
+      <div class="topbar-meta" id="topMeta">2026년 6월 기준 · 전 사업부 통합</div>
+    </div>
+    <div class="topbar-actions">
+      <button class="btn" onclick="openEdit('데이터 편집')">편집</button>
+      <button class="btn" onclick="togglePresent()" id="presBtn">발표 모드</button>
+      <div class="notif-btn" onclick="toggleNotif()"></div>
+      <div class="role-sel">
+        <div class="role-av" id="userAv">d2</div>
+        <div style="display:flex;flex-direction:column;gap:1px">
+          <span id="userName" style="font-size:12px;font-weight:700;color:var(--ink1)">digitalDigm</span>
+          <span id="userInfoLine" style="font-size:11px;color:var(--ink4)">사업부 MIS</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NOTIF PANEL -->
+  <div class="notif-panel" id="notifPanel">
+    <div class="notif-hd"><span>알림 (4)</span><span class="notif-close" onclick="toggleNotif()">닫기</span></div>
+    <div class="notif-item"><div class="notif-tag danger">리스크</div><div class="notif-msg">SKT 계약 만료 D-8 (2026.06.30) — 재계약 미확정</div><div class="notif-time">오늘 09:00 · AD 사업부</div></div>
+    <div class="notif-item"><div class="notif-tag danger">목표 미달</div><div class="notif-msg">DX 상반기 달성률 49.4% — 목표 대비 16%p 미달</div><div class="notif-time">오늘 09:00 · DX 사업부</div></div>
+    <div class="notif-item"><div class="notif-tag info">리포트</div><div class="notif-msg">5월 전사 실적 리포트 자동 생성 완료</div><div class="notif-time">2026.06.01</div></div>
+    <div class="notif-item"><div class="notif-tag ok">수주 확정</div><div class="notif-msg">레드버튼 2차 계약 수주 확정 (0.8억)</div><div class="notif-time">2026.06.15 · DX</div></div>
+  </div>
+
+  <!-- SCROLL -->
+  <div class="scroll-area">
+
+    <!-- ═══════ SM 총괄 ═══════ -->
+    <div class="view-pane active" id="view-sm">
+
+      <!-- KPI -->
+      <div class="sh"><span class="sh-title">핵심 지표 — 2026년 6월</span><span class="sh-action" onclick="openHist('매출','전사 5개년 추이')">추이 분석</span></div>
+      <div class="kpi-grid g5" style="margin-bottom:16px">
+        <div class="kpi accent" onclick="showBU('rev',event)"><div class="kpi-lbl">6월 매출 — 전사 합산</div><div class="kpi-val">6.8<span class="kpi-unit">억</span></div><div class="kpi-chg up">+8.3% vs 전월</div></div>
+        <div class="kpi" onclick="showBU('backlog',event)"><div class="kpi-lbl">수주 잔고 — 전사 합산</div><div class="kpi-val">32.4<span class="kpi-unit">억</span></div><div class="kpi-chg up">신규 수주 +2.1억</div></div>
+        <div class="kpi warn" onclick="showBU('util',event)"><div class="kpi-lbl">전사 가동율 — 합산</div><div class="kpi-val">76<span class="kpi-unit">%</span></div><div class="kpi-chg flat">목표 80% 대비 -4%p</div></div>
+        <div class="kpi danger" onclick="showBU('ar',event)"><div class="kpi-lbl">미수금 — 전사 합산</div><div class="kpi-val">3.2<span class="kpi-unit">억</span></div><div class="kpi-chg down">90일 초과 0.8억</div></div>
+        <div class="kpi" onclick="showBU('headcount',event)"><div class="kpi-lbl">전체 인원 — 합산</div><div class="kpi-val">61<span class="kpi-unit">명</span></div><div class="kpi-chg flat">정규 57 · 계약 4</div></div>
+      </div>
+
+      <!-- ALERTS -->
+      <div class="sh"><span class="sh-title">AI 인사이트</span></div>
+      <div class="insight-grid">
+        <div class="insight ins-danger"><div class="ins-tag">리스크</div><div class="ins-title">DX 하반기 수주 Gap</div><div class="ins-body">연간 목표 달성을 위해 하반기 약 <strong>24.6억</strong> 추가 수주 필요. 현 파이프라인 대비 Gap 8억.</div></div>
+        <div class="insight ins-warn"><div class="ins-tag">계약 만료</div><div class="ins-title">SKT 계약 D-8</div><div class="ins-body">2026.06.30 만료. 미확정 시 연간 <strong>2.1억</strong> 이탈. 이번 주 내 결론 필요.</div></div>
+        <div class="insight ins-ok"><div class="ins-tag">Q2 요약</div><div class="ins-title">손익 +1.58억 흑자 유지</div><div class="ins-body">재규어랜드로버 파생 수주 6.46억 확보. Q3 안정화 예상. 외주비 집중 모니터링 지속.</div></div>
+      </div>
+
+      <!-- CHARTS ROW -->
+      <div class="row col-21">
+        <div class="card">
+          <div class="card-hd"><div><div class="card-title">월별 매출 추이 (2026)</div><div class="card-sub">단위: 억원</div></div><span class="bx bx-green">ERP 연동</span></div>
+          <div class="ch" style="height:170px"><canvas id="cSmRev"></canvas></div>
+        </div>
+        <div class="card">
+          <div class="card-hd"><div class="card-title">사업부별 매출 비중</div></div>
+          <div class="ch" style="height:170px"><canvas id="cSmPie"></canvas></div>
+        </div>
+      </div>
+
+      <!-- GAUGES -->
+      <div class="row col-3">
+        <div class="card">
+          <div class="card-hd"><div class="card-title">사업부별 가동율</div><span class="bx bx-gray">목표 80%</span></div>
+          <div class="bar-row"><div class="bar-lbl">SM</div><div class="bar-track"><div class="bar-fill green" style="width:82%"></div></div><div class="bar-val">82%</div></div>
+          <div class="bar-row"><div class="bar-lbl">DX</div><div class="bar-track"><div class="bar-fill" style="width:76%"></div></div><div class="bar-val">76%</div></div>
+          <div class="bar-row"><div class="bar-lbl">AD</div><div class="bar-track"><div class="bar-fill amber" style="width:71%"></div></div><div class="bar-val" style="color:var(--amber)">71%</div></div>
+          <div class="bar-row"><div class="bar-lbl">페즈</div><div class="bar-track"><div class="bar-fill green" style="width:88%"></div></div><div class="bar-val" style="color:var(--green)">88%</div></div>
+          <div style="border-top:1px solid var(--border2);margin-top:10px;padding-top:10px">
+            <div class="f-label">외주비 집행 (연 예산 7.86억)</div>
+            <div class="bar-row" style="margin-bottom:0"><div class="bar-track"><div class="bar-fill amber" style="width:44%"></div></div><div class="bar-val">44%</div></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-hd"><div class="card-title">프로젝트 현황</div><span class="bx bx-gray">DX · AD</span></div>
+          <!-- DX -->
+          <div class="f-label" style="margin-bottom:8px;color:var(--blue)">DX 사업부</div>
+          <div class="proj-row">
+            <div class="proj-lbl">진행중</div>
+            <div class="proj-chips">
+              <span class="proj-num blue">● 8건</span>
+            </div>
+          </div>
+          <div class="proj-row">
+            <div class="proj-lbl">완료</div>
+            <div class="proj-chips"><span class="proj-num green">● 5건</span></div>
+          </div>
+          <div class="proj-row">
+            <div class="proj-lbl">지연</div>
+            <div class="proj-chips"><span class="proj-num red">● 2건</span></div>
+          </div>
+          <div class="proj-row" style="margin-bottom:14px">
+            <div class="proj-lbl">예정</div>
+            <div class="proj-chips"><span class="proj-num gray">● 3건</span></div>
+          </div>
+          <!-- AD -->
+          <div class="f-label" style="margin-bottom:8px">AD 사업부</div>
+          <div class="proj-row">
+            <div class="proj-lbl">진행중</div>
+            <div class="proj-chips"><span class="proj-num blue">● 4건</span></div>
+          </div>
+          <div class="proj-row">
+            <div class="proj-lbl">완료</div>
+            <div class="proj-chips"><span class="proj-num green">● 3건</span></div>
+          </div>
+          <div class="proj-row">
+            <div class="proj-lbl">지연</div>
+            <div class="proj-chips"><span class="proj-num red">● 1건</span></div>
+          </div>
+          <div class="proj-row">
+            <div class="proj-lbl">예정</div>
+            <div class="proj-chips"><span class="proj-num gray">● 2건</span></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-hd"><div class="card-title">AI 역량 전사 평균</div><span class="bx bx-blue">MCP</span></div>
+          <div style="text-align:center;padding:8px 0 14px">
+            <div style="font-size:48px;font-weight:900;color:var(--ink1);letter-spacing:-.04em">2.37</div>
+            <div style="font-size:12px;color:var(--ink4)">/4.0 · L2 활용 수준 · 57명</div>
+          </div>
+          <div class="bar-row"><div class="bar-lbl">SM</div><div class="bar-track"><div class="bar-fill" style="width:55%"></div></div><div class="bar-val">2.2</div></div>
+          <div class="bar-row"><div class="bar-lbl">AD</div><div class="bar-track"><div class="bar-fill" style="width:60%"></div></div><div class="bar-val">2.4</div></div>
+          <div class="bar-row"><div class="bar-lbl">DX</div><div class="bar-track"><div class="bar-fill amber" style="width:53%"></div></div><div class="bar-val" style="color:var(--amber)">2.1</div></div>
+        </div>
+      </div>
+
+      <!-- COST + FORECAST -->
+      <div class="row col-2">
+        <div class="card">
+          <div class="card-hd"><div class="card-title">원가 구조</div><button class="btn" id="costToggleBtn" onclick="toggleCostView()">사업부별</button></div>
+          <!-- 전사 통계 -->
+          <div id="costTotal">
+            <div class="stat-strip" style="margin-bottom:14px">
+              <div class="stat-item"><div class="stat-lbl">인당 인건비</div><div class="stat-val">820<span class="stat-unit">만</span></div></div>
+              <div class="stat-item"><div class="stat-lbl">월 인건비</div><div class="stat-val">5.0<span class="stat-unit">억</span></div></div>
+              <div class="stat-item"><div class="stat-lbl">6월 외주비</div><div class="stat-val" style="color:var(--amber)">0.87<span class="stat-unit">억</span></div></div>
+            </div>
+            <div class="f-label">외주비 연간 예산 사용률</div>
+            <div class="bar-row"><div class="bar-track"><div class="bar-fill amber" style="width:44%"></div></div><div class="bar-val">44%</div></div>
+          </div>
+          <!-- 사업부별 뷰 -->
+          <div id="costBU" style="display:none">
+            <table class="tbl" style="font-size:13px">
+              <thead><tr><th>사업부</th><th>인원</th><th>인건비</th><th>외주비</th><th>합계</th></tr></thead>
+              <tbody>
+                <tr><td style="color:var(--blue);font-weight:700">DX</td><td>33명</td><td class="td-num">2.71억</td><td class="td-num" style="color:var(--amber)">0.54억</td><td class="td-num" style="font-weight:700">3.25억</td></tr>
+                <tr><td style="font-weight:700">AD</td><td>14명</td><td class="td-num">1.15억</td><td class="td-num" style="color:var(--amber)">0.21억</td><td class="td-num" style="font-weight:700">1.36억</td></tr>
+                <tr><td style="font-weight:700">SM직영</td><td>10명</td><td class="td-num">0.82억</td><td class="td-num" style="color:var(--amber)">0.08억</td><td class="td-num" style="font-weight:700">0.90억</td></tr>
+                <tr><td style="font-weight:700">대관</td><td>4명</td><td class="td-num">0.33억</td><td class="td-num" style="color:var(--amber)">0.04억</td><td class="td-num" style="font-weight:700">0.37억</td></tr>
+                <tr style="background:var(--blue-tint)"><td style="color:var(--blue);font-weight:700">전사</td><td style="color:var(--blue)">61명</td><td class="td-num" style="color:var(--blue)">5.01억</td><td class="td-num" style="color:var(--amber)">0.87억</td><td class="td-num" style="color:var(--blue);font-weight:800">5.88억</td></tr>
+              </tbody>
+            </table>
+            <div class="f-label" style="margin-top:10px">외주비 연간 예산 사용률</div>
+            <div class="bar-row"><div class="bar-track"><div class="bar-fill amber" style="width:44%"></div></div><div class="bar-val">44%</div></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-hd"><div class="card-title">분기별 목표 및 AI 예측</div></div>
+          <table class="fc">
+            <thead><tr><th>분기</th><th>목표</th><th>AI 예상</th><th>Gap</th><th>상태</th></tr></thead>
+            <tbody>
+              <tr><td>Q1 실적</td><td class="num" style="color:var(--ink2)">14.3억</td><td class="ai">목표 14.5억</td><td class="gap-down">-0.2억</td><td><span class="bx bx-gray">완료</span></td></tr>
+              <tr><td>Q2 실적</td><td class="num" style="color:var(--green)">15.7억</td><td class="ai">목표 14.5억</td><td class="gap-up">+1.2억</td><td><span class="bx bx-green">달성</span></td></tr>
+              <tr><td>Q3</td><td class="num">15.1억</td><td class="ai">12.8억</td><td class="gap-down">-2.3억</td><td><span class="bx bx-amber">주의</span></td></tr>
+              <tr><td>Q4</td><td class="num">15.1억</td><td class="ai">14.5억</td><td class="gap-down">-0.6억</td><td><span class="bx bx-blue">관찰</span></td></tr>
+              <tr><td><strong>연간</strong></td><td class="num">59.5억</td><td class="ai">56.8억</td><td class="gap-down">-2.7억</td><td><span class="bx bx-amber">주의</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- RISK -->
+      <div class="card" style="margin-bottom:12px">
+        <div class="card-hd"><div class="card-title">리스크 현황</div><button class="btn" onclick="openEdit('리스크')">편집</button></div>
+        <div class="alert-list">
+          <div class="alert danger"><div class="alert-tag">HIGH · SKT 계약</div><div class="alert-msg">SKT 계약 만료 D-8 (2026.06.30) — 연간 2.1억 재계약 미확정</div><div class="alert-detail">이번 주 협의 결론 필요. AD 사업부 Q3 매출 직결.</div></div>
+          <div class="alert danger"><div class="alert-tag">HIGH · 목표 미달</div><div class="alert-msg">DX 상반기 달성률 49.4% — 하반기 24.6억 추가 수주 필요</div><div class="alert-detail">현 파이프라인 Gap 약 8억. SKT 하반기 집행(8월) 확인 핵심.</div></div>
+          <div class="alert warn"><div class="alert-tag">MID · 일정</div><div class="alert-msg">iM뱅크 디자인시스템 8월 납기 지연 가능성</div><div class="alert-detail">외주비 0.3억 포함. PM 주간 점검 강화 권고.</div></div>
+          <div class="alert warn"><div class="alert-tag">MID · 외주비</div><div class="alert-msg">써브웨이 AWS + SKT 개발외주 = 외주비 64% 집중</div></div>
+          <div class="alert info"><div class="alert-tag">LOW · 미수금</div><div class="alert-msg">90일 초과 미수금 0.8억 — 7월 말 회수 예정</div></div>
+        </div>
+      </div>
+
+      <!-- CLIENT TABLE -->
+      <div class="card">
+        <div class="card-hd"><div class="card-title">주요 고객사 현황</div><button class="btn" onclick="openEdit('고객사')">편집</button></div>
+        <table class="tbl">
+          <thead><tr><th>고객사</th><th>사업부</th><th>유형</th><th>계약금액</th><th>만료일</th><th>상태</th></tr></thead>
+          <tbody>
+            <tr><td class="td-hi">삼성자산운용 (KODEX ETF)</td><td><span class="bx bx-blue">DX</span></td><td>플랫폼 운영·개발</td><td class="td-num">6.5억/년</td><td>2026.12.31</td><td><span class="bx bx-green">정상</span></td></tr>
+            <tr><td class="td-hi">SKT</td><td><span class="bx bx-blue">DX+AD</span></td><td>디자인시스템 + 캠페인</td><td class="td-num">11.88억 + 2.1억</td><td style="color:var(--red);font-weight:700">2026.06.30</td><td><span class="bx bx-red">만료임박</span></td></tr>
+            <tr><td class="td-hi">써브웨이</td><td><span class="bx bx-blue">DX</span></td><td>온라인채널 운영·고도화</td><td class="td-num">11.33억/년</td><td>2027.01</td><td><span class="bx bx-green">정상</span></td></tr>
+            <tr><td class="td-hi">재규어랜드로버</td><td><span class="bx bx-blue">DX+AD</span></td><td>AS앱·캠페인 운영</td><td class="td-num">9.27억</td><td>2026.12.31</td><td><span class="bx bx-green">정상</span></td></tr>
+            <tr><td class="td-hi">iM뱅크</td><td><span class="bx bx-blue">DX</span></td><td>디자인시스템 구축</td><td class="td-num">2.78억</td><td style="color:var(--amber);font-weight:600">2026.08.31</td><td><span class="bx bx-amber">일정 주의</span></td></tr>
+            <tr><td class="td-hi">CJ프레시웨이</td><td><span class="bx bx-blue">DX</span></td><td>프레시밀 운영·고도화</td><td class="td-num">3.97억</td><td>2026.12</td><td><span class="bx bx-amber">마진 주의</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ═══════ DX ═══════ -->
+    <div class="view-pane" id="view-dx">
+      <div class="sh"><span class="sh-title">DX 사업부 — 2026 상반기</span><span class="sh-action" onclick="openHist('DX매출','DX 매출 추이')">5개년 추이</span></div>
+      <div class="kpi-grid g6" style="margin-bottom:16px">
+        <div class="kpi accent" onclick="openHist('DX매출','DX 월별 매출')"><div class="kpi-lbl">6월 매출</div><div class="kpi-val">3.62<span class="kpi-unit">억</span></div><div class="kpi-chg up">+166% vs 5월</div></div>
+        <div class="kpi warn"><div class="kpi-lbl">상반기 누적</div><div class="kpi-val">15.7<span class="kpi-unit">억</span></div><div class="kpi-chg flat">목표 31.8억 대비</div></div>
+        <div class="kpi danger"><div class="kpi-lbl">달성률</div><div class="kpi-val" style="color:var(--red)">49.4<span class="kpi-unit">%</span></div><div class="kpi-chg down">위험 수준</div></div>
+        <div class="kpi danger"><div class="kpi-lbl">YoY</div><div class="kpi-val" style="color:var(--red)">-40<span class="kpi-unit">%</span></div><div class="kpi-chg down">전년 26.35억 대비</div></div>
+        <div class="kpi"><div class="kpi-lbl">누적 손익</div><div class="kpi-val" style="color:var(--green)">+1.58<span class="kpi-unit">억</span></div><div class="kpi-chg up">흑자 유지</div></div>
+        <div class="kpi"><div class="kpi-lbl">외주비 누적</div><div class="kpi-val">3.43<span class="kpi-unit">억</span></div><div class="kpi-chg flat">연 예산 44%</div></div>
+      </div>
+
+      <div class="insight-grid">
+        <div class="insight ins-danger"><div class="ins-tag">목표 위험</div><div class="ins-title">하반기 24.6억 수주 필요</div><div class="ins-body">상반기 49.4% 달성. 하반기 신규 수주 집중 필요. <strong>8월 SKT 5.75억</strong>이 핵심 변수.</div></div>
+        <div class="insight ins-danger"><div class="ins-tag">YoY 급락</div><div class="ins-title">전년 대비 -40.3%</div><div class="ins-body">1월·5월 적자 반복 구조. Q3 회복 여부는 SKT 집행 일정에 달림.</div></div>
+        <div class="insight ins-warn"><div class="ins-tag">외주비 집중</div><div class="ins-title">2개 프로젝트에 64% 집중</div><div class="ins-body">써브웨이 AWS + SKT 개발외주 합계 외주비 64%. 프로젝트 종료 후 구조 재편 필요.</div></div>
+      </div>
+
+      <div class="row col-3">
+        <div class="card"><div class="card-hd"><div class="card-title">월별 실적 vs 목표</div></div><div class="ch" style="height:150px"><canvas id="cDxRvT"></canvas></div></div>
+        <div class="card"><div class="card-hd"><div class="card-title">YoY 누적 매출</div></div><div class="ch" style="height:150px"><canvas id="cDxYoY"></canvas></div></div>
+        <div class="card"><div class="card-hd"><div class="card-title">월별 손익</div></div><div class="ch" style="height:150px"><canvas id="cDxPnL"></canvas></div></div>
+      </div>
+
+      <div class="row col-2">
+        <div class="card"><div class="card-hd"><div class="card-title">외주비 항목별</div></div><div class="ch" style="height:155px"><canvas id="cDxExt"></canvas></div></div>
+        <div class="card"><div class="card-hd"><div class="card-title">팀별 가동율</div></div><div class="ch" style="height:155px"><canvas id="cDxUtil"></canvas></div></div>
+      </div>
+
+      <div class="row col-2" style="margin-bottom:12px">
+        <div class="card">
+          <div class="card-hd"><div class="card-title">분기별 손익 계획</div></div>
+          <table class="fc">
+            <thead><tr><th>분기</th><th>목표</th><th>손익</th><th>누적</th><th>상태</th></tr></thead>
+            <tbody>
+              <tr><td>Q1</td><td class="num">14.76억</td><td class="gap-up">+0.98억</td><td class="gap-up">+0.98억</td><td><span class="bx bx-gray">완료</span></td></tr>
+              <tr><td>Q2</td><td class="num">14.53억</td><td class="gap-up">+0.60억</td><td class="gap-up">+1.58억</td><td><span class="bx bx-amber">매출미달</span></td></tr>
+              <tr><td>Q3 예상</td><td class="num">15.07억</td><td class="gap-up">+0.37억</td><td class="gap-up">+1.95억</td><td><span class="bx bx-blue">예측</span></td></tr>
+              <tr><td><strong>연간</strong></td><td class="num">59.5억</td><td class="ai">AI 56.8억</td><td class="gap-down">-2.7억</td><td><span class="bx bx-amber">주의</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card">
+          <div class="card-hd"><div class="card-title">고객사별 매출 비중</div></div>
+          <div class="ch" style="height:160px"><canvas id="cDxClient"></canvas></div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:12px">
+        <div class="card-hd"><div class="card-title">DX 프로젝트 현황</div><span class="bx bx-blue">Google Sheets 연동</span></div>
+        <table class="tbl">
+          <thead><tr><th>프로젝트</th><th>고객사</th><th>계약금</th><th>유형</th><th>주요 이슈</th><th>상태</th></tr></thead>
+          <tbody>
+            <tr><td class="td-hi">플랫폼 유지보수</td><td>삼성자산운용</td><td class="td-num">6.50억/년</td><td><span class="bx bx-green">운영</span></td><td>KODEX ETF · 안정</td><td><span class="bx bx-green">정상</span></td></tr>
+            <tr><td class="td-hi">디자인시스템 고도화</td><td>SKT</td><td class="td-num">11.88억</td><td><span class="bx bx-blue">구축</span></td><td>개발외주 2.37억 · 8월 집중</td><td><span class="bx bx-blue">진행중</span></td></tr>
+            <tr><td class="td-hi">온라인채널 운영</td><td>써브웨이</td><td class="td-num">11.33억</td><td><span class="bx bx-green">운영</span></td><td>AWS 2.64억 · 마진 관리</td><td><span class="bx bx-green">정상</span></td></tr>
+            <tr><td class="td-hi">AS앱·이커머스</td><td>재규어랜드로버</td><td class="td-num">9.27억</td><td><span class="bx bx-green">운영</span></td><td>파생 수주 확보 양호</td><td><span class="bx bx-green">정상</span></td></tr>
+            <tr><td class="td-hi">디자인시스템 구축</td><td>iM뱅크</td><td class="td-num">2.78억</td><td><span class="bx bx-blue">구축</span></td><td>8월 납기 일정 리스크</td><td><span class="bx bx-amber">일정 주의</span></td></tr>
+            <tr><td class="td-hi">프레시밀 운영</td><td>CJ프레시웨이</td><td class="td-num">3.97억</td><td><span class="bx bx-green">운영</span></td><td>마진율 재검토 필요</td><td><span class="bx bx-red">마진 주의</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- AI 역량 -->
+      <div class="card">
+        <div class="card-hd"><div class="card-title">AI 역량 현황</div><span class="bx bx-blue">MCP 연동</span></div>
+        <div class="alert info" style="margin-bottom:12px"><div class="alert-tag">주의</div><div class="alert-msg">DX-기획 참여율 33% (5/15명) — 미응답 10명 독려 필요</div></div>
+        <div class="ai-grid" style="margin-bottom:14px">
+          <div class="ai-sc me"><div class="ai-sc-name">DX 기획</div><div class="ai-sc-val">1.60</div><div class="ai-sc-lv">L2 활용</div></div>
+          <div class="ai-sc lo"><div class="ai-sc-name">DX 디자인</div><div class="ai-sc-val">1.33</div><div class="ai-sc-lv">L1 탐색</div></div>
+          <div class="ai-sc me"><div class="ai-sc-name">DX 개발</div><div class="ai-sc-val">2.10</div><div class="ai-sc-lv">L2 활용</div></div>
+          <div class="ai-sc hi"><div class="ai-sc-name">챔피언</div><div class="ai-sc-val" style="font-size:15px;margin-top:3px">전초롱</div><div class="ai-sc-lv">3.8점</div></div>
+          <div class="ai-sc lo"><div class="ai-sc-name">코칭 대상</div><div class="ai-sc-val" style="font-size:15px;margin-top:3px">정의수</div><div class="ai-sc-lv">1.1점</div></div>
+        </div>
+        <div id="qBars"></div>
+      </div>
+    </div>
+
+    <!-- ═══════ AD ═══════ -->
+    <div class="view-pane" id="view-ad">
+      <div class="sh"><span class="sh-title">AD 사업부 — 2026</span><span class="sh-action" onclick="openHist('AD매출','AD 매출 추이')">5개년 추이</span></div>
+      <div class="kpi-grid g5" style="margin-bottom:16px">
+        <div class="kpi accent" onclick="openHist('AD매출','AD 월별 매출')"><div class="kpi-lbl">6월 매출</div><div class="kpi-val">1.9<span class="kpi-unit">억</span></div><div class="kpi-chg flat">전월 +0.1억</div></div>
+        <div class="kpi"><div class="kpi-lbl">상반기 달성률</div><div class="kpi-val" style="color:var(--green)">78<span class="kpi-unit">%</span></div><div class="kpi-chg up">목표 대비 양호</div></div>
+        <div class="kpi warn" onclick="openHist('AD가동율','AD 가동율')"><div class="kpi-lbl">가동율</div><div class="kpi-val">71<span class="kpi-unit">%</span></div><div class="kpi-chg down">목표 -9%p</div></div>
+        <div class="kpi danger"><div class="kpi-lbl">미수금</div><div class="kpi-val">0.7<span class="kpi-unit">억</span></div><div class="kpi-chg down">SKT 30일 지연</div></div>
+        <div class="kpi"><div class="kpi-lbl">인원</div><div class="kpi-val">14<span class="kpi-unit">명</span></div><div class="kpi-chg flat">AE · CD · PD</div></div>
+      </div>
+
+      <div class="insight-grid">
+        <div class="insight ins-danger"><div class="ins-tag">D-8</div><div class="ins-title">SKT 계약 만료</div><div class="ins-body">2026.06.30 만료. 확정 시 연 <strong>2.1억</strong> 유지. 이번 주 내 확정 필요.</div></div>
+        <div class="insight ins-warn"><div class="ins-tag">가동율 저하</div><div class="ins-title">PD팀 유휴 인력 2명</div><div class="ins-body">롯데지주 완료 후 발생. 신규 수주 연결 또는 DX 지원 투입 검토.</div></div>
+        <div class="insight ins-ok"><div class="ins-tag">AI 전망</div><div class="ins-title">Q3 목표 달성 가능</div><div class="ins-body">SKT 재계약 확정 시 Q3 달성 확률 <strong>81%</strong> (AI 예측).</div></div>
+      </div>
+
+      <div class="row col-2">
+        <div class="card"><div class="card-hd"><div class="card-title">월별 매출 추이</div></div><div class="ch" style="height:160px"><canvas id="cAdRev"></canvas></div></div>
+        <div class="card"><div class="card-hd"><div class="card-title">팀별 가동율</div></div><div class="ch" style="height:160px"><canvas id="cAdUtil"></canvas></div></div>
+      </div>
+
+      <div class="row col-2" style="margin-bottom:12px">
+        <div class="card">
+          <div class="card-hd"><div class="card-title">영업 현황</div></div>
+          <div class="mini-grid">
+            <div class="mini"><div class="mini-val" style="color:var(--green)">2.1억</div><div class="mini-lbl">신규 수주 (목표 70%)</div></div>
+            <div class="mini"><div class="mini-val" style="color:var(--blue)">4.8억</div><div class="mini-lbl">파생 매출</div></div>
+            <div class="mini"><div class="mini-val" style="color:var(--amber)">1.5억</div><div class="mini-lbl">파이프라인 (협의 2건)</div></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-hd"><div class="card-title">분기별 AI 예측</div></div>
+          <table class="fc">
+            <thead><tr><th>분기</th><th>목표</th><th>AI 예상</th><th>Gap</th><th>상태</th></tr></thead>
+            <tbody>
+              <tr><td>Q3</td><td class="num">6.5억</td><td class="ai">5.9억</td><td class="gap-down">-0.6억</td><td><span class="bx bx-amber">SKT 변수</span></td></tr>
+              <tr><td>Q4</td><td class="num">7.2억</td><td class="ai">7.0억</td><td class="gap-down">-0.2억</td><td><span class="bx bx-blue">예측</span></td></tr>
+              <tr><td><strong>연간</strong></td><td class="num">26억</td><td class="ai">24.5억</td><td class="gap-down">-1.5억</td><td><span class="bx bx-amber">주의</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-hd"><div class="card-title">AD 프로젝트 현황</div><button class="btn" onclick="openEdit('AD 프로젝트')">편집</button></div>
+        <table class="tbl">
+          <thead><tr><th>프로젝트</th><th>고객사</th><th>계약금</th><th>투입비</th><th>마진</th><th>상태</th></tr></thead>
+          <tbody>
+            <tr><td class="td-hi">SKT 하반기 캠페인</td><td>SKT</td><td class="td-num">0.8억</td><td>0.52억</td><td class="td-num" style="color:var(--green)">35%</td><td><span class="bx bx-red">만료 임박</span></td></tr>
+            <tr><td class="td-hi">재규어 브랜드</td><td>재규어랜드로버</td><td class="td-num">0.45억</td><td>0.31억</td><td class="td-num" style="color:var(--green)">31%</td><td><span class="bx bx-blue">진행중</span></td></tr>
+            <tr><td class="td-hi">롯데지주 인하우스</td><td>롯데지주</td><td class="td-num">0.3억</td><td>0.22억</td><td class="td-num" style="color:var(--amber)">27%</td><td><span class="bx bx-gray">완료</span></td></tr>
+            <tr><td class="td-hi">AHC 뷰티 캠페인</td><td>AHC</td><td class="td-num">0.35억</td><td>0.28억</td><td class="td-num" style="color:var(--red)">20%</td><td><span class="bx bx-amber">예산 주의</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ═══════ PEZ ═══════ -->
+    <div class="view-pane" id="view-pez">
+      <div class="sh"><span class="sh-title">대관사업부 — 2026</span><span class="sh-action" onclick="openHist('PEZ매출','대관 매출 추이')">5개년 추이</span></div>
+      <div class="kpi-grid g4" style="margin-bottom:16px">
+        <div class="kpi accent" onclick="openHist('PEZ매출','대관 매출')"><div class="kpi-lbl">상반기 매출</div><div class="kpi-val">4.8<span class="kpi-unit">억</span></div><div class="kpi-chg up">전년 +22%</div></div>
+        <div class="kpi"><div class="kpi-lbl">상반기 달성률</div><div class="kpi-val" style="color:var(--green)">84<span class="kpi-unit">%</span></div><div class="kpi-chg up">4개 부서 최고</div></div>
+        <div class="kpi"><div class="kpi-lbl">진행 프로젝트</div><div class="kpi-val">7<span class="kpi-unit">건</span></div><div class="kpi-chg flat">공공 5 · 정부 2</div></div>
+        <div class="kpi"><div class="kpi-lbl">가동율</div><div class="kpi-val" style="color:var(--green)">88<span class="kpi-unit">%</span></div><div class="kpi-chg up">목표 초과 +8%p</div></div>
+      </div>
+
+      <div class="insight-grid" style="grid-template-columns:1fr 1fr">
+        <div class="insight ins-ok"><div class="ins-tag">AI 요약</div><div class="ins-title">4개 사업부 중 최고 달성률</div><div class="ins-body">상반기 84% 달성. 하반기 입찰 3건(3.2억) 확정 시 연간 목표 초과 달성 가능.</div></div>
+        <div class="insight ins-info"><div class="ins-tag">파이프라인</div><div class="ins-title">Q3 입찰 3건 · 예상 3.2억</div><div class="ins-body">과거 낙찰률 62% 기준 AI 예측 확보액 약 2.0억. 연간 목표 달성 가능 범위 내.</div></div>
+      </div>
+
+      <div class="row col-2">
+        <div class="card"><div class="card-hd"><div class="card-title">월별 매출 추이 (2026)</div></div><div class="ch" style="height:165px"><canvas id="cPezRev"></canvas></div></div>
+        <div class="card"><div class="card-hd"><div class="card-title">사업 유형별 구성</div></div><div class="ch" style="height:165px"><canvas id="cPezType"></canvas></div></div>
+      </div>
+
+      <div class="row col-2" style="margin-bottom:12px">
+        <div class="card">
+          <div class="card-hd"><div class="card-title">분기별 목표 및 AI 예측</div></div>
+          <table class="fc">
+            <thead><tr><th>분기</th><th>목표</th><th>실적</th><th>Gap</th><th>상태</th></tr></thead>
+            <tbody>
+              <tr><td>Q1</td><td class="num">2.5억</td><td class="num" style="color:var(--green)">2.3억</td><td class="gap-down">-0.2억</td><td><span class="bx bx-gray">완료</span></td></tr>
+              <tr><td>Q2</td><td class="num">3.2억</td><td class="num" style="color:var(--green)">2.5억</td><td class="gap-down">-0.7억</td><td><span class="bx bx-gray">완료</span></td></tr>
+              <tr><td>Q3</td><td class="num">3.8억</td><td class="ai">AI 3.5억</td><td class="gap-down">-0.3억</td><td><span class="bx bx-blue">입찰 3건</span></td></tr>
+              <tr><td>Q4</td><td class="num">3.5억</td><td class="ai">AI 3.8억</td><td class="gap-up">+0.3억</td><td><span class="bx bx-green">낙관</span></td></tr>
+              <tr><td><strong>연간</strong></td><td class="num">13억</td><td class="ai">AI 13.1억</td><td class="gap-up">+0.1억</td><td><span class="bx bx-green">초과 가능</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card">
+          <div class="card-hd"><div class="card-title">입찰 파이프라인</div></div>
+          <div class="mini-grid">
+            <div class="mini"><div class="mini-val" style="color:var(--blue)">3건</div><div class="mini-lbl">진행중 입찰</div></div>
+            <div class="mini"><div class="mini-val" style="color:var(--blue)">3.2억</div><div class="mini-lbl">예상 낙찰금</div></div>
+            <div class="mini"><div class="mini-val" style="color:var(--green)">62%</div><div class="mini-lbl">과거 낙찰률</div></div>
+          </div>
+          <table class="tbl">
+            <thead><tr><th>사업명</th><th>발주처</th><th>예산</th><th>입찰일</th><th>상태</th></tr></thead>
+            <tbody>
+              <tr><td class="td-hi">디지털 전환 컨설팅</td><td>A 기관</td><td class="td-num">1.2억</td><td>07.15</td><td><span class="bx bx-blue">서류 준비</span></td></tr>
+              <tr><td class="td-hi">공공 플랫폼 구축</td><td>B 부처</td><td class="td-num">1.5억</td><td>08.01</td><td><span class="bx bx-amber">검토중</span></td></tr>
+              <tr><td class="td-hi">스마트 행정 시스템</td><td>C 기관</td><td class="td-num">0.5억</td><td>07.30</td><td><span class="bx bx-blue">제안 준비</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════ AI / MCP ═══════ -->
+    <div class="view-pane" id="view-ai">
+      <div class="sh"><span class="sh-title">AI / MCP 현황 — 전사 종합</span><span class="sh-action">데이터 기준: 2026.06.01</span></div>
+
+      <!-- KPI -->
+      <div class="kpi-grid g4" style="margin-bottom:16px">
+        <div class="kpi accent"><div class="kpi-lbl">전사 AI 역량 평균</div><div class="kpi-val">2.37<span class="kpi-unit">/4.0</span></div><div class="kpi-chg up">+0.41 vs 작년</div></div>
+        <div class="kpi"><div class="kpi-lbl">연동 MCP 수</div><div class="kpi-val">7<span class="kpi-unit">개</span></div><div class="kpi-chg up">ERP·Sheets·Notion 등</div></div>
+        <div class="kpi"><div class="kpi-lbl">AI 자동화 업무 수</div><div class="kpi-val">23<span class="kpi-unit">건</span></div><div class="kpi-chg up">+8 vs 전분기</div></div>
+        <div class="kpi"><div class="kpi-lbl">월 AI 절감 추정 시간</div><div class="kpi-val">186<span class="kpi-unit">h</span></div><div class="kpi-chg flat">인당 평균 3.1h</div></div>
+      </div>
+
+      <div class="insight-grid">
+        <div class="insight ins-ok"><div class="ins-tag">종합 평가</div><div class="ins-title">전사 L2 진입 확인</div><div class="ins-body">전사 평균 2.37로 L2(활용) 수준 진입. 단, DX 디자인팀 1.33으로 편차 심화. 집중 육성 필요.</div></div>
+        <div class="insight ins-warn"><div class="ins-tag">참여율 부족</div><div class="ins-title">DX 기획 33% 응답</div><div class="ins-body">15명 중 5명만 응답. 미응답 10명 독려 완료 후 재집계 예정 (6월 말).</div></div>
+        <div class="insight ins-info"><div class="ins-tag">다음 단계</div><div class="ins-title">L3 파일럿 2팀 선발</div><div class="ins-body">챔피언(전초롱 3.8 · DX개발) 중심으로 L3 자동화 파일럿 2팀 구성. 7월 킥오프 예정.</div></div>
+      </div>
+
+      <!-- 부서별 AI 역량 + MCP 현황 -->
+      <div class="row col-2">
+        <div class="card">
+          <div class="card-hd"><div class="card-title">부서 · 직군별 AI 역량 점수</div><span class="bx bx-gray">N=57명 · 6월 기준</span></div>
+          <div class="ch" style="height:175px"><canvas id="cAiBar"></canvas></div>
+        </div>
+        <div class="card">
+          <div class="card-hd"><div class="card-title">MCP 도구별 활용률</div><span class="bx bx-blue">연동 완료</span></div>
+          <div class="ch" style="height:175px"><canvas id="cMcpBar"></canvas></div>
+        </div>
+      </div>
+
+      <!-- 월별 AI 활용 추이 + 질문별 세부 -->
+      <div class="row col-21">
+        <div class="card">
+          <div class="card-hd"><div class="card-title">월별 AI 활용 건수 추이</div><div class="card-sub">프롬프트 제출 + 자동화 실행 합계</div></div>
+          <div class="ch" style="height:155px"><canvas id="cAiTrend"></canvas></div>
+        </div>
+        <div class="card">
+          <div class="card-hd"><div class="card-title">레벨 분포</div></div>
+          <div class="ch" style="height:155px"><canvas id="cAiLevel"></canvas></div>
+        </div>
+      </div>
+
+      <!-- 10문항 상세 -->
+      <div class="card" style="margin-bottom:12px">
+        <div class="card-hd"><div class="card-title">AI 역량 진단 10문항 — 전사 평균</div><span class="bx bx-gray">4점 만점</span></div>
+        <div id="aiQBars" style="margin-top:4px"></div>
+      </div>
+
+      <!-- 개인 Top/Bottom -->
+      <div class="row col-2" style="margin-bottom:12px">
+        <div class="card">
+          <div class="card-hd"><div class="card-title">개인 역량 상위 10</div><span class="bx bx-green">챔피언 후보</span></div>
+          <table class="tbl">
+            <thead><tr><th>이름</th><th>부서</th><th>점수</th><th>강점</th><th>레벨</th></tr></thead>
+            <tbody>
+              <tr><td class="td-hi">전초롱</td><td>DX 개발</td><td class="td-num" style="color:var(--blue)">3.8</td><td>자동화 · MCP 연결</td><td><span class="bx bx-blue">L3</span></td></tr>
+              <tr><td class="td-hi">김수현</td><td>SM 기획</td><td class="td-num">3.5</td><td>프롬프트 설계</td><td><span class="bx bx-blue">L3</span></td></tr>
+              <tr><td class="td-hi">박준혁</td><td>DX 기획</td><td class="td-num">3.2</td><td>업무 적용</td><td><span class="bx bx-blue">L3</span></td></tr>
+              <tr><td class="td-hi">이혜진</td><td>AD AE</td><td class="td-num">3.1</td><td>콘텐츠 생성</td><td><span class="bx bx-blue">L2+</span></td></tr>
+              <tr><td class="td-hi">최동현</td><td>DX 개발</td><td class="td-num">2.9</td><td>코드 보조</td><td><span class="bx bx-gray">L2</span></td></tr>
+              <tr><td class="td-hi">오지영</td><td>SM 경영</td><td class="td-num">2.8</td><td>리포트 자동화</td><td><span class="bx bx-gray">L2</span></td></tr>
+              <tr><td class="td-hi">강민재</td><td>DX PM</td><td class="td-num">2.7</td><td>일정 관리</td><td><span class="bx bx-gray">L2</span></td></tr>
+              <tr><td class="td-hi">황수민</td><td>AD CD</td><td class="td-num">2.6</td><td>브리프 작성</td><td><span class="bx bx-gray">L2</span></td></tr>
+              <tr><td class="td-hi">송태양</td><td>DX 기획</td><td class="td-num">2.5</td><td>분석 보조</td><td><span class="bx bx-gray">L2</span></td></tr>
+              <tr><td class="td-hi">유나연</td><td>페즈</td><td class="td-num">2.5</td><td>제안서 보조</td><td><span class="bx bx-gray">L2</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card">
+          <div class="card-hd"><div class="card-title">개인 역량 하위 · 코칭 우선 대상</div><span class="bx bx-red">집중 지원</span></div>
+          <table class="tbl">
+            <thead><tr><th>이름</th><th>부서</th><th>점수</th><th>주요 이슈</th><th>조치</th></tr></thead>
+            <tbody>
+              <tr><td class="td-hi">정의수</td><td>DX 디자인</td><td class="td-num" style="color:var(--red)">1.1</td><td>도구 비사용</td><td><span class="bx bx-red">1:1 코칭</span></td></tr>
+              <tr><td class="td-hi">안현서</td><td>DX 디자인</td><td class="td-num" style="color:var(--red)">1.2</td><td>인식 부족</td><td><span class="bx bx-red">1:1 코칭</span></td></tr>
+              <tr><td class="td-hi">배유리</td><td>AD PD</td><td class="td-num" style="color:var(--red)">1.3</td><td>활용 기회 없음</td><td><span class="bx bx-amber">워크샵</span></td></tr>
+              <tr><td class="td-hi">임도윤</td><td>DX 기획</td><td class="td-num" style="color:var(--red)">1.4</td><td>미응답</td><td><span class="bx bx-amber">독려 중</span></td></tr>
+              <tr><td class="td-hi">권수아</td><td>AD PD</td><td class="td-num" style="color:var(--amber)">1.5</td><td>Figma AI 미사용</td><td><span class="bx bx-amber">툴 교육</span></td></tr>
+            </tbody>
+          </table>
+          <div style="margin-top:14px;border-top:1px solid var(--border2);padding-top:12px">
+            <div class="f-label">Q3 교육 일정</div>
+            <div style="margin-top:8px;display:flex;flex-direction:column;gap:6px">
+              <div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:var(--ink2)">전사 AI 기초 워크샵</span><span style="font-weight:700;color:var(--blue)">7월 2주</span></div>
+              <div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:var(--ink2)">DX 디자인 도구 집중 교육</span><span style="font-weight:700;color:var(--blue)">7월 3주</span></div>
+              <div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:var(--ink2)">L3 파일럿팀 킥오프</span><span style="font-weight:700;color:var(--blue)">8월 1주</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 자동화 현황 -->
+      <div class="row col-2" style="margin-bottom:12px">
+        <div class="card">
+          <div class="card-hd"><div class="card-title">MCP 연동 현황</div><span class="bx bx-blue">7개 연동 완료</span></div>
+          <table class="tbl">
+            <thead><tr><th>MCP / 도구</th><th>연동 대상</th><th>활용율</th><th>월 호출</th><th>상태</th></tr></thead>
+            <tbody>
+              <tr><td class="td-hi">ERP API</td><td>SM · 전사</td><td class="td-num">91%</td><td>2,840회</td><td><span class="bx bx-green">정상</span></td></tr>
+              <tr><td class="td-hi">Google Sheets MCP</td><td>DX · AD</td><td class="td-num">78%</td><td>1,620회</td><td><span class="bx bx-green">정상</span></td></tr>
+              <tr><td class="td-hi">Notion MCP</td><td>전사</td><td class="td-num">65%</td><td>940회</td><td><span class="bx bx-green">정상</span></td></tr>
+              <tr><td class="td-hi">Gmail MCP</td><td>SM · AD</td><td class="td-num">54%</td><td>620회</td><td><span class="bx bx-green">정상</span></td></tr>
+              <tr><td class="td-hi">Google Calendar</td><td>전사</td><td class="td-num">48%</td><td>480회</td><td><span class="bx bx-green">정상</span></td></tr>
+              <tr><td class="td-hi">Supabase MCP</td><td>DX 개발</td><td class="td-num">31%</td><td>210회</td><td><span class="bx bx-amber">확장 중</span></td></tr>
+              <tr><td class="td-hi">Claude API</td><td>SM · MIS</td><td class="td-num">22%</td><td>140회</td><td><span class="bx bx-blue">파일럿</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card">
+          <div class="card-hd"><div class="card-title">AI 자동화 업무 현황</div><span class="bx bx-gray">23건 운영중</span></div>
+          <table class="tbl">
+            <thead><tr><th>업무</th><th>부서</th><th>절감 시간</th><th>빈도</th><th>상태</th></tr></thead>
+            <tbody>
+              <tr><td class="td-hi">월 실적 리포트 자동화</td><td>SM</td><td class="td-num" style="color:var(--green)">12h/월</td><td>월 1회</td><td><span class="bx bx-green">운영</span></td></tr>
+              <tr><td class="td-hi">견적서 초안 생성</td><td>DX</td><td class="td-num" style="color:var(--green)">8h/월</td><td>수시</td><td><span class="bx bx-green">운영</span></td></tr>
+              <tr><td class="td-hi">회의록 자동 요약</td><td>전사</td><td class="td-num" style="color:var(--green)">20h/월</td><td>주 5회+</td><td><span class="bx bx-green">운영</span></td></tr>
+              <tr><td class="td-hi">입찰 제안서 초안</td><td>페즈</td><td class="td-num" style="color:var(--green)">15h/건</td><td>건당</td><td><span class="bx bx-green">운영</span></td></tr>
+              <tr><td class="td-hi">캠페인 카피 생성</td><td>AD</td><td class="td-num" style="color:var(--green)">6h/월</td><td>월 3회</td><td><span class="bx bx-green">운영</span></td></tr>
+              <tr><td class="td-hi">코드 리뷰 보조</td><td>DX 개발</td><td class="td-num" style="color:var(--green)">10h/월</td><td>수시</td><td><span class="bx bx-blue">파일럿</span></td></tr>
+              <tr><td class="td-hi">UI 스토리보드 초안</td><td>DX 기획</td><td class="td-num" style="color:var(--amber)">-</td><td>-</td><td><span class="bx bx-amber">준비중</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 확장 예정 -->
+      <div class="card" style="border: 1.5px dashed var(--border); background: var(--bg);">
+        <div class="card-hd">
+          <div><div class="card-title" style="color:var(--ink3)">추가 예정 — 사업부 AI 현황 확장</div><div class="card-sub">데이터 수집 후 순차 오픈</div></div>
+          <span class="bx bx-gray">준비중</span>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:4px">
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:14px;opacity:.5">
+            <div class="f-label" style="margin-bottom:8px">AD 사업부 AI 현황</div>
+            <div style="font-size:13px;color:var(--ink3)">크리에이티브 AI 활용 · 카피 자동화 · Midjourney 도입 현황 추가 예정</div>
+          </div>
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:14px;opacity:.5">
+            <div class="f-label" style="margin-bottom:8px">대관사업부 AI 현황</div>
+            <div style="font-size:13px;color:var(--ink3)">입찰 제안서 AI 보조 · 공공 데이터 분석 자동화 현황 추가 예정</div>
+          </div>
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:14px;opacity:.5">
+            <div class="f-label" style="margin-bottom:8px">ROI 분석</div>
+            <div style="font-size:13px;color:var(--ink3)">AI 도입 비용 대비 효과 · 시간 절감 금액 환산 · 산출물 품질 지표 추가 예정</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════ 시장 & 경쟁사 ═══════ -->
+    <div class="view-pane" id="view-mkt">
+      <div class="sh"><span class="sh-title">시장 & 경쟁사 현황</span><span class="sh-action">출처: KOCCA · NICE신용평가 · 캐치닷컴 (2024-2025 기준)</span></div>
+
+      <!-- KPI -->
+      <div class="kpi-grid g4" style="margin-bottom:16px">
+        <div class="kpi accent"><div class="kpi-lbl">국내 디지털 에이전시 시장</div><div class="kpi-val">4.2<span class="kpi-unit">조</span></div><div class="kpi-chg up">+11% YoY (2025 추정)</div></div>
+        <div class="kpi"><div class="kpi-lbl">digitalDigm 추정 점유율</div><div class="kpi-val">0.14<span class="kpi-unit">%</span></div><div class="kpi-chg flat">연 매출 약 59억 기준</div></div>
+        <div class="kpi"><div class="kpi-lbl">시장 CAGR (2020-2025)</div><div class="kpi-val">13.2<span class="kpi-unit">%</span></div><div class="kpi-chg up">DX 수요 급성장</div></div>
+        <div class="kpi"><div class="kpi-lbl">AI 에이전시 전환 기업</div><div class="kpi-val">38<span class="kpi-unit">%</span></div><div class="kpi-chg up">2024→2026 추정</div></div>
+      </div>
+
+      <div class="insight-grid">
+        <div class="insight ins-info"><div class="ins-tag">시장 동향</div><div class="ins-title">DX 플랫폼 운영 수요 급증</div><div class="ins-body">단순 구축→운영+AI 고도화로 계약 패턴 변화. 장기 운영 계약 비중 확대가 핵심 경쟁력.</div></div>
+        <div class="insight ins-warn"><div class="ins-tag">경쟁 심화</div><div class="ins-title">대형 SI 시장 진입 본격화</div><div class="ins-body">삼성SDS·LG CNS 계열 에이전시가 중견 고객사 공략 강화. 가격 경쟁 심화 우려.</div></div>
+        <div class="insight ins-ok"><div class="ins-tag">기회</div><div class="ins-title">AI 도입 격차 → 포지셔닝 기회</div><div class="ins-body">경쟁사 대비 AI 조직 내재화 속도가 빠름. AI 내재화 에이전시 포지셔닝으로 프리미엄 수주 가능.</div></div>
+      </div>
+
+      <!-- 시장 규모 추이 + 경쟁사 비교 -->
+      <div class="row col-2">
+        <div class="card">
+          <div class="card-hd"><div><div class="card-title">국내 디지털 에이전시 시장 규모 추이</div><div class="card-sub">단위: 조원 · 2025-2026 추정치</div></div></div>
+          <div class="ch" style="height:175px"><canvas id="cMktSize"></canvas></div>
+        </div>
+        <div class="card">
+          <div class="card-hd"><div class="card-title">경쟁사 규모 비교 (매출)</div><div class="card-sub">단위: 억원 · 최근 공시 기준 추정</div></div>
+          <div class="ch" style="height:220px"><canvas id="cCompRev"></canvas></div>
+        </div>
+      </div>
+
+      <!-- 분야별 시장 성장률 + 수주 경쟁 -->
+      <div class="row col-2">
+        <div class="card">
+          <div class="card-hd"><div class="card-title">분야별 시장 성장률 (2025 YoY)</div></div>
+          <div style="margin-top:4px">
+            <div class="bar-row"><div class="bar-lbl" style="min-width:90px;font-size:13px">AI·자동화</div><div class="bar-track"><div class="bar-fill" style="width:88%;background:var(--blue)"></div></div><div class="bar-val">+38%</div></div>
+            <div class="bar-row"><div class="bar-lbl" style="min-width:90px;font-size:13px">플랫폼 운영</div><div class="bar-track"><div class="bar-fill" style="width:74%"></div></div><div class="bar-val">+21%</div></div>
+            <div class="bar-row"><div class="bar-lbl" style="min-width:90px;font-size:13px">DX 컨설팅</div><div class="bar-track"><div class="bar-fill" style="width:66%"></div></div><div class="bar-val">+17%</div></div>
+            <div class="bar-row"><div class="bar-lbl" style="min-width:90px;font-size:13px">퍼포먼스 광고</div><div class="bar-track"><div class="bar-fill" style="width:52%"></div></div><div class="bar-val">+12%</div></div>
+            <div class="bar-row"><div class="bar-lbl" style="min-width:90px;font-size:13px">브랜드 캠페인</div><div class="bar-track"><div class="bar-fill amber" style="width:28%"></div></div><div class="bar-val">+5%</div></div>
+            <div class="bar-row" style="margin-bottom:0"><div class="bar-lbl" style="min-width:90px;font-size:13px">단순 구축</div><div class="bar-track"><div class="bar-fill red" style="width:14%"></div></div><div class="bar-val" style="color:var(--red)">-3%</div></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-hd"><div class="card-title">d2 수주 경쟁 현황 (2026 H1)</div></div>
+          <div class="ch" style="height:165px"><canvas id="cBidResult"></canvas></div>
+        </div>
+      </div>
+
+      <!-- 경쟁사 테이블 -->
+      <div class="card" style="margin-bottom:12px">
+        <div class="card-hd"><div class="card-title">주요 경쟁사 현황</div><span class="bx bx-gray">출처: NICE신용평가 · 캐치닷컴 2024-2025 기준</span></div>
+        <table class="tbl">
+          <thead><tr><th>경쟁사</th><th>매출</th><th>영업이익</th><th>전년비</th><th>인원</th><th>핵심 강점</th><th>AI 도입</th><th>위협 수준</th></tr></thead>
+          <tbody>
+            <tr><td class="td-hi">와일리</td><td class="td-num">302억</td><td class="td-num" style="color:var(--green)">10억</td><td style="color:var(--ink3);font-size:13px">-0.6%</td><td>170명</td><td>통합 디지털마케팅 · 운영</td><td><div class="ai-ev"><span class="bx bx-amber">도입 중</span><span class="ai-src">근거 ⓘ<div class="ai-tt">AI 마케팅 솔루션 'Fromto X' 출시 — AI 기반 성과 예측·결과 분석 서비스 (매일경제, 2024)</div></span></div></td><td><span class="bx bx-red">높음</span></td></tr>
+            <tr><td class="td-hi">아이파트너즈</td><td class="td-num">302억</td><td class="td-num" style="color:var(--green)">21억</td><td style="color:var(--red);font-size:13px">-56.6%</td><td>200명+</td><td>플랫폼 구축 · 운영 20년+</td><td><div class="ai-ev"><span class="bx bx-gray">미확인</span><span class="ai-src">근거 ⓘ<div class="ai-tt">자체 AI 도입 관련 공개 발표·보도 확인 불가 (2026.6 기준). 투자 포트폴리오 내 AI 스타트업 지원 사례만 확인됨.</div></span></div></td><td><span class="bx bx-red">높음</span></td></tr>
+            <tr><td class="td-hi">매그넘빈트</td><td class="td-num">275억</td><td class="td-num" style="color:var(--green)">23억</td><td style="color:var(--green);font-size:13px">+14.4%</td><td>미확인</td><td>모바일 · SI · 운영</td><td><div class="ai-ev"><span class="bx bx-gray">초기</span><span class="ai-src">근거 ⓘ<div class="ai-tt">2025 인터넷서비스 트렌드 컨퍼런스 참여 (AI 검색·UX 변화 세션). 자체 AI 서비스·제품 출시 근거는 미확인 (2026.6 기준)</div></span></div></td><td><span class="bx bx-amber">중</span></td></tr>
+            <tr><td class="td-hi">바이널씨</td><td class="td-num">210억</td><td class="td-num" style="color:var(--amber)">2.6억</td><td style="color:var(--red);font-size:13px">-84.4%</td><td>미확인</td><td>UX·UI 디자인 · 구축</td><td><div class="ai-ev"><span class="bx bx-amber">도입 중</span><span class="ai-src">근거 ⓘ<div class="ai-tt">VinylCeremony 2025 사내 AI 연구 프로젝트 발표 — 브랜드전략·시나리오·영상제작 AI 적용 연구. Figma Config 2024 참석 (AI 활용 방향 탐색). (vinylc.com, 2025)</div></span></div></td><td><span class="bx bx-amber">중</span></td></tr>
+            <tr><td class="td-hi">펜타브리드</td><td class="td-num">169억</td><td class="td-num" style="color:var(--red)">-7.6억</td><td style="color:var(--ink3);font-size:13px">+2.4%</td><td>71명</td><td>광고 · 이머시브미디어</td><td><div class="ai-ev"><span class="bx bx-green">적극 도입</span><span class="ai-src">근거 ⓘ<div class="ai-tt">① 렛서와 생성형 AI 마케팅 기술 MOU 체결 (AI타임스, 2025.2) ② AI 캐릭터 이벤트 서비스 출시 (크록스 협업) ③ AI과학기술혁신대상 2025 수상 (전자신문) ④ 2026 AI서비스 트렌드 컨퍼런스 발표</div></span></div></td><td><span class="bx bx-amber">중</span></td></tr>
+            <tr><td class="td-hi">플립커뮤니케이션즈</td><td class="td-num">152억</td><td class="td-num" style="color:var(--green)">6억</td><td style="color:var(--green);font-size:13px">+6.7%</td><td>108명</td><td>UX컨설팅 · 구축 · 운영</td><td><div class="ai-ev"><span class="bx bx-gray">초기</span><span class="ai-src">근거 ⓘ<div class="ai-tt">행안부 디지털 정부서비스 UI/UX 가이드라인 웹표준 혁신대상 수상 (2024 웹어워드). AI 전담 서비스·제품 출시 공개 근거는 미확인 (2026.6 기준)</div></span></div></td><td><span class="bx bx-amber">중</span></td></tr>
+            <tr><td class="td-hi">엘루오</td><td class="td-num">~140억</td><td class="td-num" style="color:var(--ink4)">미확인</td><td style="color:var(--ink4);font-size:13px">—</td><td>130명</td><td>웹·모바일 구축 · 운영</td><td><div class="ai-ev"><span class="bx bx-green">적극 도입</span><span class="ai-src">근거 ⓘ<div class="ai-tt">① 공식 슬로건 'AIX 리딩 컨설턴시'로 포지셔닝 ② AI 에이전트 구축 서비스 제공 ③ Claude 활용 UI/UX 기획 사내 교육 운영 (blog.naver.com/eluocnc, 2025)</div></span></div></td><td><span class="bx bx-amber">중</span></td></tr>
+            <tr style="background:var(--blue-tint)"><td class="td-hi" style="color:var(--blue)">digitalDigm (d2)</td><td class="td-num" style="color:var(--blue)">59억</td><td class="td-num" style="color:var(--blue)">—</td><td style="color:var(--ink3);font-size:13px">—</td><td>61명</td><td>운영+AI 내재화 특화</td><td><span class="bx bx-green">내재화</span></td><td><span class="bx bx-gray">—</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 경쟁 포지셔닝 + 트렌드 -->
+      <div class="row col-2" style="margin-bottom:0">
+        <div class="card">
+          <div class="card-hd"><div class="card-title">d2 경쟁 우위 분석</div></div>
+          <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px">
+            <div>
+              <div class="f-label" style="margin-bottom:5px;color:var(--green)">강점 (Strength)</div>
+              <div class="bar-row"><div class="bar-lbl" style="min-width:100px;font-size:13px">AI 내재화 속도</div><div class="bar-track"><div class="bar-fill green" style="width:82%"></div></div><div class="bar-val">82</div></div>
+              <div class="bar-row"><div class="bar-lbl" style="min-width:100px;font-size:13px">운영 전문성</div><div class="bar-track"><div class="bar-fill green" style="width:78%"></div></div><div class="bar-val">78</div></div>
+              <div class="bar-row"><div class="bar-lbl" style="min-width:100px;font-size:13px">고객 장기 유지율</div><div class="bar-track"><div class="bar-fill green" style="width:75%"></div></div><div class="bar-val">75</div></div>
+            </div>
+            <div style="border-top:1px solid var(--border2);padding-top:8px">
+              <div class="f-label" style="margin-bottom:5px;color:var(--red)">약점 (Weakness)</div>
+              <div class="bar-row"><div class="bar-lbl" style="min-width:100px;font-size:13px">브랜드 인지도</div><div class="bar-track"><div class="bar-fill red" style="width:28%"></div></div><div class="bar-val" style="color:var(--red)">28</div></div>
+              <div class="bar-row"><div class="bar-lbl" style="min-width:100px;font-size:13px">대형 고객 포트폴리오</div><div class="bar-track"><div class="bar-fill red" style="width:35%"></div></div><div class="bar-val" style="color:var(--red)">35</div></div>
+              <div class="bar-row"><div class="bar-lbl" style="min-width:100px;font-size:13px">퍼포먼스 AD 역량</div><div class="bar-track"><div class="bar-fill amber" style="width:42%"></div></div><div class="bar-val" style="color:var(--amber)">42</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-hd"><div class="card-title">2026 주요 시장 트렌드</div></div>
+          <div style="display:flex;flex-direction:column;gap:9px;margin-top:4px">
+            <div class="alert info"><div class="alert-tag">기회</div><div class="alert-msg">AI 에이전시 전환 수요 급증 — "AI First" 계약 요구 증가</div><div class="alert-detail">RFP에 AI 활용 계획 필수 기재 사례 증가. 내재화 조직이 절대 우위.</div></div>
+            <div class="alert info"><div class="alert-tag">기회</div><div class="alert-msg">공공·금융 DX 예산 확대 — 대관 사업부 성장 기회</div><div class="alert-detail">2026 공공 IT 예산 전년 대비 +18%. 대관사업부 파이프라인 확대 직결.</div></div>
+            <div class="alert warn"><div class="alert-tag">위협</div><div class="alert-msg">생성AI 직접 사용 고객 증가 — 단순 제작 수요 감소</div><div class="alert-detail">고객이 직접 AI로 초안 제작 후 정제만 의뢰하는 패턴. 고부가가치 기획 역량 강화 필요.</div></div>
+            <div class="alert warn"><div class="alert-tag">위협</div><div class="alert-msg">글로벌 에이전시 로컬 공략 강화</div><div class="alert-detail">퍼블리시스·AKQA 국내 조직 확대. 대형 브랜드 영역 경쟁 심화.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+<!-- ──────── 영업관리 ──────── -->
+<div class="view-pane" id="view-sales">
+
+  <!-- 배너 -->
+  <div style="display:flex;align-items:center;gap:8px;padding:8px 14px;background:var(--blue-tint);border:1px solid var(--blue);border-radius:var(--r);margin-bottom:14px;opacity:.85">
+    <span style="font-size:14px">📋</span>
+    <span style="font-size:12px;font-weight:700;color:var(--blue)">제안 관리</span>
+    <span style="font-size:12px;color:var(--ink3)">DX · AD 사업부 제안 파이프라인 · 수주율 추적</span>
+    <span class="bx bx-blue" style="margin-left:auto">ERP 연동 예정</span>
+  </div>
+
+  <!-- 필터 행 -->
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+    <div class="tab-row" id="salesBuTab" style="margin:0">
+      <button class="tab-btn active" onclick="filterSalesBu('all',this)">전체 BU</button>
+      <button class="tab-btn" onclick="filterSalesBu('DX',this)">DX</button>
+      <button class="tab-btn" onclick="filterSalesBu('AD',this)">AD</button>
+    </div>
+    <div class="tab-row" id="salesStatTab" style="margin:0">
+      <button class="tab-btn active" onclick="filterSalesStat('all',this)">전체 상태</button>
+      <button class="tab-btn" onclick="filterSalesStat('검토중',this)">검토중</button>
+      <button class="tab-btn" onclick="filterSalesStat('제안중',this)">제안중</button>
+      <button class="tab-btn" onclick="filterSalesStat('PT준비',this)">PT준비</button>
+      <button class="tab-btn" onclick="filterSalesStat('수주',this)">수주</button>
+      <button class="tab-btn" onclick="filterSalesStat('탈락',this)">탈락</button>
+      <button class="tab-btn" onclick="filterSalesStat('보류',this)">보류</button>
+    </div>
+    <button class="btn btn-primary" style="margin-left:auto" onclick="openSalesDrawer(-1)">+ 제안 등록</button>
+  </div>
+
+  <!-- KPI 4개 -->
+  <div class="kpi-grid g4" style="margin-bottom:14px">
+    <div class="kpi accent" id="sk-total">
+      <div class="kpi-lbl">총 제안</div>
+      <div class="kpi-val">—<span class="kpi-unit">건</span></div>
+      <div class="kpi-chg flat" id="sk-total-sub">전체 기준</div>
+    </div>
+    <div class="kpi" id="sk-ongoing">
+      <div class="kpi-lbl">진행중</div>
+      <div class="kpi-val" style="color:var(--blue)">—<span class="kpi-unit">건</span></div>
+      <div class="kpi-chg flat">검토중+제안중+PT준비</div>
+    </div>
+    <div class="kpi" id="sk-won">
+      <div class="kpi-lbl">수주</div>
+      <div class="kpi-val" style="color:var(--green)">—<span class="kpi-unit">건</span></div>
+      <div class="kpi-chg up" id="sk-winrate">수주율 계산 중</div>
+    </div>
+    <div class="kpi" id="sk-budget">
+      <div class="kpi-lbl">추정 예산 합계</div>
+      <div class="kpi-val">—<span class="kpi-unit">억</span></div>
+      <div class="kpi-chg flat">필터 기준</div>
+    </div>
+  </div>
+
+  <!-- 중단: 상태별 현황 + BU 요약 -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+
+    <!-- 상태별 현황 -->
+    <div class="card">
+      <div class="card-hd"><div class="card-title">상태별 현황</div><span class="bx bx-gray" id="salesStatCount"></span></div>
+      <div id="salesStatBars"></div>
+    </div>
+
+    <!-- BU별 요약 -->
+    <div class="card">
+      <div class="card-hd"><div class="card-title">BU별 요약</div></div>
+      <table class="tbl" id="salesBuSummary">
+        <thead><tr><th>BU</th><th>건수</th><th>추정예산</th><th>수주</th><th>탈락</th></tr></thead>
+        <tbody></tbody>
+      </table>
+      <div style="margin-top:12px" id="salesCatBars"></div>
+    </div>
+
+  </div>
+
+  <!-- 제안 목록 전체 폭 -->
+  <div class="card">
+    <div class="card-hd">
+      <div class="card-title">제안 목록</div>
+      <span class="bx bx-gray" style="margin-left:auto">클릭하여 편집</span>
+    </div>
+    <div style="overflow-x:auto">
+      <table class="tbl" id="salesTable">
+        <thead>
+          <tr>
+            <th>BU</th>
+            <th>프로젝트명</th>
+            <th>고객사</th>
+            <th>분류</th>
+            <th>상태</th>
+            <th>제안일정</th>
+            <th>PT일정</th>
+            <th>추정예산</th>
+            <th>경쟁사</th>
+            <th>영업PM</th>
+            <th style="width:80px"></th>
+          </tr>
+        </thead>
+        <tbody id="salesTableBody">
+          <tr><td colspan="11" style="text-align:center;padding:24px;color:var(--ink4)">로딩 중...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+
+<!-- ──────── 설정 ──────── -->
+<div class="view-pane" id="view-cfg">
+  <div class="cfg-layout">
+
+    <!-- 왼쪽 설정 네비 -->
+    <div class="card" style="padding:8px">
+      <div class="cfg-nav-item active" onclick="showCfg('sys',this)"><span class="cfg-nav-icon">🔗</span>시스템 연동</div>
+      <div class="cfg-nav-item" onclick="showCfg('ver',this)"><span class="cfg-nav-icon">📦</span>버전 관리</div>
+      <div class="cfg-nav-item" onclick="showCfg('mem',this)"><span class="cfg-nav-icon">👥</span>멤버 &amp; 권한</div>
+      <div class="cfg-nav-item" onclick="showCfg('memo',this)"><span class="cfg-nav-icon">📝</span>메모 / 공지</div>
+      <div class="cfg-nav-item" onclick="showCfg('pcard',this)"><span class="cfg-nav-icon">📋</span>프로젝트 카드</div>
+      <div class="cfg-nav-item" onclick="showCfg('ccard',this)"><span class="cfg-nav-icon">🏢</span>고객사 카드</div>
+      <div class="cfg-nav-item" onclick="showCfg('data',this)"><span class="cfg-nav-icon">🗄️</span>데이터 관리</div>
+    </div>
+
+    <!-- 오른쪽 콘텐츠 -->
+    <div>
+
+      <!-- ① 시스템 연동 -->
+      <div class="cfg-sec active" id="cfgSec-sys">
+        <!-- ERP 연동 목록 -->
+        <div class="card" style="margin-bottom:12px">
+          <div class="card-hd">
+            <div><div class="card-title">ERP 연동</div><div class="card-sub">각 사업부·시스템별 API 키를 개별 등록합니다</div></div>
+            <button class="btn btn-primary" onclick="openConnDrawer('erp',-1)">+ 연동 추가</button>
+          </div>
+          <div id="erpList" style="margin-top:4px"></div>
+        </div>
+        <!-- Google Sheets 목록 -->
+        <div class="card">
+          <div class="card-hd">
+            <div><div class="card-title">Google Sheets 연동</div><div class="card-sub">시트별로 링크·동기화 주기를 개별 설정합니다</div></div>
+            <button class="btn btn-primary" onclick="openConnDrawer('gs',-1)">+ 시트 추가</button>
+          </div>
+          <div id="gsList" style="margin-top:4px"></div>
+        </div>
+      </div>
+
+      <!-- ② 버전 관리 -->
+      <div class="cfg-sec" id="cfgSec-ver">
+        <div class="card" style="margin-bottom:12px">
+          <div class="card-hd"><div class="card-title">현재 버전</div><span class="bx bx-blue">v3.2.1</span></div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:4px">
+            <div style="text-align:center;padding:12px;background:var(--bg);border-radius:8px">
+              <div style="font-size:22px;font-weight:900;color:var(--blue)">v3</div>
+              <div style="font-size:11px;color:var(--ink4)">메이저</div>
+            </div>
+            <div style="text-align:center;padding:12px;background:var(--bg);border-radius:8px">
+              <div style="font-size:22px;font-weight:900;color:var(--ink1)">2</div>
+              <div style="font-size:11px;color:var(--ink4)">마이너</div>
+            </div>
+            <div style="text-align:center;padding:12px;background:var(--bg);border-radius:8px">
+              <div style="font-size:22px;font-weight:900;color:var(--ink1)">1</div>
+              <div style="font-size:11px;color:var(--ink4)">패치</div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-hd"><div class="card-title">변경 이력</div></div>
+          <table class="tbl">
+            <thead><tr><th>버전</th><th>날짜</th><th>주요 변경</th><th>작성자</th></tr></thead>
+            <tbody>
+              <tr><td><span class="bx bx-blue">v3.2.1</span></td><td style="font-size:12px;color:var(--ink4)">2026.06.23</td><td>설정 페이지 추가, 프로젝트 분석 UI 개선</td><td style="font-size:12px">AI팀</td></tr>
+              <tr><td><span class="bx bx-gray">v3.2.0</span></td><td style="font-size:12px;color:var(--ink4)">2026.06.20</td><td>프로젝트 분석 메뉴 신설, 경쟁사 AI 근거 툴팁</td><td style="font-size:12px">AI팀</td></tr>
+              <tr><td><span class="bx bx-gray">v3.1.0</span></td><td style="font-size:12px;color:var(--ink4)">2026.06.15</td><td>SM 총괄 BU 드릴다운, 원가 구조 사업부별 뷰</td><td style="font-size:12px">AI팀</td></tr>
+              <tr><td><span class="bx bx-gray">v3.0.0</span></td><td style="font-size:12px;color:var(--ink4)">2026.06.01</td><td>v3 디자인 전면 리뉴얼, 경쟁사 데이터 반영</td><td style="font-size:12px">AI팀</td></tr>
+              <tr><td><span class="bx bx-gray">v2.0.0</span></td><td style="font-size:12px;color:var(--ink4)">2026.05.15</td><td>MIS 프로토타입 v2 빌드</td><td style="font-size:12px">AI팀</td></tr>
+            </tbody>
+          </table>
+          <div style="margin-top:14px">
+            <div class="cfg-label">릴리즈 노트 작성</div>
+            <textarea class="cfg-textarea" placeholder="이번 버전에서 변경된 내용을 입력하세요..." style="min-height:70px"></textarea>
+            <button class="btn btn-primary" style="margin-top:8px" onclick="alert('버전이 기록되었습니다')">버전 저장</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ③ 멤버 & 권한 -->
+      <div class="cfg-sec" id="cfgSec-mem">
+        <div class="card" style="margin-bottom:12px">
+          <div class="card-hd"><div class="card-title">멤버 초대</div></div>
+          <div class="cfg-field">
+            <div class="cfg-label">이메일로 초대</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <input class="cfg-input" type="email" id="inviteEmail" placeholder="example@d2.co.kr" style="flex:1;min-width:180px">
+              <select class="cfg-input" id="inviteRole" style="width:auto">
+                <option value="viewer">뷰어</option>
+                <option value="editor" selected>편집자</option>
+                <option value="admin">관리자</option>
+              </select>
+              <button class="btn btn-primary" id="inviteBtn" onclick="doInviteMember()">초대 발송</button>
+            </div>
+            <div id="inviteMsg" style="margin-top:8px;font-size:12px;display:none"></div>
+          </div>
+        </div>
+        <div class="card" style="margin-bottom:12px">
+          <div class="card-hd">
+            <div class="card-title">팀원 목록</div>
+            <button class="btn" onclick="loadMembers()" style="font-size:12px">새로고침</button>
+          </div>
+          <div id="memberList" style="padding:4px 0">
+            <div style="color:var(--ink4);font-size:13px;padding:12px 0">로딩 중...</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-hd"><div class="card-title">권한 정의</div></div>
+          <table class="tbl">
+            <thead><tr><th>권한</th><th>대시보드 조회</th><th>데이터 편집</th><th>설정 변경</th><th>멤버 관리</th></tr></thead>
+            <tbody>
+              <tr><td><span class="bx bx-red">관리자</span></td><td>✅</td><td>✅</td><td>✅</td><td>✅</td></tr>
+              <tr><td><span class="bx bx-blue">편집자</span></td><td>✅</td><td>✅</td><td>❌</td><td>❌</td></tr>
+              <tr><td><span class="bx bx-gray">뷰어</span></td><td>✅</td><td>❌</td><td>❌</td><td>❌</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ④ 메모 / 공지 -->
+      <div class="cfg-sec" id="cfgSec-memo">
+        <div class="card" style="margin-bottom:12px">
+          <div class="card-hd"><div class="card-title">전사 공지</div><span class="bx bx-green">게시 중</span></div>
+          <div class="cfg-field">
+            <div class="cfg-label">공지 내용</div>
+            <textarea class="cfg-textarea" id="noticeText" style="min-height:80px">6월 실적 마감 기준일: 6/25(수) 17시. 각 사업부 PM 데이터 입력 요망.</textarea>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-primary" onclick="alert('공지가 업데이트됩니다')">공지 업데이트</button>
+            <button class="btn" onclick="document.getElementById('noticeText').value=''">초기화</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-hd"><div class="card-title">내부 메모</div></div>
+          <div class="cfg-field">
+            <div class="cfg-label">사업부장 메모 (비공개)</div>
+            <textarea class="cfg-textarea" style="min-height:120px" placeholder="내부 메모를 작성하세요. 본인만 열람 가능합니다.">- SKT 재계약 6/30 데드라인. 이번주 내 결론 필요.&#10;- iM뱅크 디자인시스템 8월 납기 지연 가능성 → PM 면담 예정&#10;- Q3 목표 달성을 위해 신규 수주 파이프라인 점검 필요 (갭 8억)</textarea>
+          </div>
+          <button class="btn btn-primary" onclick="alert('저장되었습니다')">저장</button>
+        </div>
+      </div>
+
+      <!-- ⑤ 프로젝트 카드 -->
+      <div class="cfg-sec" id="cfgSec-pcard">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+          <div style="font-size:13px;color:var(--ink3)">프로젝트를 클릭해 주요 항목을 수정할 수 있습니다</div>
+          <button class="btn btn-primary" onclick="openDrawer('proj',-1)">+ 프로젝트 추가</button>
+        </div>
+        <div class="card-grid" id="projCardGrid"></div>
+      </div>
+
+      <!-- ⑥ 고객사 카드 -->
+      <div class="cfg-sec" id="cfgSec-ccard">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+          <div style="font-size:13px;color:var(--ink3)">고객사를 클릭해 정보를 수정할 수 있습니다</div>
+          <button class="btn btn-primary" onclick="openDrawer('client',-1)">+ 고객사 추가</button>
+        </div>
+        <div class="card-grid" id="clientCardGrid"></div>
+      </div>
+
+      <!-- ⑦ 데이터 관리 -->
+      <div class="cfg-sec" id="cfgSec-data">
+        <div class="card" style="margin-bottom:12px">
+          <div class="card-hd">
+            <div class="card-title">DB 연결 상태</div>
+            <span class="bx" id="dbStatusBadge" style="background:#FEF3C7;color:#92400E">확인 중</span>
+          </div>
+          <div style="font-size:13px;color:var(--ink2);margin-bottom:14px">
+            Supabase 프로젝트: <strong>wuqffbtuftuyynntsxrw</strong><br>
+            연결 URL: <code style="font-size:11px;color:var(--blue)">https://wuqffbtuftuyynntsxrw.supabase.co</code>
+          </div>
+          <button class="btn" onclick="checkDbConnection()">연결 테스트</button>
+        </div>
+        <div class="card" style="margin-bottom:12px">
+          <div class="card-hd"><div class="card-title">샘플 데이터 초기 적재</div><span class="bx bx-amber">최초 1회</span></div>
+          <div style="font-size:13px;color:var(--ink3);margin-bottom:12px">DB가 비어있을 때 현재 샘플 데이터를 저장합니다. 이미 데이터가 있으면 건너뜁니다.</div>
+          <button class="btn btn-primary" id="seedBtn" onclick="seedSampleData()">샘플 데이터 DB 저장</button>
+        </div>
+        <div class="card">
+          <div class="card-hd"><div class="card-title">데이터 새로고침</div></div>
+          <div style="font-size:13px;color:var(--ink3);margin-bottom:12px">DB에서 최신 데이터를 다시 불러옵니다.</div>
+          <button class="btn" onclick="loadAllData().then(()=>showToast('데이터를 새로 불러왔습니다'))">DB 데이터 새로고침</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- ──────── 프로젝트 분석 ──────── -->
+<div class="view-pane" id="view-proj">
+
+  <!-- 상단 배너 + 필터 -->
+  <div style="display:flex;align-items:center;gap:8px;padding:8px 14px;background:var(--amber-tint);border:1px solid var(--amber);border-radius:var(--r);margin-bottom:14px">
+    <span style="font-size:14px">⚠</span>
+    <span style="font-size:12px;font-weight:700;color:var(--amber)">샘플 데이터</span>
+    <span style="font-size:12px;color:var(--ink3)">ERP 연동 완료 시 프로젝트 원가·공수·실적 자동 반영</span>
+    <span class="bx bx-amber" style="margin-left:auto">연동 예정</span>
+  </div>
+
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+    <div class="tab-row" id="projBuTab" style="margin:0">
+      <button class="tab-btn active" onclick="filterProj('all',this)">전체 BU</button>
+      <button class="tab-btn" onclick="filterProj('DX',this)">DX</button>
+      <button class="tab-btn" onclick="filterProj('AD',this)">AD</button>
+      <button class="tab-btn" onclick="filterProj('SM',this)">SM</button>
+    </div>
+    <div class="tab-row" id="projStatTab" style="margin:0">
+      <button class="tab-btn active" onclick="filterProjStat('all',this)">전체 상태</button>
+      <button class="tab-btn" onclick="filterProjStat('진행중',this)">진행중</button>
+      <button class="tab-btn" onclick="filterProjStat('완료',this)">완료</button>
+      <button class="tab-btn" onclick="filterProjStat('지연',this)">지연</button>
+    </div>
+  </div>
+
+  <!-- KPI 4개 가로 배치 -->
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px">
+    <div class="card" style="padding:14px 16px">
+      <div class="card-title" style="margin-bottom:8px">진행중 프로젝트</div>
+      <div style="font-size:34px;font-weight:900;color:var(--ink1);line-height:1.1">12<span style="font-size:15px;color:var(--ink4);font-weight:500"> 건</span></div>
+      <div style="font-size:12px;color:var(--ink4);margin-top:5px">전사 기준</div>
+    </div>
+    <div class="card" style="padding:14px 16px">
+      <div class="card-title" style="margin-bottom:8px">총 계약금액</div>
+      <div style="font-size:34px;font-weight:900;color:var(--ink1);line-height:1.1">68.5<span style="font-size:15px;color:var(--ink4);font-weight:500"> 억</span></div>
+      <div style="font-size:12px;color:var(--ink4);margin-top:5px">진행중 합산</div>
+    </div>
+    <div class="card" style="padding:14px 16px">
+      <div class="card-title" style="margin-bottom:8px">평균 마진율</div>
+      <div style="font-size:34px;font-weight:900;color:var(--green);line-height:1.1">23.4<span style="font-size:15px;font-weight:500"> %</span></div>
+      <div style="font-size:12px;color:var(--ink4);margin-top:5px">원가 대비 영업이익</div>
+    </div>
+    <div class="card" style="padding:14px 16px">
+      <div class="card-title" style="margin-bottom:8px">납기 준수율</div>
+      <div style="font-size:34px;font-weight:900;color:var(--amber);line-height:1.1">86<span style="font-size:15px;font-weight:500"> %</span></div>
+      <div style="font-size:12px;color:var(--ink4);margin-top:5px">지연 2건 제외</div>
+    </div>
+  </div>
+
+  <!-- 차트 3열 -->
+  <div style="display:grid;grid-template-columns:2fr 2fr 1fr;gap:10px;margin-bottom:14px">
+
+    <!-- 마진율 차트 -->
+    <div class="card">
+      <div class="card-hd"><div class="card-title">프로젝트별 마진율</div><span class="bx bx-gray">영업이익률</span></div>
+      <div class="ch" style="height:210px"><canvas id="cProjMargin"></canvas></div>
+    </div>
+
+    <!-- 월별 수주 추이 -->
+    <div class="card">
+      <div class="card-hd"><div class="card-title">월별 수주·완료 추이</div><span class="bx bx-gray">2026</span></div>
+      <div class="ch" style="height:210px"><canvas id="cProjFlow"></canvas></div>
+    </div>
+
+    <!-- BU 요약 -->
+    <div class="card">
+      <div class="card-hd"><div class="card-title">BU별 요약</div></div>
+      <table class="tbl" style="font-size:12.5px;margin-bottom:14px">
+        <thead><tr><th>BU</th><th>건</th><th>계약</th><th>마진</th></tr></thead>
+        <tbody>
+          <tr><td style="color:var(--blue);font-weight:700">DX</td><td>6</td><td class="td-num">42억</td><td class="td-num" style="color:var(--green)">26%</td></tr>
+          <tr><td style="font-weight:700">AD</td><td>4</td><td class="td-num">9.5억</td><td class="td-num" style="color:var(--amber)">18%</td></tr>
+          <tr><td style="font-weight:700">SM</td><td>2</td><td class="td-num">7.0억</td><td class="td-num" style="color:var(--green)">28%</td></tr>
+        </tbody>
+      </table>
+      <div class="f-label" style="margin-bottom:6px">유형별 비중</div>
+      <div class="bar-row"><div class="bar-lbl" style="font-size:12px">운영</div><div class="bar-track"><div class="bar-fill green" style="width:45%"></div></div><div class="bar-val">45%</div></div>
+      <div class="bar-row"><div class="bar-lbl" style="font-size:12px">구축</div><div class="bar-track"><div class="bar-fill" style="width:35%"></div></div><div class="bar-val">35%</div></div>
+      <div class="bar-row" style="margin-bottom:0"><div class="bar-lbl" style="font-size:12px">캠페인</div><div class="bar-track"><div class="bar-fill amber" style="width:20%"></div></div><div class="bar-val">20%</div></div>
+    </div>
+  </div>
+
+  <!-- 프로젝트 목록 전체 폭 -->
+  <div class="card">
+    <div class="card-hd">
+      <div class="card-title">프로젝트 목록</div>
+      <span class="bx bx-gray" style="margin-left:auto">ERP 연동 시 자동 갱신</span>
+    </div>
+    <div style="overflow-x:auto">
+      <table class="tbl" id="projTable">
+        <thead><tr>
+          <th>프로젝트명</th><th>고객사</th><th>BU</th><th>유형</th>
+          <th>계약금액</th><th>투입</th><th>진행률</th><th>마진율</th><th>납기</th><th>상태</th>
+        </tr></thead>
+        <tbody id="projBody"></tbody>
+      </table>
+    </div>
+    <div style="margin-top:12px;padding:10px 12px;background:var(--bg);border-radius:6px;border:1px dashed var(--border)">
+      <div class="f-label" style="margin-bottom:6px">ERP 연동 시 추가될 항목</div>
+      <div style="display:flex;flex-wrap:wrap;gap:5px">
+        <span class="bx bx-gray">프로젝트 코드</span>
+        <span class="bx bx-gray">투입 공수 (MM)</span>
+        <span class="bx bx-gray">실제 원가</span>
+        <span class="bx bx-gray">예산 대비 집행률</span>
+        <span class="bx bx-gray">담당 PM</span>
+        <span class="bx bx-gray">리스크 등급</span>
+        <span class="bx bx-gray">변경 이력</span>
+        <span class="bx bx-gray">고객 만족도 (CSAT)</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+  </div><!-- /scroll-area -->
+</div><!-- /main -->
+
+<!-- ──────── BU 드릴다운 팝업 ──────── -->
+<div id="buPopup" class="bu-popup" style="display:none" onclick="event.stopPropagation()"></div>
+
+
+<script>
+
+// ═══════════════════════════════════════════
+// Supabase 연동 — digitalDigm MIS v3
+// ═══════════════════════════════════════════
+const {createClient} = window.supabase;
+const SB = createClient('https://wuqffbtuftuyynntsxrw.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind1cWZmYnR1ZnR1eXlubnRzeHJ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxODUwNTQsImV4cCI6MjA5Nzc2MTA1NH0.ITLhyjKJA6twC3JjPJ8bT-YG10PDOW5DPWsqyblak74');
+let currentUser = null, currentProfile = null;
+
+async function initApp(){
+  document.getElementById('dbSyncLine').textContent = '● Supabase 연결됨';
+  await loadAllData();
+  sw('sm');
+}
+function showLogin(){ /* 로그인 불필요 */ }
+function hideLogin(){ /* 로그인 불필요 */ }
+async function doLogin(){ /* 로그인 불필요 */ }
+async function doLogout(){ /* 로그아웃 불필요 */ }
+
+// ─── 데이터 로드 ───
+// ─── 팀원 관리 ───
+async function loadMembers(){
+  const listEl = document.getElementById('memberList');
+  if(!listEl) return;
+  listEl.innerHTML = '<div style="color:var(--ink4);font-size:13px;padding:12px 0">로딩 중...</div>';
+  const {data, error} = await SB.from('profiles').select('*').order('created_at');
+  if(error){ listEl.innerHTML = '<div style="color:#DC2626;font-size:13px;padding:12px 0">불러오기 실패: '+error.message+'</div>'; return; }
+  if(!data||data.length===0){ listEl.innerHTML = '<div style="color:var(--ink4);font-size:13px;padding:12px 0">팀원 없음</div>'; return; }
+  const roleLabel = {admin:'관리자', editor:'편집자', viewer:'뷰어'};
+  const roleColor = {admin:'bx-red', editor:'bx-blue', viewer:'bx-gray'};
+  const colors = ['var(--blue-tint)','var(--green-tint)','var(--amber-tint)'];
+  const tcolors = ['var(--blue)','var(--green)','var(--amber)'];
+  listEl.innerHTML = data.map((m,i) => {
+    const initial = (m.name||m.email||'?')[0].toUpperCase();
+    const isMe = m.id === currentUser?.id;
+    const ci = i % 3;
+    const canChange = currentProfile?.role === 'admin' && !isMe;
+    return `<div class="member-row">
+      <div class="member-avatar" style="background:${colors[ci]};color:${tcolors[ci]}">${initial}</div>
+      <div style="flex:1">
+        <div class="member-name">${m.name||'(이름 없음)'}${isMe?' <span style="font-size:11px;color:var(--ink4)">(나)</span>':''}</div>
+        <div class="member-role">${m.email||''} · ${m.bu||'전사'}</div>
+      </div>
+      ${canChange
+        ? `<select class="cfg-input" style="width:auto;font-size:12px;padding:3px 6px" onchange="changeMemberRole('${m.id}',this.value)">
+            <option value="viewer"${m.role==='viewer'?' selected':''}>뷰어</option>
+            <option value="editor"${m.role==='editor'?' selected':''}>편집자</option>
+            <option value="admin"${m.role==='admin'?' selected':''}>관리자</option>
+          </select>`
+        : `<span class="bx ${roleColor[m.role]||'bx-gray'}" style="margin-left:6px">${roleLabel[m.role]||m.role}</span>`
+      }
+    </div>`;
+  }).join('');
+}
+
+async function doInviteMember(){
+  const email = document.getElementById('inviteEmail').value.trim();
+  const role  = document.getElementById('inviteRole').value;
+  const msgEl = document.getElementById('inviteMsg');
+  const btn   = document.getElementById('inviteBtn');
+  if(!email){ msgEl.style.display='block'; msgEl.style.color='#DC2626'; msgEl.textContent='이메일을 입력하세요.'; return; }
+  btn.textContent='발송 중…'; btn.disabled=true;
+  msgEl.style.display='none';
+  // Supabase Admin API는 클라이언트에서 직접 호출 불가 → signUp으로 계정 생성 후 role 업데이트
+  // 실제 초대 메일은 Supabase 대시보드 Auth 설정에서 활성화 필요
+  const {data, error} = await SB.auth.signUp({
+    email,
+    password: Math.random().toString(36).slice(-10) + 'A1!', // 임시 비밀번호
+    options: { data: { role } }
+  });
+  btn.textContent='초대 발송'; btn.disabled=false;
+  if(error){
+    msgEl.style.display='block'; msgEl.style.color='#DC2626';
+    msgEl.textContent = error.message.includes('already registered')
+      ? '이미 가입된 이메일입니다. Supabase 대시보드에서 직접 초대하세요.'
+      : '오류: ' + error.message;
+    return;
+  }
+  // 생성된 유저 프로필에 role 업데이트
+  if(data.user){
+    await SB.from('profiles').upsert({id:data.user.id, email, role, bu:'전사', name:email.split('@')[0]},{onConflict:'id'});
+  }
+  msgEl.style.display='block'; msgEl.style.color='#16A34A';
+  msgEl.textContent = `✅ ${email} 초대 완료! 상대방이 이메일을 확인 후 비밀번호를 재설정하면 접속 가능합니다.`;
+  document.getElementById('inviteEmail').value='';
+  setTimeout(()=>loadMembers(), 1000);
+}
+
+async function changeMemberRole(userId, newRole){
+  const {error} = await SB.from('profiles').update({role:newRole}).eq('id',userId);
+  if(error){ showToast('권한 변경 실패: '+error.message,'error'); return; }
+  showToast('권한이 변경되었습니다');
+}
+
+async function loadAllData(){
+  await Promise.all([loadProjects(), loadSales(), loadClients(), loadIntegrations()]);
+}
+function dbToProj(r){
+  return {id:r.id,name:r.name,client:r.client,bu:r.bu,type:r.type,
+    amt:parseFloat(r.amt)||0,team:parseInt(r.team)||0,margin:parseFloat(r.margin)||0,
+    pct:parseInt(r.pct)||0,due:r.due||'',stat:r.stat||'진행중',pm:r.pm||'',
+    cStart:r.c_start||'',cEnd:r.c_end||'',
+    planMM:parseFloat(r.plan_mm)||0,actualMM:parseFloat(r.actual_mm)||0};
+}
+function projToDb(p){
+  return {name:p.name,client:p.client,bu:p.bu,type:p.type,amt:p.amt,
+    team:p.team,margin:p.margin,pct:p.pct,due:p.due,stat:p.stat,pm:p.pm||'',
+    c_start:p.cStart||'',c_end:p.cEnd||'',plan_mm:p.planMM||0,actual_mm:p.actualMM||0};
+}
+function dbToSale(r){
+  return {id:r.id,bu:r.bu,category:r.category||'',pm:r.pm||'',name:r.name,
+    client:r.client||'',clientContact:r.client_contact||'',status:r.status||'검토중',
+    propStart:r.prop_start||'',propEnd:r.prop_end||'',ptDate:r.pt_date||'',
+    budget:parseFloat(r.budget)||0,competitor:r.competitor||'',
+    contact:r.contact_route||'',reqDate:r.req_date||'',
+    tf:r.tf||'',salesPm:r.sales_pm||'',memo:r.memo||''};
+}
+function saleToDb(s){
+  return {bu:s.bu,category:s.category,pm:s.pm,name:s.name,client:s.client,
+    client_contact:s.clientContact,status:s.status,prop_start:s.propStart,
+    prop_end:s.propEnd,pt_date:s.ptDate,budget:s.budget,competitor:s.competitor,
+    contact_route:s.contact,req_date:s.reqDate,tf:s.tf,sales_pm:s.salesPm,memo:s.memo};
+}
+function dbToClient(r){
+  return {id:r.id,name:r.name,bu:r.bu,type:r.type||'',amt:r.amt||'',
+    contact:r.contact||'',tel:r.tel||'',expire:r.expire||'',memo:r.memo||'',stat:r.stat||'정상'};
+}
+function clientToDb(c){
+  return {name:c.name,bu:c.bu,type:c.type,amt:c.amt,
+    contact:c.contact,tel:c.tel,expire:c.expire,memo:c.memo,stat:c.stat};
+}
+async function loadProjects(){
+  const {data} = await SB.from('projects').select('*').order('created_at');
+  if(data && data.length>0){ PROJ_DATA.length=0; data.forEach(r=>PROJ_DATA.push(dbToProj(r))); }
+}
+async function loadSales(){
+  const {data} = await SB.from('sales_proposals').select('*').order('created_at');
+  if(data && data.length>0){ SALES_DATA.length=0; data.forEach(r=>SALES_DATA.push(dbToSale(r))); }
+}
+async function loadClients(){
+  const {data} = await SB.from('clients').select('*').order('created_at');
+  if(data && data.length>0){ CLIENT_DATA.length=0; data.forEach(r=>CLIENT_DATA.push(dbToClient(r))); }
+}
+async function loadIntegrations(){
+  const {data} = await SB.from('integrations').select('*').order('created_at');
+  if(data){
+    ERP_LIST.length=0; GS_LIST.length=0;
+    data.forEach(r=>{
+      if(r.type==='erp') ERP_LIST.push({id:r.id,name:r.name,bu:r.bu,url:r.url||'',key:r.api_key||'',sync:r.sync_interval||'수동',stat:r.stat||'준비중'});
+      else GS_LIST.push({id:r.id,name:r.name,bu:r.bu,url:r.url||'',sync:r.sync_interval||'수동',stat:r.stat||'준비중'});
+    });
+  }
+}
+
+// ─── DB 저장/삭제 ───
+async function saveProjectToDb(p){
+  const d=projToDb(p);
+  if(p.id){ await SB.from('projects').update(d).eq('id',p.id); }
+  else{ const {data}=await SB.from('projects').insert(d).select().single(); if(data) p.id=data.id; }
+}
+async function deleteProjFromDb(id){ if(id) await SB.from('projects').delete().eq('id',id); }
+async function saveSaleToDb(s){
+  const d=saleToDb(s);
+  if(s.id){ await SB.from('sales_proposals').update(d).eq('id',s.id); }
+  else{ const {data}=await SB.from('sales_proposals').insert(d).select().single(); if(data) s.id=data.id; }
+}
+async function deleteSaleFromDb(id){ if(id) await SB.from('sales_proposals').delete().eq('id',id); }
+async function saveClientToDb(c){
+  const d=clientToDb(c);
+  if(c.id){ await SB.from('clients').update(d).eq('id',c.id); }
+  else{ const {data}=await SB.from('clients').insert(d).select().single(); if(data) c.id=data.id; }
+}
+async function saveIntegrationToDb(item,type){
+  const d={type,name:item.name,bu:item.bu,url:item.url,api_key:item.key||'',sync_interval:item.sync,stat:item.stat};
+  if(item.id){ await SB.from('integrations').update(d).eq('id',item.id); }
+  else{ const {data}=await SB.from('integrations').insert(d).select().single(); if(data) item.id=data.id; }
+}
+async function deleteIntegrationFromDb(id){ if(id) await SB.from('integrations').delete().eq('id',id); }
+
+// ─── 샘플 데이터 초기 적재 ───
+async function seedSampleData(){
+  if(!confirm('현재 샘플 데이터를 DB에 저장합니다. 기존 DB 데이터가 없을 때만 사용하세요. 계속할까요?')) return;
+  const btn=document.getElementById('seedBtn');
+  btn.textContent='저장 중…'; btn.disabled=true;
+  for(const p of [...PROJ_DATA]){ if(!p.id) await saveProjectToDb(p); }
+  for(const s of [...SALES_DATA]){ if(!s.id) await saveSaleToDb(s); }
+  for(const c of [...CLIENT_DATA]){ if(!c.id) await saveClientToDb(c); }
+  btn.textContent='✅ 완료'; 
+  setTimeout(()=>{btn.textContent='샘플 데이터 DB 저장';btn.disabled=false;},3000);
+  alert('저장 완료. 이제 모든 편집 내용이 DB에 자동 저장됩니다.');
+}
+
+document.addEventListener('DOMContentLoaded', initApp);
+
+
+// ─── HIST DATA ───
+const MONTHS=['1월','2월','3월','4월','5월','6월'];
+const YRS=['2022','2023','2024','2025','2026'];
+const HIST={
+  매출:{yrs:[[4.1,4.3,4.8,4.2,4.6,4.8],[4.8,5.0,5.2,4.9,5.3,5.5],[5.0,5.2,5.5,5.3,5.8,6.0],[5.2,5.4,5.7,5.5,6.0,6.3],[5.2,5.8,6.0,5.9,6.3,6.8]],insight:'전사 매출 5개년 연평균 8% 성장. 2026년 6월 6.8억은 역대 최고치. 하반기 7억+ 달성을 위해 DX 수주 확대 필요.'},
+  수주잔고:{yrs:[[18,19,20,21,22,24],[22,24,25,26,27,28],[25,27,28,29,30,31],[28,29,30,31,32,33],[30,31,32,31,32,32.4]],insight:'수주잔고 5개년 지속 증가. 2026년 32억대 안정 유지. 하반기 신규 수주 합산 시 35억+ 가능성.'},
+  가동율:{yrs:[[72,74,75,73,76,78],[75,76,77,75,78,79],[77,78,79,77,80,81],[79,80,80,79,81,82],[76,77,78,76,75,76]],insight:'가동율 2022~2025 꾸준 상승. 2026년 76%는 AD 유휴 인력 영향. 80% 달성을 위해 프로젝트 배분 최적화 필요.'},
+  미수금:{yrs:[[1.2,1.0,0.8,1.1,0.9,1.0],[1.1,1.0,0.9,1.2,1.0,1.1],[1.3,1.2,1.0,1.3,1.1,1.2],[2.0,1.8,1.6,2.1,1.9,2.0],[3.0,2.8,2.6,3.1,3.0,3.2]],insight:'미수금 2025~2026 증가 추세. SKT·CJ프레시웨이 반복 지연 패턴. 90일 초과분 0.8억 즉시 대응 필요.'},
+  인원:{yrs:[[45,46,47,48,49,50],[50,51,52,53,54,55],[55,55,56,57,58,58],[58,59,60,61,61,62],[61,61,62,61,61,61]],insight:'2022년 45명→2026년 61명 36% 성장. 성장 둔화로 하반기 신규 채용보다 가동율 최적화가 효율적.'},
+  'DX매출':{yrs:[[1.8,2.0,2.2,2.0,2.3,2.5],[2.2,2.5,2.8,2.4,2.9,3.0],[2.8,3.0,3.5,3.2,3.6,3.8],[3.5,4.0,4.5,4.2,3.8,4.4],[0.9,2.15,4.38,3.33,1.36,3.62]],insight:'2026 상반기 1월 급락→3월 급등 패턴. 2025 대비 -40%는 신규 착수 지연 탓. 8월 SKT 5.75억이 하반기 반전 핵심.'},
+  'AD매출':{yrs:[[0.9,1.0,1.1,1.0,1.1,1.2],[1.1,1.2,1.3,1.2,1.4,1.5],[1.3,1.4,1.5,1.4,1.6,1.7],[1.4,1.5,1.7,1.6,1.7,1.8],[1.4,1.6,1.8,1.7,1.8,1.9]],insight:'AD 매출 5개년 안정 성장. SKT 재계약 확정 시 하반기 전망 긍정적.'},
+  'AD가동율':{yrs:[[70,72,73,71,74,75],[73,74,75,73,76,77],[75,76,78,76,79,80],[77,78,79,77,80,80],[71,72,73,71,72,71]],insight:'AD 가동율 2025까지 상승 후 2026 하락. 롯데지주 완료 후 PD팀 유휴 발생. 신규 수주 연결 시급.'},
+  'PEZ매출':{yrs:[[0.5,0.6,0.7,0.6,0.7,0.8],[0.6,0.7,0.8,0.7,0.9,1.0],[0.7,0.8,1.0,0.9,1.0,1.1],[0.8,0.9,1.1,1.0,1.2,1.3],[0.7,0.8,0.9,0.8,1.0,0.6]],insight:'대관사업부 안정적 성장. 낙찰률 62% 유지 시 연간 목표 13억 달성 가능.'},
+};
+
+// ─── COLOR PALETTE (minimal) ───
+const C_BLUE='#2563EB', C_GRAY='#9CA3AF', C_GREEN='#16A34A', C_RED='#DC2626';
+const C_BLUE_T='rgba(37,99,235,.08)', C_GREEN_T='rgba(22,163,74,.1)';
+
+const BASE_OPT={
+  responsive:true, maintainAspectRatio:false,
+  plugins:{legend:{display:false}},
+  scales:{
+    x:{grid:{display:false},ticks:{font:{size:11,family:'Inter'},color:C_GRAY}},
+    y:{grid:{color:'#F3F4F6'},ticks:{font:{size:11,family:'Inter'},color:C_GRAY}}
+  }
+};
+
+// ─── BU 드릴다운 데이터 ───
+// 2026년 1~6월 사업부별 월 매출 (단위: 억)  → 합산 = [5.2, 5.8, 6.0, 5.9, 6.3, 6.8]
+const BU_MON = {
+  DX:  [2.30, 2.60, 2.60, 2.60, 2.80, 3.00],
+  AD:  [1.40, 1.60, 1.70, 1.60, 1.80, 1.90],
+  PEZ: [0.70, 0.80, 0.90, 0.80, 1.00, 0.60],
+  기타: [0.80, 0.80, 0.80, 0.90, 0.70, 1.30],
+};
+// 5개년 사업부별 월 합산 (합산 = HIST.매출)
+const BU_HIST_YRS = {
+  DX:  [[1.8,2.0,2.2,2.0,2.3,2.5],[2.2,2.5,2.8,2.4,2.9,3.0],[2.8,3.0,3.5,3.2,3.6,3.8],[3.5,4.0,4.5,4.2,3.8,4.4],[2.30,2.60,2.60,2.60,2.80,3.00]],
+  AD:  [[0.9,1.0,1.1,1.0,1.1,1.2],[1.1,1.2,1.3,1.2,1.4,1.5],[1.3,1.4,1.5,1.4,1.6,1.7],[1.4,1.5,1.7,1.6,1.7,1.8],[1.40,1.60,1.70,1.60,1.80,1.90]],
+  PEZ: [[0.5,0.6,0.7,0.6,0.7,0.8],[0.6,0.7,0.8,0.7,0.9,1.0],[0.7,0.8,1.0,0.9,1.0,1.1],[0.8,0.9,1.1,1.0,1.2,1.3],[0.70,0.80,0.90,0.80,1.00,0.60]],
+  기타: [[0.9,0.7,0.8,0.6,0.5,0.3],[0.9,0.6,0.3,0.6,0.1,0.0],[0.2,0.0,0.5,0.8,0.6,0.4],[0.5,1.0,0.4,0.7,1.3,0.8],[0.80,0.80,0.80,0.90,0.70,1.30]],
+};
+// KPI 팝업 데이터
+const BU_KPI = {
+  rev:       { title:'6월 매출 — 사업부별', unit:'억', rows:[{n:'DX 사업부',v:'3.0억',s:'44%',c:C_BLUE},{n:'AD 사업부',v:'1.9억',s:'28%',c:'#374151'},{n:'기타/SM직영',v:'1.3억',s:'19%',c:C_GRAY},{n:'대관사업부',v:'0.6억',s:'9%',c:'#111827'}], total:'6.8억' },
+  backlog:   { title:'수주잔고 — 사업부별', unit:'억', rows:[{n:'DX 사업부',v:'18.0억',s:'56%',c:C_BLUE},{n:'AD 사업부',v:'8.8억',s:'27%',c:'#374151'},{n:'대관사업부',v:'5.6억',s:'17%',c:'#111827'}], total:'32.4억' },
+  util:      { title:'가동율 — 사업부별', unit:'%', rows:[{n:'대관사업부',v:'88%',s:'▲ 목표초과',c:C_GREEN},{n:'SM본부',v:'82%',s:'▲ 목표초과',c:C_GREEN},{n:'DX 사업부',v:'76%',s:'△ 목표미달',c:C_BLUE},{n:'AD 사업부',v:'71%',s:'▽ 주의',c:'#D97706'}], total:'76% (전사 평균)' },
+  ar:        { title:'미수금 — 사업부별', unit:'억', rows:[{n:'DX 사업부',v:'1.5억',s:'47%',c:C_BLUE},{n:'AD 사업부',v:'1.1억',s:'34%',c:'#374151'},{n:'대관사업부',v:'0.6억',s:'19%',c:'#111827'}], total:'3.2억' },
+  headcount: { title:'인원 — 사업부별', unit:'명', rows:[{n:'DX 사업부',v:'33명',s:'54%',c:C_BLUE},{n:'AD 사업부',v:'18명',s:'30%',c:'#374151'},{n:'대관사업부',v:'10명',s:'16%',c:'#111827'}], total:'61명 (정규 57 + 계약 4)' },
+};
+
+// ─── BU 팝업 함수 ───
+function showBU(key, e){
+  e.stopPropagation();
+  const d=BU_KPI[key]; if(!d) return;
+  const pop=document.getElementById('buPopup');
+  let html=`<div class="bu-popup-title">${d.title}</div>`;
+  d.rows.forEach(r=>{
+    html+=`<div class="bu-row"><div class="bu-dot" style="background:${r.c}"></div><div class="bu-name">${r.n}</div><div class="bu-share">${r.s}</div><div class="bu-val" style="color:${r.c}">${r.v}</div></div>`;
+  });
+  html+=`<div class="bu-total"><div class="bu-total-lbl">전사 합산</div><div class="bu-total-val">${d.total}</div></div>`;
+  pop.innerHTML=html;
+  // 위치: 클릭 위치 기준, 화면 넘침 방지
+  const x=Math.min(e.clientX, window.innerWidth-260);
+  const y=Math.min(e.clientY+12, window.innerHeight-200);
+  pop.style.left=x+'px'; pop.style.top=y+'px'; pop.style.display='block';
+}
+document.addEventListener('click',()=>{ document.getElementById('buPopup').style.display='none'; });
+
+// ─── BU 히스토리 뷰 토글 ───
+let buViewOn=false, curFilter='2yr', curBtn=null;
+let costBUOn=false;
+function toggleCostView(){
+  costBUOn=!costBUOn;
+  document.getElementById('costTotal').style.display=costBUOn?'none':'block';
+  document.getElementById('costBU').style.display=costBUOn?'block':'none';
+  const btn=document.getElementById('costToggleBtn');
+  btn.textContent=costBUOn?'전사 보기':'사업부별';
+  btn.classList.toggle('btn-primary',costBUOn);
+}
+function toggleBuView(){
+  buViewOn=!buViewOn;
+  document.getElementById('buToggleBtn').textContent=buViewOn?'합산 보기':'사업부별 보기';
+  document.getElementById('buToggleBtn').classList.toggle('btn-primary',buViewOn);
+  if(curBtn) setH(curFilter, curBtn);
+}
+
+// ─── SM CHARTS ───
+const smRevTotalsPlugin = {
+  id:'smRevTotals',
+  afterDatasetsDraw(chart){
+    const {ctx,data,scales:{x,y}}=chart;
+    ctx.save();
+    ctx.font='700 12px Inter,sans-serif';
+    ctx.fillStyle='#111827';
+    ctx.textAlign='center';
+    ctx.textBaseline='bottom';
+    (data.labels||[]).forEach((_,i)=>{
+      const total=data.datasets.reduce((s,ds)=>s+(ds.data[i]||0),0);
+      const xPx=x.getPixelForValue(i);
+      const yPx=y.getPixelForValue(total);
+      ctx.fillText(total.toFixed(1)+'억',xPx,yPx-5);
+    });
+    ctx.restore();
+  }
+};
+new Chart(document.getElementById('cSmRev').getContext('2d'),{
+  type:'bar',
+  plugins:[smRevTotalsPlugin],
+  data:{labels:MONTHS,datasets:[
+    {label:'DX',   data:BU_MON.DX,  backgroundColor:C_BLUE,  borderRadius:0,borderSkipped:false,stack:'s'},
+    {label:'AD',   data:BU_MON.AD,  backgroundColor:'#374151',borderRadius:0,borderSkipped:false,stack:'s'},
+    {label:'대관', data:BU_MON.PEZ, backgroundColor:C_GRAY,  borderRadius:0,borderSkipped:false,stack:'s'},
+    {label:'기타', data:BU_MON.기타,backgroundColor:'#D1D5DB',borderRadius:[6,6,0,0],borderSkipped:false,stack:'s'},
+  ]},
+  options:{...BASE_OPT,
+    plugins:{
+      legend:{display:true,position:'bottom',labels:{font:{size:11,family:'Inter'},color:'#374151',boxWidth:12}},
+      tooltip:{
+        callbacks:{
+          title:(items)=>MONTHS[items[0].dataIndex]+' 매출',
+          label:(item)=>' '+item.dataset.label+': '+item.raw.toFixed(2)+'억',
+          footer:(items)=>{
+            const idx=items[0].dataIndex;
+            const total=Object.values(BU_MON).reduce((s,arr)=>s+arr[idx],0);
+            return '──────────\n전사 합산: '+total.toFixed(1)+'억';
+          }
+        },
+        footerFont:{weight:'bold'},
+        footerColor:'#1D4ED8'
+      }
+    },
+    scales:{...BASE_OPT.scales,x:{...BASE_OPT.scales.x,stacked:true},y:{...BASE_OPT.scales.y,stacked:true,ticks:{...BASE_OPT.scales.y.ticks,callback:v=>v+'억'}}}
+  }
+});
+new Chart(document.getElementById('cSmPie').getContext('2d'),{
+  type:'doughnut',
+  data:{labels:['DX','AD','SM','대관'],datasets:[{data:[44,28,19,9],backgroundColor:[C_BLUE,'#374151',C_GRAY,'#111827'],borderWidth:0,hoverOffset:4}]},
+  options:{responsive:true,maintainAspectRatio:false,cutout:'64%',plugins:{legend:{position:'bottom',labels:{font:{size:12,family:'Inter'},color:'#374151'}}}}
+});
+// cSmProj: replaced with DX/AD text breakdown in HTML
+
+// ─── DX CHARTS ───
+new Chart(document.getElementById('cDxRvT').getContext('2d'),{
+  type:'bar',
+  data:{labels:MONTHS,datasets:[
+    {label:'실적',data:[0.90,2.15,4.38,3.33,1.36,3.62],backgroundColor:([0.90,2.15,4.38,3.33,1.36,3.62]).map(v=>v<0?C_RED:C_BLUE),borderRadius:5,borderSkipped:false,order:2},
+    {label:'목표',data:[3.47,5.07,7.30,6.24,3.72,6.04],type:'line',borderColor:C_GRAY,borderDash:[4,3],borderWidth:1.5,pointRadius:2,fill:false,order:1}
+  ]},
+  options:{...BASE_OPT,plugins:{legend:{display:true,position:'bottom',labels:{font:{size:11,family:'Inter'},color:'#374151',boxWidth:8}}}}
+});
+new Chart(document.getElementById('cDxYoY').getContext('2d'),{
+  type:'line',
+  data:{labels:MONTHS,datasets:[
+    {label:'2025 누적',data:[3.73,8.25,13.14,17.65,21.60,26.35],borderColor:C_GRAY,borderDash:[5,3],borderWidth:1.5,pointRadius:0,fill:false},
+    {label:'2026 누적',data:[0.90,3.05,7.43,10.76,12.12,15.74],borderColor:C_BLUE,backgroundColor:C_BLUE_T,borderWidth:2,pointRadius:3,pointBackgroundColor:C_BLUE,fill:true}
+  ]},
+  options:{...BASE_OPT,plugins:{legend:{display:true,position:'bottom',labels:{font:{size:11,family:'Inter'},color:'#374151',boxWidth:8}}}}
+});
+const plD=[-1.44,0.55,2.75,1.74,-1.46,1.82];
+new Chart(document.getElementById('cDxPnL').getContext('2d'),{
+  type:'bar',
+  data:{labels:MONTHS,datasets:[{data:plD,backgroundColor:plD.map(v=>v>=0?C_GREEN:C_RED),borderRadius:5,borderSkipped:false}]},
+  options:{...BASE_OPT,scales:{...BASE_OPT.scales,y:{...BASE_OPT.scales.y,ticks:{...BASE_OPT.scales.y.ticks,callback:v=>v+'억'}}}}
+});
+new Chart(document.getElementById('cDxExt').getContext('2d'),{
+  type:'bar',
+  data:{
+    labels:['써브웨이AWS','SKT개발','본인인증','퍼블외주','iM뱅크','알림톡'],
+    datasets:[{data:[2.64,2.37,0.55,0.33,0.30,0.13],backgroundColor:[C_BLUE,'#1D4ED8','#3B82F6','#60A5FA','#93C5FD','#DBEAFE'],borderRadius:5,borderSkipped:false}]
+  },
+  options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{font:{size:11,family:'Inter'},color:C_GRAY,callback:v=>v+'억'},grid:{color:'#F3F4F6'}},y:{ticks:{font:{size:11,family:'Inter'},color:'#374151'},grid:{display:false}}}}
+});
+new Chart(document.getElementById('cDxUtil').getContext('2d'),{
+  type:'bar',
+  data:{labels:['기획팀','디자인팀','개발팀','PM'],datasets:[{data:[72,68,81,76],backgroundColor:['#DBEAFE','#DBEAFE',C_BLUE,'#DBEAFE'],borderRadius:6,borderSkipped:false}]},
+  options:{...BASE_OPT,scales:{...BASE_OPT.scales,y:{...BASE_OPT.scales.y,max:100,ticks:{...BASE_OPT.scales.y.ticks,callback:v=>v+'%'}}}}
+});
+new Chart(document.getElementById('cDxClient').getContext('2d'),{
+  type:'doughnut',
+  data:{labels:['SKT','써브웨이','재규어LR','삼성운용','CJ','레드버튼','iM뱅크','기타'],datasets:[{data:[15.39,11.33,9.27,6.50,3.97,3.34,2.78,6.90],backgroundColor:['#111827','#1F2937','#374151','#4B5563','#6B7280','#9CA3AF','#D1D5DB','#E5E7EB'],borderWidth:2,borderColor:'#fff'}]},
+  options:{responsive:true,maintainAspectRatio:false,cutout:'55%',plugins:{legend:{display:true,position:'right',labels:{font:{size:11,family:'Inter'},color:'#374151',boxWidth:8}}}}
+});
+
+// ─── AD CHARTS ───
+new Chart(document.getElementById('cAdRev').getContext('2d'),{
+  type:'line',
+  data:{labels:MONTHS,datasets:[{data:[1.4,1.6,1.8,1.7,1.8,1.9],borderColor:C_BLUE,backgroundColor:C_BLUE_T,borderWidth:2,tension:.4,fill:true,pointRadius:4,pointBackgroundColor:C_BLUE}]},
+  options:BASE_OPT
+});
+new Chart(document.getElementById('cAdUtil').getContext('2d'),{
+  type:'bar',
+  data:{labels:['AE팀','CD팀','PD팀','기획'],datasets:[{data:[75,68,62,72],backgroundColor:['#DBEAFE','#DBEAFE',C_RED,'#DBEAFE'],borderRadius:6,borderSkipped:false}]},
+  options:{...BASE_OPT,scales:{...BASE_OPT.scales,y:{...BASE_OPT.scales.y,max:100,ticks:{...BASE_OPT.scales.y.ticks,callback:v=>v+'%'}}}}
+});
+
+// ─── PEZ (lazy) ───
+let pezDone=false;
+function initPez(){
+  if(pezDone)return; pezDone=true;
+  new Chart(document.getElementById('cPezRev').getContext('2d'),{
+    type:'bar',
+    data:{labels:MONTHS,datasets:[{data:[0.7,0.8,0.8,0.9,1.0,0.6],backgroundColor:MONTHS.map((_,i)=>i===5?C_BLUE:'#DBEAFE'),borderRadius:6,borderSkipped:false}]},
+    options:{...BASE_OPT,scales:{...BASE_OPT.scales,y:{...BASE_OPT.scales.y,ticks:{...BASE_OPT.scales.y.ticks,callback:v=>v+'억'}}}}
+  });
+  new Chart(document.getElementById('cPezType').getContext('2d'),{
+    type:'doughnut',
+    data:{labels:['플랫폼구축','컨설팅','운영','기타'],datasets:[{data:[40,35,20,5],backgroundColor:['#111827','#374151',C_GRAY,'#E5E7EB'],borderWidth:0,hoverOffset:4}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{position:'bottom',labels:{font:{size:12,family:'Inter'},color:'#374151'}}}}
+  });
+}
+
+// ─── Q 바 ───
+const qData=[
+  {id:'Q01',label:'AI에게 업무 맡기기',val:3.30},
+  {id:'Q02',label:'결과물 실무 적용',val:2.82},
+  {id:'Q03',label:'노하우 재사용',val:2.60},
+  {id:'Q04',label:'AI·도구 연결',val:2.37},
+  {id:'Q05',label:'반복 자동화',val:2.63},
+  {id:'Q06',label:'팀 산출물 품질',val:2.32},
+  {id:'Q07',label:'팀 데이터 보고',val:2.12},
+  {id:'Q08',label:'일정·검수 시스템화',val:1.96},
+  {id:'Q09',label:'팀 공용 AI 도구',val:2.04},
+  {id:'Q10',label:'AI 전파·성과관리',val:1.91},
+];
+const qC=document.getElementById('qBars');
+qData.forEach(q=>{
+  const pct=(q.val/4*100).toFixed(0);
+  const col=q.val>=2.7?C_GREEN:q.val>=2.2?C_BLUE:C_RED;
+  const row=document.createElement('div');
+  row.className='q-row';
+  row.innerHTML=`<div class="q-lbl">${q.id} ${q.label}</div><div class="q-track"><div class="q-fill" style="width:${pct}%;background:${col}"></div></div><div class="q-num" style="color:${col}">${q.val}</div>`;
+  qC.appendChild(row);
+});
+
+// ─── HIST MODAL ───
+let hChart=null, curHistKey='매출';
+function openHist(key,title){
+  curHistKey=key; buViewOn=false;
+  document.getElementById('buToggleBtn').textContent='사업부별 보기';
+  document.getElementById('buToggleBtn').classList.remove('btn-primary');
+  document.getElementById('histTitle').textContent=title;
+  document.getElementById('histOv').classList.add('open');
+  const btn=document.querySelectorAll('#tabRow .tab-btn')[1];
+  curFilter='2yr'; curBtn=btn;
+  setH('2yr',btn);
+}
+function setH(filter,btn){
+  document.querySelectorAll('#tabRow .tab-btn').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  curFilter=filter; curBtn=btn;
+  const d=HIST[curHistKey]; if(!d)return;
+  if(hChart){hChart.destroy();hChart=null;}
+  const ctx=document.getElementById('cHist').getContext('2d');
+  const LEG={display:true,position:'bottom',labels:{font:{size:11,family:'Inter'},color:'#374151',boxWidth:8}};
+
+  // ── 사업부별 뷰 ──
+  if(buViewOn && curHistKey==='매출'){
+    const buKeys=['DX','AD','PEZ','기타'];
+    const buColors=[C_BLUE,'#374151',C_GRAY,'#D1D5DB'];
+    const buLabels=['DX','AD','대관','기타'];
+    if(filter==='2026'){
+      hChart=new Chart(ctx,{type:'bar',data:{labels:MONTHS,datasets:buKeys.map((k,i)=>({label:buLabels[i],data:BU_HIST_YRS[k][4],backgroundColor:buColors[i],borderRadius:0,borderSkipped:false,stack:'s'}))},options:{...BASE_OPT,plugins:{legend:LEG},scales:{...BASE_OPT.scales,x:{...BASE_OPT.scales.x,stacked:true},y:{...BASE_OPT.scales.y,stacked:true,ticks:{...BASE_OPT.scales.y.ticks,callback:v=>v+'억'}}}}});
+    } else if(filter==='2yr'){
+      const ds=[];
+      buKeys.forEach((k,i)=>{
+        ds.push({label:buLabels[i]+' 2025',data:BU_HIST_YRS[k][3],borderColor:buColors[i],borderDash:[5,3],borderWidth:1.5,pointRadius:0,fill:false});
+        ds.push({label:buLabels[i]+' 2026',data:BU_HIST_YRS[k][4],borderColor:buColors[i],borderWidth:2,pointRadius:2,fill:false});
+      });
+      hChart=new Chart(ctx,{type:'line',data:{labels:MONTHS,datasets:ds},options:{...BASE_OPT,plugins:{legend:LEG}}});
+    } else {
+      // 5개년 합산 기준 스택
+      hChart=new Chart(ctx,{type:'bar',data:{labels:MONTHS,datasets:buKeys.map((k,i)=>({label:buLabels[i],data:BU_HIST_YRS[k][4],backgroundColor:buColors[i],borderRadius:0,borderSkipped:false,stack:'s'}))},options:{...BASE_OPT,plugins:{legend:LEG},scales:{...BASE_OPT.scales,x:{...BASE_OPT.scales.x,stacked:true},y:{...BASE_OPT.scales.y,stacked:true,ticks:{...BASE_OPT.scales.y.ticks,callback:v=>v+'억'}}}}});
+    }
+    // 미니 테이블 채우기
+    const tbl=document.getElementById('buHistBody');
+    tbl.innerHTML='';
+    const yr=(filter==='2026'||filter==='2yr')?4:4;
+    buKeys.forEach((k,i)=>{
+      const data=BU_HIST_YRS[k][yr];
+      const row=document.createElement('tr');
+      row.innerHTML=`<td class="td-hi" style="color:${buColors[i]}">${buLabels[i]}</td>`+data.map(v=>`<td class="td-num">${v.toFixed(1)}</td>`).join('');
+      tbl.appendChild(row);
+    });
+    // 합산 행
+    const totals=MONTHS.map((_,mi)=>buKeys.reduce((s,k)=>s+(BU_HIST_YRS[k][yr][mi]||0),0));
+    const totRow=document.createElement('tr');
+    totRow.style.borderTop='2px solid var(--ink1)';
+    totRow.innerHTML=`<td style="font-weight:700">합계</td>`+totals.map(v=>`<td class="td-num" style="color:var(--blue)">${v.toFixed(1)}</td>`).join('');
+    tbl.appendChild(totRow);
+    document.getElementById('buTable').style.display='block';
+    document.getElementById('histInsight').textContent='사업부별 상세 보기: 2026년 기준. DX가 전체의 44%, AD 28%, 대관 9% 기여.';
+    return;
+  }
+
+  document.getElementById('buTable').style.display='none';
+  // ── 합산 뷰 (기존) ──
+  if(filter==='2026'){
+    hChart=new Chart(ctx,{type:'bar',data:{labels:MONTHS,datasets:[{data:d.yrs[4]||[],backgroundColor:(d.yrs[4]||[]).map((_,i)=>i===(d.yrs[4].length-1)?C_BLUE:'#DBEAFE'),borderRadius:6,borderSkipped:false}]},options:BASE_OPT});
+  } else if(filter==='2yr'){
+    hChart=new Chart(ctx,{type:'line',data:{labels:MONTHS,datasets:[
+      {label:'2025',data:d.yrs[3]||[],borderColor:C_GRAY,borderDash:[5,3],borderWidth:1.5,pointRadius:0,fill:false},
+      {label:'2026',data:d.yrs[4]||[],borderColor:C_BLUE,backgroundColor:C_BLUE_T,borderWidth:2,pointRadius:3,pointBackgroundColor:C_BLUE,fill:true}
+    ]},options:{...BASE_OPT,plugins:{legend:LEG}}});
+  } else {
+    const grays=['#E5E7EB','#D1D5DB','#9CA3AF','#6B7280',C_BLUE];
+    hChart=new Chart(ctx,{type:'line',data:{labels:MONTHS,datasets:YRS.map((y,i)=>({label:y,data:d.yrs[i]||[],borderColor:grays[i],borderWidth:i===4?2:1.5,pointRadius:i===4?3:0,fill:false}))},options:{...BASE_OPT,plugins:{legend:LEG}}});
+  }
+  document.getElementById('histInsight').textContent=d.insight;
+}
+
+// ─── NAV ───
+const views={sm:'SM 총괄 — 전사 통합 현황',dx:'DX 사업부 대시보드',ad:'AD 사업부 대시보드',pez:'대관사업부 대시보드',ai:'AI / MCP 현황 — 전사 역량',mkt:'시장 & 경쟁사 현황',proj:'프로젝트 분석 — 전사 프로젝트 성과',sales:'영업관리 — 제안 프로젝트',cfg:'설정'};
+const metas={sm:'2026년 6월 기준 · 전 사업부 통합',dx:'디지털 플랫폼 구축·운영 · 2026 상반기',ad:'광고·캠페인·브랜드 · 2026',pez:'정부·공공기관 대관 사업 · 2026',ai:'AI 역량 진단 + MCP 연동 현황 · 2026.06',mkt:'국내 디지털 에이전시 시장 · 경쟁사 분석',proj:'ERP 연동 준비 중 · 샘플 데이터 기준 · 2026.06',sales:'DX · AD 사업부 · 2026 상반기',cfg:'시스템 연동 · 멤버 · 데이터 관리'};
+function sw(v){
+  document.querySelectorAll('.view-pane').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item[id^="nav-"]').forEach(n=>n.classList.remove('active'));
+  document.getElementById('view-'+v).classList.add('active');
+  document.getElementById('nav-'+v).classList.add('active');
+  document.getElementById('topTitle').textContent=views[v];
+  document.getElementById('topMeta').textContent=metas[v];
+  if(v==='pez')  setTimeout(initPez,50);
+  if(v==='ai')   setTimeout(initAi,50);
+  if(v==='mkt')  setTimeout(initMkt,50);
+  if(v==='proj') setTimeout(initProj,50);
+  if(v==='sales') setTimeout(initSales,50);
+  if(v==='cfg')  setTimeout(()=>{ renderErpList(); renderGsList(); },50);
+}
+
+// ─── 프로젝트 데이터 ───
+const PROJ_DATA = [
+  {name:'KODEX ETF 플랫폼 운영',   client:'삼성자산운용',   bu:'DX', type:'운영',  amt:6.5,   team:8,  margin:31, pct:100, due:'2026.12.31', stat:'진행중', pm:'DX 김○○ Manager', cStart:'2024.01.01', cEnd:'2026.12.31', planMM:24.0, actualMM:12.5},
+  {name:'SKT 디자인시스템',         client:'SKT',            bu:'DX', type:'구축',  amt:11.88, team:12, margin:22, pct:72,  due:'2026.06.30', stat:'지연',   pm:'DX 정○○ Manager', cStart:'2025.10.01', cEnd:'2026.06.30', planMM:30.4, actualMM:21.9},
+  {name:'써브웨이 온라인채널',       client:'써브웨이',        bu:'DX', type:'운영',  amt:11.33, team:10, margin:28, pct:100, due:'2027.01',    stat:'진행중', pm:'DX 한○○ Manager', cStart:'2024.02.01', cEnd:'2027.01.31', planMM:36.0, actualMM:18.0},
+  {name:'iM뱅크 디자인시스템',      client:'iM뱅크',         bu:'DX', type:'구축',  amt:5.8,   team:7,  margin:19, pct:58,  due:'2026.08',    stat:'지연',   pm:'DX 이○○ Manager', cStart:'2026.01.01', cEnd:'2026.08.31', planMM:18.0, actualMM:10.4},
+  {name:'재규어랜드로버 AS앱',      client:'재규어랜드로버',  bu:'DX', type:'운영',  amt:4.6,   team:5,  margin:25, pct:100, due:'2026.12.31', stat:'진행중', pm:'DX 최○○ Manager', cStart:'2026.04.01', cEnd:'2026.12.31', planMM:12.0, actualMM:5.8},
+  {name:'롯데지주 플랫폼',          client:'롯데지주',        bu:'DX', type:'구축',  amt:2.1,   team:4,  margin:20, pct:40,  due:'2026.09',    stat:'진행중', pm:'DX 박○○ Manager', cStart:'2026.03.01', cEnd:'2026.09.30', planMM:10.0, actualMM:4.0},
+  {name:'SKT 디지털 캠페인',        client:'SKT',            bu:'AD', type:'캠페인',amt:2.1,   team:3,  margin:15, pct:80,  due:'2026.06.30', stat:'진행중', pm:'AD 윤○○ Manager', cStart:'2026.03.01', cEnd:'2026.06.30', planMM:8.0,  actualMM:6.4},
+  {name:'삼성전자 브랜드 캠페인',    client:'삼성전자',        bu:'AD', type:'캠페인',amt:3.8,   team:4,  margin:20, pct:60,  due:'2026.08',    stat:'진행중', pm:'AD 임○○ Manager', cStart:'2026.04.01', cEnd:'2026.08.31', planMM:10.0, actualMM:6.0},
+  {name:'AHC 디지털마케팅',         client:'AHC',            bu:'AD', type:'캠페인',amt:2.4,   team:3,  margin:18, pct:100, due:'2026.12',    stat:'진행중', pm:'AD 장○○ Manager', cStart:'2026.01.01', cEnd:'2026.12.31', planMM:9.0,  actualMM:4.5},
+  {name:'레드버튼 브랜딩',          client:'레드버튼',        bu:'AD', type:'브랜딩',amt:1.2,   team:2,  margin:22, pct:30,  due:'2026.09',    stat:'진행중', pm:'AD 오○○ Manager', cStart:'2026.05.01', cEnd:'2026.09.30', planMM:4.0,  actualMM:1.2},
+  {name:'CJ프레시웨이 운영',        client:'CJ프레시웨이',   bu:'SM', type:'운영',  amt:3.6,   team:4,  margin:30, pct:100, due:'2026.12',    stat:'진행중', pm:'SM 강○○ Manager', cStart:'2026.01.01', cEnd:'2026.12.31', planMM:12.0, actualMM:6.0},
+  {name:'본아이에프 운영',          client:'본아이에프',      bu:'SM', type:'운영',  amt:3.4,   team:3,  margin:26, pct:100, due:'2026.12',    stat:'진행중', pm:'SM 신○○ Manager', cStart:'2026.01.01', cEnd:'2026.12.31', planMM:9.0,  actualMM:4.5},
+];
+let projBuFilter='all', projStatFilter='all', projDone=false;
+
+function filterProj(bu, btn){
+  projBuFilter=bu;
+  document.querySelectorAll('#projBuTab .tab-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderProjTable();
+}
+function filterProjStat(stat, btn){
+  projStatFilter=stat;
+  document.querySelectorAll('#projStatTab .tab-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderProjTable();
+}
+function renderProjTable(){
+  const filtered = PROJ_DATA.filter(p=>
+    (projBuFilter==='all'||p.bu===projBuFilter) &&
+    (projStatFilter==='all'||p.stat===projStatFilter)
+  );
+  const statBadge={
+    '진행중':'<span class="bx bx-blue">진행중</span>',
+    '지연':'<span class="bx bx-red">지연</span>',
+    '완료':'<span class="bx bx-green">완료</span>',
+  };
+  const marginColor=m=>m>=25?'var(--green)':m>=18?'var(--amber)':'var(--red)';
+  document.getElementById('projBody').innerHTML = filtered.map(p=>`
+    <tr>
+      <td class="td-hi">${p.name}</td>
+      <td>${p.client}</td>
+      <td><span class="bx bx-blue">${p.bu}</span></td>
+      <td>${p.type}</td>
+      <td class="td-num">${p.amt}억</td>
+      <td>${p.team}명</td>
+      <td>
+        <div style="display:flex;align-items:center;gap:6px">
+          <div style="flex:1;height:5px;background:var(--border2);border-radius:20px;min-width:50px">
+            <div style="width:${p.pct}%;height:100%;border-radius:20px;background:${p.pct===100?'var(--green)':'var(--blue)'}"></div>
+          </div>
+          <span style="font-size:12px;color:var(--ink3);min-width:28px">${p.pct}%</span>
+        </div>
+      </td>
+      <td class="td-num" style="color:${marginColor(p.margin)};font-weight:700">${p.margin}%</td>
+      <td style="font-size:12px;color:${p.stat==='지연'?'var(--red)':'var(--ink3)'}">${p.due}</td>
+      <td>${statBadge[p.stat]||''}</td>
+    </tr>
+  `).join('');
+}
+function initProj(){
+  if(projDone) return; projDone=true;
+  renderProjTable();
+  const F={font:{size:11,family:'Inter'},color:'#6B7280'};
+  const G={color:'#F3F4F6',drawBorder:false};
+  // ── 마진율 가로 바차트 (indexAxis:'y') ──
+  const mLabels=PROJ_DATA.map(p=>p.name.length>9?p.name.slice(0,9)+'…':p.name);
+  const mVals=PROJ_DATA.map(p=>p.margin);
+  const mColors=PROJ_DATA.map(p=>p.margin>=25?'#059669':p.margin>=18?'#D97706':'#DC2626');
+  new Chart(document.getElementById('cProjMargin').getContext('2d'),{
+    type:'bar',
+    data:{labels:mLabels,datasets:[{data:mVals,backgroundColor:mColors,borderRadius:4,borderSkipped:false}]},
+    options:{
+      indexAxis:'y',
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:i=>` ${i.raw}% 마진율`}}},
+      scales:{
+        x:{min:0,max:40,ticks:{...F,callback:v=>v+'%'},grid:{color:'#F3F4F6'},border:{display:false}},
+        y:{ticks:{font:{size:10,family:'Inter'},color:'#374151'},grid:{display:false},border:{display:false}}
+      }
+    }
+  });
+  // ── 월별 수주·완료 ──
+  new Chart(document.getElementById('cProjFlow').getContext('2d'),{
+    type:'bar',
+    data:{
+      labels:MONTHS,
+      datasets:[
+        {label:'신규 수주',data:[2,3,1,2,2,2],backgroundColor:C_BLUE,borderRadius:4,borderSkipped:false,order:2},
+        {label:'완료',data:[1,2,2,1,3,1],backgroundColor:C_GRAY,borderRadius:4,borderSkipped:false,order:2},
+        {label:'누적 수주액',data:[8.2,14.5,17.3,22.1,26.8,30.5],type:'line',borderColor:C_BLUE,borderDash:[4,3],borderWidth:1.5,pointRadius:2,fill:false,order:1,yAxisID:'y2'}
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:true,position:'bottom',labels:{font:{size:11,family:'Inter'},color:'#374151',boxWidth:10}}},
+      scales:{
+        x:{ticks:F,grid:{display:false},border:{display:false}},
+        y:{ticks:{...F,callback:v=>v+'건'},grid:{color:'#F3F4F6'},border:{display:false},beginAtZero:true},
+        y2:{position:'right',grid:{display:false},border:{display:false},ticks:{font:{size:11,family:'Inter'},color:C_BLUE,callback:v=>v+'억'},beginAtZero:true}
+      }
+    }
+  });
+}
+
+// ─── AI Q BARS ───
+const aiQData=[
+  {id:'Q01',label:'AI에게 업무 맡기기',val:3.30},
+  {id:'Q02',label:'결과물 실무 적용',val:2.82},
+  {id:'Q03',label:'노하우 재사용',val:2.60},
+  {id:'Q04',label:'AI·도구 연결',val:2.37},
+  {id:'Q05',label:'반복 자동화',val:2.63},
+  {id:'Q06',label:'팀 산출물 품질',val:2.32},
+  {id:'Q07',label:'팀 데이터 보고',val:2.12},
+  {id:'Q08',label:'일정·검수 시스템화',val:1.96},
+  {id:'Q09',label:'팀 공용 AI 도구',val:2.04},
+  {id:'Q10',label:'AI 전파·성과관리',val:1.91},
+];
+const aiQC=document.getElementById('aiQBars');
+aiQData.forEach(q=>{
+  const pct=(q.val/4*100).toFixed(0);
+  const col=q.val>=2.7?C_GREEN:q.val>=2.2?C_BLUE:C_RED;
+  const row=document.createElement('div');
+  row.className='q-row';
+  row.innerHTML=`<div class="q-lbl">${q.id} ${q.label}</div><div class="q-track"><div class="q-fill" style="width:${pct}%;background:${col}"></div></div><div class="q-num" style="color:${col}">${q.val}</div>`;
+  aiQC.appendChild(row);
+});
+
+// ─── AI CHARTS (lazy) ───
+let aiDone=false;
+function initAi(){
+  if(aiDone)return; aiDone=true;
+
+  // 부서·직군별 AI 역량
+  new Chart(document.getElementById('cAiBar').getContext('2d'),{
+    type:'bar',
+    data:{
+      labels:['SM 기획','SM 경영','DX 기획','DX 디자인','DX 개발','DX PM','AD AE','AD CD','AD PD','페즈'],
+      datasets:[{
+        data:[2.6,2.1,1.60,1.33,2.10,2.40,2.35,2.20,1.55,2.42],
+        backgroundColor:([2.6,2.1,1.60,1.33,2.10,2.40,2.35,2.20,1.55,2.42]).map(v=>v>=2.5?C_BLUE:v>=2.0?'#93C5FD':C_RED),
+        borderRadius:5,borderSkipped:false
+      }]
+    },
+    options:{...BASE_OPT,scales:{
+      x:{grid:{display:false},ticks:{font:{size:11,family:'Inter'},color:C_GRAY,maxRotation:30}},
+      y:{grid:{color:'#F3F4F6'},ticks:{font:{size:11,family:'Inter'},color:C_GRAY,max:4,callback:v=>v+'점'}}
+    }}
+  });
+
+  // MCP 도구별 활용률
+  new Chart(document.getElementById('cMcpBar').getContext('2d'),{
+    type:'bar',
+    data:{
+      labels:['ERP API','G. Sheets','Notion','Gmail','Calendar','Supabase','Claude API'],
+      datasets:[{
+        data:[91,78,65,54,48,31,22],
+        backgroundColor:([91,78,65,54,48,31,22]).map(v=>v>=70?C_BLUE:v>=40?'#93C5FD':'#DBEAFE'),
+        borderRadius:5,borderSkipped:false
+      }]
+    },
+    options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{
+      x:{ticks:{font:{size:11,family:'Inter'},color:C_GRAY,callback:v=>v+'%'},grid:{color:'#F3F4F6'},max:100},
+      y:{ticks:{font:{size:11,family:'Inter'},color:'#374151'},grid:{display:false}}
+    }}
+  });
+
+  // 월별 AI 활용 건수
+  new Chart(document.getElementById('cAiTrend').getContext('2d'),{
+    type:'line',
+    data:{
+      labels:['1월','2월','3월','4월','5월','6월'],
+      datasets:[
+        {label:'MCP 호출',data:[3210,3580,4120,4890,5640,6650],borderColor:C_BLUE,backgroundColor:C_BLUE_T,borderWidth:2,tension:.4,fill:true,pointRadius:3,pointBackgroundColor:C_BLUE},
+        {label:'AI 자동화 실행',data:[8,11,14,17,20,23],borderColor:C_GREEN,borderDash:[4,3],borderWidth:1.5,pointRadius:2,fill:false,yAxisID:'y2'}
+      ]
+    },
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'bottom',labels:{font:{size:11,family:'Inter'},color:'#374151',boxWidth:8}}},scales:{
+      x:{grid:{display:false},ticks:{font:{size:11,family:'Inter'},color:C_GRAY}},
+      y:{grid:{color:'#F3F4F6'},ticks:{font:{size:11,family:'Inter'},color:C_GRAY},position:'left'},
+      y2:{grid:{display:false},ticks:{font:{size:11,family:'Inter'},color:C_GRAY},position:'right'}
+    }}
+  });
+
+  // 레벨 분포
+  new Chart(document.getElementById('cAiLevel').getContext('2d'),{
+    type:'doughnut',
+    data:{labels:['L1 탐색 (1.0-1.9)','L2 활용 (2.0-2.9)','L3 자동화 (3.0-3.9)','L4 내재화 (4.0)'],datasets:[{data:[12,34,10,1],backgroundColor:['#DBEAFE','#3B82F6',C_BLUE,'#111827'],borderWidth:0,hoverOffset:4}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'60%',plugins:{legend:{position:'bottom',labels:{font:{size:11,family:'Inter'},color:'#374151'}}}}
+  });
+}
+
+// ─── MKT CHARTS (lazy) ───
+let mktDone=false;
+function initMkt(){
+  if(mktDone)return; mktDone=true;
+
+  // 시장 규모 추이
+  new Chart(document.getElementById('cMktSize').getContext('2d'),{
+    type:'line',
+    data:{
+      labels:['2020','2021','2022','2023','2024','2025E','2026E'],
+      datasets:[{
+        label:'시장 규모 (조원)',
+        data:[2.1,2.4,2.9,3.3,3.8,4.2,4.7],
+        borderColor:C_BLUE,backgroundColor:C_BLUE_T,borderWidth:2.5,tension:.4,fill:true,
+        pointRadius:4,pointBackgroundColor:C_BLUE
+      }]
+    },
+    options:{...BASE_OPT,plugins:{legend:{display:false}},scales:{
+      x:{grid:{display:false},ticks:{font:{size:11,family:'Inter'},color:C_GRAY}},
+      y:{grid:{color:'#F3F4F6'},ticks:{font:{size:11,family:'Inter'},color:C_GRAY,callback:v=>v+'조'}}
+    }}
+  });
+
+  // 경쟁사 매출 비교 (수평 막대)
+  new Chart(document.getElementById('cCompRev').getContext('2d'),{
+    type:'bar',
+    data:{
+      labels:['와일리','아이파트너즈','매그넘빈트','바이널씨','펜타브리드','플립커뮤니케이션즈','엘루오','digitalDigm'],
+      datasets:[{
+        data:[302,302,275,210,169,152,140,59],
+        backgroundColor:['#D1D5DB','#D1D5DB','#D1D5DB','#D1D5DB','#D1D5DB','#D1D5DB','#D1D5DB',C_BLUE],
+        borderRadius:5,borderSkipped:false
+      }]
+    },
+    options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{
+      x:{ticks:{font:{size:11,family:'Inter'},color:C_GRAY,callback:v=>v+'억'},grid:{color:'#F3F4F6'}},
+      y:{ticks:{font:{size:11,family:'Inter'},color:'#374151'},grid:{display:false}}
+    }}
+  });
+
+  // 수주 경쟁 결과
+  new Chart(document.getElementById('cBidResult').getContext('2d'),{
+    type:'doughnut',
+    data:{labels:['수주 성공','경쟁 패배','단독 수주','미결정'],datasets:[{data:[8,4,6,3],backgroundColor:[C_BLUE,C_RED,C_GREEN,'#D1D5DB'],borderWidth:0,hoverOffset:4}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'58%',plugins:{legend:{position:'bottom',labels:{font:{size:11,family:'Inter'},color:'#374151'}}}}
+  });
+}
+
+// ─── 설정 ───
+function showCfg(sec, btn){
+  document.querySelectorAll('.cfg-sec').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.cfg-nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('cfgSec-'+sec).classList.add('active');
+  btn.classList.add('active');
+  if(sec==='sys'){ renderErpList(); renderGsList(); }
+  if(sec==='pcard') renderProjCards();
+  if(sec==='ccard') renderClientCards();
+  if(sec==='mem') loadMembers();
+}
+// ─── ERP / GS 연동 목록 ───
+let ERP_LIST = [
+  {name:'ERP 메인 (전사)', url:'https://erp.company.com/api/v1', key:'', bu:'전사', sync:'매일 09:00', stat:'준비중'},
+];
+let GS_LIST = [
+  {name:'월별 실적 시트', url:'https://docs.google.com/spreadsheets/d/1BxiM...', bu:'전사', sync:'1시간', stat:'연결됨'},
+  {name:'DX 프로젝트 현황', url:'https://docs.google.com/spreadsheets/d/2CxyN...', bu:'DX', sync:'수동', stat:'연결됨'},
+];
+
+const SYNC_OPTIONS=['수동','15분','1시간','6시간','매일 09:00'];
+const STAT_OPTIONS={준비중:'warn',연결됨:'ok',오류:'err'};
+
+function renderErpList(){
+  const el=document.getElementById('erpList');
+  if(!el) return;
+  if(!ERP_LIST.length){el.innerHTML='<div style="padding:12px 0;font-size:13px;color:var(--ink4)">등록된 ERP 연동이 없습니다</div>';return;}
+  el.innerHTML=ERP_LIST.map((e,i)=>`
+    <div class="conn-row">
+      <div class="conn-icon" style="background:var(--blue-tint);color:var(--blue)">ERP</div>
+      <div style="flex:1;min-width:0">
+        <div class="conn-name">${e.name}</div>
+        <div class="conn-meta">${e.bu} · ${e.url} · 동기화 ${e.sync}</div>
+      </div>
+      <span class="cfg-status ${STAT_OPTIONS[e.stat]||'warn'}">● ${e.stat}</span>
+      <button class="btn" style="padding:4px 10px;font-size:12px" onclick="testConnRow('erp',${i})">테스트</button>
+      <button class="btn" style="padding:4px 10px;font-size:12px" onclick="openConnDrawer('erp',${i})">편집</button>
+      <button class="btn" style="padding:4px 10px;font-size:12px;color:var(--red)" onclick="delConn('erp',${i})">삭제</button>
+    </div>
+  `).join('');
+}
+
+function renderGsList(){
+  const el=document.getElementById('gsList');
+  if(!el) return;
+  if(!GS_LIST.length){el.innerHTML='<div style="padding:12px 0;font-size:13px;color:var(--ink4)">등록된 시트가 없습니다</div>';return;}
+  el.innerHTML=GS_LIST.map((g,i)=>`
+    <div class="conn-row">
+      <div class="conn-icon" style="background:#E8F5E9;color:#1B5E20">GS</div>
+      <div style="flex:1;min-width:0">
+        <div class="conn-name">${g.name}</div>
+        <div class="conn-meta">${g.bu} · 동기화 ${g.sync}</div>
+        <div class="conn-url">${g.url}</div>
+      </div>
+      <span class="cfg-status ${STAT_OPTIONS[g.stat]||'warn'}">● ${g.stat}</span>
+      <button class="btn" style="padding:4px 10px;font-size:12px" onclick="window.open('${g.url}')">열기</button>
+      <button class="btn" style="padding:4px 10px;font-size:12px" onclick="openConnDrawer('gs',${i})">편집</button>
+      <button class="btn" style="padding:4px 10px;font-size:12px;color:var(--red)" onclick="delConn('gs',${i})">삭제</button>
+    </div>
+  `).join('');
+}
+
+async function testConnRow(type, i){
+  const item = type==='erp' ? ERP_LIST[i] : GS_LIST[i];
+  if(type==='erp' && !item.key){ showToast('API Key가 입력되지 않았습니다','error'); return; }
+  item.stat='연결됨';
+  renderErpList(); renderGsList();
+  await saveIntegrationToDb(item, type);
+  showToast(`"${item.name}" 연결 상태 저장`);
+}
+async function delConn(type, i){
+  const list = type==='erp' ? ERP_LIST : GS_LIST;
+  if(!confirm(`"${list[i].name}"을 삭제할까요?`)) return;
+  const id = list[i].id;
+  list.splice(i,1);
+  type==='erp' ? renderErpList() : renderGsList();
+  await deleteIntegrationFromDb(id);
+}
+
+// ─── 커넥션 드로어 ───
+let connDrawerType='', connDrawerIdx=-1;
+function openConnDrawer(type, idx){
+  connDrawerType=type; connDrawerIdx=idx;
+  const isErp=type==='erp';
+  const list=isErp?ERP_LIST:GS_LIST;
+  const item=idx>=0?list[idx]:{name:'',url:'',bu:'전사',sync:'수동',stat:'준비중',...(isErp?{key:''}:{})};
+  document.getElementById('drawerTitle').textContent = isErp?(idx>=0?'ERP 연동 편집':'ERP 연동 추가'):(idx>=0?'Google Sheets 편집':'Google Sheets 추가');
+  document.getElementById('drawerSub').textContent = idx>=0?item.name:'신규 연동';
+  document.getElementById('drawerBody').innerHTML = isErp ? `
+    <div class="cfg-field"><div class="cfg-label">연동 이름</div><input class="cfg-input" id="cn-name" placeholder="예: DX 사업부 ERP" value="${item.name}"></div>
+    <div class="cfg-field"><div class="cfg-label">담당 BU / 용도</div>
+      <select class="cfg-input" id="cn-bu">
+        ${['전사','DX','AD','SM','대관','재무'].map(b=>`<option${item.bu===b?' selected':''}>${b}</option>`).join('')}
+      </select>
+    </div>
+    <div class="cfg-field"><div class="cfg-label">ERP 서버 URL</div><input class="cfg-input" id="cn-url" type="text" placeholder="https://erp.company.com/api/v1" value="${item.url}"></div>
+    <div class="cfg-field">
+      <div class="cfg-label">API Key</div>
+      <div style="display:flex;gap:8px">
+        <input class="cfg-input" id="cn-key" type="password" placeholder="sk-erp-xxxxxxxxxxxxxxxx" value="${item.key||''}" style="flex:1">
+        <button class="btn" onclick="document.getElementById('cn-key').type=document.getElementById('cn-key').type==='password'?'text':'password'">표시</button>
+      </div>
+      <div style="font-size:12px;color:var(--ink4);margin-top:5px">저장 후 테스트 버튼으로 연결을 확인하세요</div>
+    </div>
+    <div class="cfg-field"><div class="cfg-label">동기화 주기</div>
+      <select class="cfg-input" id="cn-sync">
+        ${SYNC_OPTIONS.map(s=>`<option${item.sync===s?' selected':''}>${s}</option>`).join('')}
+      </select>
+    </div>
+    <div class="cfg-field" style="margin-bottom:0"><div class="cfg-label">상태</div>
+      <select class="cfg-input" id="cn-stat">
+        ${['준비중','연결됨','오류'].map(s=>`<option${item.stat===s?' selected':''}>${s}</option>`).join('')}
+      </select>
+    </div>
+  ` : `
+    <div class="cfg-field"><div class="cfg-label">시트 이름</div><input class="cfg-input" id="cn-name" placeholder="예: DX 프로젝트 현황" value="${item.name}"></div>
+    <div class="cfg-field"><div class="cfg-label">담당 BU / 용도</div>
+      <select class="cfg-input" id="cn-bu">
+        ${['전사','DX','AD','SM','대관','재무'].map(b=>`<option${item.bu===b?' selected':''}>${b}</option>`).join('')}
+      </select>
+    </div>
+    <div class="cfg-field"><div class="cfg-label">스프레드시트 URL</div><input class="cfg-input" id="cn-url" type="text" placeholder="https://docs.google.com/spreadsheets/d/..." value="${item.url}"></div>
+    <div class="cfg-field" style="margin-bottom:0"><div class="cfg-label">동기화 주기</div>
+      <select class="cfg-input" id="cn-sync">
+        ${SYNC_OPTIONS.map(s=>`<option${item.sync===s?' selected':''}>${s}</option>`).join('')}
+      </select>
+    </div>
+  `;
+  // 드로어 저장 버튼을 saveConnDrawer로 연결
+  document.querySelector('#editDrawer .drawer-ft .btn-primary').onclick = saveConnDrawer;
+  document.getElementById('drawerOv').classList.add('open');
+  document.getElementById('editDrawer').classList.add('open');
+}
+
+async function saveConnDrawer(){
+  const isErp=connDrawerType==='erp';
+  const list=isErp?ERP_LIST:GS_LIST;
+  const item=connDrawerIdx>=0?list[connDrawerIdx]:{};
+  item.name=document.getElementById('cn-name').value||'이름 없음';
+  item.bu=document.getElementById('cn-bu').value;
+  item.url=document.getElementById('cn-url').value;
+  item.sync=document.getElementById('cn-sync').value;
+  if(isErp){ item.key=document.getElementById('cn-key').value; item.stat=document.getElementById('cn-stat').value; }
+  else { item.stat='연결됨'; }
+  if(connDrawerIdx<0) list.push(item);
+  isErp?renderErpList():renderGsList();
+  closeDrawer();
+  document.querySelector('#editDrawer .drawer-ft .btn-primary').onclick = saveDrawer;
+  await saveIntegrationToDb(item, isErp?'erp':'gs');
+  showToast('연동 정보가 저장되었습니다');
+}
+
+// DB 연결 테스트
+async function checkDbConnection(){
+  const badge = document.getElementById('dbStatusBadge');
+  badge.textContent = '확인 중…'; badge.style.background='#FEF3C7'; badge.style.color='#92400E';
+  const {error} = await SB.from('projects').select('id').limit(1);
+  if(error){
+    badge.textContent = '연결 실패'; badge.style.background='#FEE2E2'; badge.style.color='#991B1B';
+    showToast('DB 연결 실패: ' + error.message, 'error');
+  } else {
+    badge.textContent = '연결됨'; badge.style.background='#DCFCE7'; badge.style.color='#166534';
+    showToast('Supabase DB 연결 정상');
+  }
+}
+// saveDrawer handled per type via onclick override
+
+// ─── 고객사 데이터 ───
+const CLIENT_DATA=[
+  {name:'삼성자산운용',bu:'DX',type:'플랫폼 운영·개발',amt:'6.5억/년',contact:'김○○ 팀장',tel:'02-xxxx-xxxx',expire:'2026.12.31',memo:'KODEX ETF 운영. 안정적 장기 계약.',stat:'정상'},
+  {name:'SKT',bu:'DX+AD',type:'디자인시스템 + 캠페인',amt:'11.88억 + 2.1억',contact:'이○○ 차장',tel:'02-xxxx-xxxx',expire:'2026.06.30',memo:'만료 임박. 재계약 협의 중.',stat:'주의'},
+  {name:'써브웨이',bu:'DX',type:'온라인채널 운영·고도화',amt:'11.33억/년',contact:'박○○ 팀장',tel:'02-xxxx-xxxx',expire:'2027.01',memo:'안정 운영 중. 고도화 추가 논의 예정.',stat:'정상'},
+  {name:'재규어랜드로버',bu:'DX+AD',type:'AS앱·캠페인 운영',amt:'9.27억',contact:'최○○ 부장',tel:'02-xxxx-xxxx',expire:'2026.12.31',memo:'',stat:'정상'},
+  {name:'iM뱅크',bu:'DX',type:'디자인시스템 구축',amt:'5.8억',contact:'정○○ 과장',tel:'02-xxxx-xxxx',expire:'2026.08',memo:'납기 지연 가능성. PM 면담 필요.',stat:'주의'},
+  {name:'CJ프레시웨이',bu:'SM',type:'온라인 플랫폼 운영',amt:'3.6억/년',contact:'강○○ 팀장',tel:'02-xxxx-xxxx',expire:'2026.12',memo:'미수금 지연 패턴. 주의 필요.',stat:'주의'},
+  {name:'본아이에프',bu:'SM',type:'플랫폼 운영',amt:'3.4억/년',contact:'윤○○ 팀장',tel:'02-xxxx-xxxx',expire:'2026.12',memo:'',stat:'정상'},
+  {name:'삼성전자',bu:'AD',type:'브랜드 캠페인',amt:'3.8억',contact:'한○○ 차장',tel:'02-xxxx-xxxx',expire:'2026.08',memo:'',stat:'정상'},
+  {name:'AHC',bu:'AD',type:'디지털 마케팅',amt:'2.4억/년',contact:'오○○ 팀장',tel:'02-xxxx-xxxx',expire:'2026.12',memo:'',stat:'정상'},
+  {name:'Hybe',bu:'AD',type:'캠페인·콘텐츠',amt:'2.0억',contact:'장○○ 팀장',tel:'02-xxxx-xxxx',expire:'2026.09',memo:'',stat:'정상'},
+  {name:'레드버튼',bu:'AD',type:'브랜딩·웹',amt:'1.2억',contact:'임○○ 대리',tel:'02-xxxx-xxxx',expire:'2026.09',memo:'',stat:'정상'},
+  {name:'롯데지주',bu:'DX',type:'플랫폼 구축',amt:'2.1억',contact:'신○○ 과장',tel:'02-xxxx-xxxx',expire:'2026.09',memo:'',stat:'정상'},
+];
+
+// ─── 프로젝트 카드 렌더링 ───
+function renderProjCards(){
+  const statBadge={진행중:'bx-blue',지연:'bx-red',완료:'bx-green'};
+  document.getElementById('projCardGrid').innerHTML=PROJ_DATA.map((p,i)=>`
+    <div class="pcard" onclick="openDrawer('proj',${i})" style="cursor:pointer">
+      <div class="pcard-hd">
+        <div>
+          <div class="pcard-name">${p.name}</div>
+          <div class="pcard-client">${p.client}</div>
+        </div>
+        <span class="bx ${statBadge[p.stat]||'bx-gray'}">${p.stat}</span>
+      </div>
+      <div class="pcard-row"><span class="pcard-key">사업부</span><span class="bx bx-blue" style="font-size:11px">${p.bu}</span></div>
+      <div class="pcard-row"><span class="pcard-key">유형</span><span class="pcard-val">${p.type}</span></div>
+      <div class="pcard-row"><span class="pcard-key">계약금액</span><span class="pcard-val" style="color:var(--blue)">${p.amt}억</span></div>
+      <div class="pcard-row"><span class="pcard-key">진행률</span><span class="pcard-val">${p.pct}%</span></div>
+      <div class="pcard-row"><span class="pcard-key">마진율</span><span class="pcard-val" style="color:${p.margin>=25?'var(--green)':p.margin>=18?'var(--amber)':'var(--red)'}">${p.margin}%</span></div>
+      <div class="pcard-row"><span class="pcard-key">납기</span><span class="pcard-val" style="color:${p.stat==='지연'?'var(--red)':'var(--ink1)'}">${p.due}</span></div>
+    </div>
+  `).join('');
+}
+
+// ─── 고객사 카드 렌더링 ───
+function renderClientCards(){
+  const statColor={정상:'bx-green',주의:'bx-amber',위험:'bx-red'};
+  document.getElementById('clientCardGrid').innerHTML=CLIENT_DATA.map((c,i)=>`
+    <div class="pcard" onclick="openDrawer('client',${i})" style="cursor:pointer">
+      <div class="pcard-hd">
+        <div>
+          <div class="pcard-name">${c.name}</div>
+          <div class="pcard-client">${c.type}</div>
+        </div>
+        <span class="bx ${statColor[c.stat]||'bx-gray'}">${c.stat}</span>
+      </div>
+      <div class="pcard-row"><span class="pcard-key">담당 BU</span><span class="bx bx-blue" style="font-size:11px">${c.bu}</span></div>
+      <div class="pcard-row"><span class="pcard-key">계약금액</span><span class="pcard-val" style="color:var(--blue)">${c.amt}</span></div>
+      <div class="pcard-row"><span class="pcard-key">담당자</span><span class="pcard-val">${c.contact}</span></div>
+      <div class="pcard-row"><span class="pcard-key">연락처</span><span class="pcard-val">${c.tel}</span></div>
+      <div class="pcard-row"><span class="pcard-key">계약 만료</span><span class="pcard-val" style="color:${c.stat==='주의'?'var(--amber)':'var(--ink1)'}">${c.expire}</span></div>
+      ${c.memo?`<div style="margin-top:8px;padding:6px 8px;background:var(--bg);border-radius:6px;font-size:11.5px;color:var(--ink3)">${c.memo}</div>`:''}
+    </div>
+  `).join('');
+}
+
+// ─── 드로어 ───
+let drawerType='', drawerIdx=-1;
+function openDrawer(type, idx){
+  drawerType=type; drawerIdx=idx;
+  const ov=document.getElementById('drawerOv');
+  const dr=document.getElementById('editDrawer');
+  if(type==='proj'){
+    const p=idx>=0?PROJ_DATA[idx]:{name:'',client:'',bu:'DX',type:'운영',amt:0,team:0,margin:0,pct:0,due:'',stat:'진행중',pm:'',cStart:'',cEnd:'',planMM:0,actualMM:0};
+    document.getElementById('drawerTitle').textContent=idx>=0?'프로젝트 관리':'프로젝트 추가';
+    document.getElementById('drawerSub').textContent=idx>=0?p.client:'신규 프로젝트';
+    const cost=(p.amt*(1-p.margin/100)).toFixed(2);
+    const profit=(p.amt*(p.margin/100)).toFixed(2);
+    const actAmt=(p.amt*p.pct/100).toFixed(2);
+    document.getElementById('drawerBody').innerHTML=`
+      <div class="dtab-nav">
+        <button class="dtab active" onclick="switchDTab(this,'dtab-basic')">기본정보</button>
+        <button class="dtab" onclick="switchDTab(this,'dtab-profit')">이윤계획</button>
+        <button class="dtab" onclick="switchDTab(this,'dtab-perf')">실적현황</button>
+        <button class="dtab" onclick="switchDTab(this,'dtab-mm')">실투입물</button>
+      </div>
+
+      <div class="dtab-sec active" id="dtab-basic">
+        <div class="cfg-field"><div class="cfg-label">프로젝트명</div><input class="cfg-input" id="de-name" value="${p.name}"></div>
+        <div class="cfg-field"><div class="cfg-label">고객사</div><input class="cfg-input" id="de-client" value="${p.client}"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div class="cfg-field"><div class="cfg-label">사업부</div>
+            <select class="cfg-input" id="de-bu">
+              ${['DX','AD','SM','대관'].map(b=>`<option${p.bu===b?' selected':''}>${b}</option>`).join('')}
+            </select>
+          </div>
+          <div class="cfg-field"><div class="cfg-label">프로젝트 분류</div>
+            <select class="cfg-input" id="de-type">
+              ${['운영','구축','캠페인','브랜딩','컨설팅'].map(t=>`<option${p.type===t?' selected':''}>${t}</option>`).join('')}
+            </select>
+          </div>
+        </div>
+        <div class="cfg-field"><div class="cfg-label">PM</div><input class="cfg-input" id="de-pm" value="${p.pm||''}"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div class="cfg-field"><div class="cfg-label">계약기간 시작</div><input class="cfg-input" id="de-cStart" value="${p.cStart||''}"></div>
+          <div class="cfg-field"><div class="cfg-label">계약기간 종료</div><input class="cfg-input" id="de-cEnd" value="${p.cEnd||''}"></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div class="cfg-field"><div class="cfg-label">계약금액 (억, VAT별도)</div><input class="cfg-input" id="de-amt" type="number" step="0.01" value="${p.amt}"></div>
+          <div class="cfg-field"><div class="cfg-label">납기일</div><input class="cfg-input" id="de-due" value="${p.due}"></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div class="cfg-field"><div class="cfg-label">진행률 (%)</div><input class="cfg-input" id="de-pct" type="number" min="0" max="100" value="${p.pct}"></div>
+          <div class="cfg-field"><div class="cfg-label">상태</div>
+            <select class="cfg-input" id="de-stat">
+              ${['진행중','완료','지연'].map(s=>`<option${p.stat===s?' selected':''}>${s}</option>`).join('')}
+            </select>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div class="cfg-field" style="margin-bottom:0"><div class="cfg-label">투입 인원 (명)</div><input class="cfg-input" id="de-team" type="number" value="${p.team}"></div>
+          <div class="cfg-field" style="margin-bottom:0"><div class="cfg-label">이익률 (%)</div><input class="cfg-input" id="de-margin" type="number" value="${p.margin}"></div>
+        </div>
+      </div>
+
+      <div class="dtab-sec" id="dtab-profit">
+        <div style="background:var(--bg);border-radius:8px;padding:14px 16px;margin-bottom:14px">
+          <div style="font-size:11px;color:var(--ink4);margin-bottom:2px">계약금액 (매출, VAT별도)</div>
+          <div style="font-size:20px;font-weight:900;color:var(--blue)">${p.amt}억원</div>
+        </div>
+        <table class="perf-tbl">
+          <tr><th>항목</th><th>금액</th><th>비율</th></tr>
+          <tr><td style="font-weight:600">계약금액 (매출)</td><td style="color:var(--blue);font-weight:700">${p.amt}억</td><td>100%</td></tr>
+          <tr><td>비용합계</td><td>${cost}억</td><td>${(100-p.margin).toFixed(1)}%</td></tr>
+          <tr style="border-top:2px solid var(--border)">
+            <td style="font-weight:700;color:var(--green)">이윤</td>
+            <td style="font-weight:700;color:var(--green)">${profit}억</td>
+            <td style="font-weight:700;color:var(--green)">${p.margin}%</td>
+          </tr>
+        </table>
+        <div style="margin-top:14px;padding:10px 12px;background:var(--blue-tint);border-radius:8px;font-size:12px;color:var(--blue)">
+          ℹ️ 이익률은 기본정보 탭에서 수정 가능합니다. ERP 연동 시 실원가 기준으로 자동 갱신됩니다.
+        </div>
+      </div>
+
+      <div class="dtab-sec" id="dtab-perf">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+          <div style="background:var(--bg);border-radius:8px;padding:10px 12px">
+            <div style="font-size:11px;color:var(--ink4)">초기계획 M/M</div>
+            <div style="font-size:16px;font-weight:800;color:var(--ink1)">${p.planMM||0} M/M</div>
+          </div>
+          <div style="background:var(--bg);border-radius:8px;padding:10px 12px">
+            <div style="font-size:11px;color:var(--ink4)">누적 실투입 M/M</div>
+            <div style="font-size:16px;font-weight:800;color:var(--blue)">${p.actualMM||0} M/M</div>
+          </div>
+        </div>
+        <table class="perf-tbl">
+          <tr><th>구분</th><th>매출</th><th>비용</th><th>M/M</th><th>수익</th><th>수익률</th></tr>
+          <tr class="plan-row"><td>초기계획</td><td>${p.amt}억</td><td>${cost}억</td><td>${p.planMM||0}</td><td>${profit}억</td><td>${p.margin}%</td></tr>
+          <tr class="act-row"><td>누적실적(ACT)</td><td>${actAmt}억</td><td>-</td><td>${p.actualMM||0}</td><td>-</td><td>-</td></tr>
+          <tr class="est-row"><td>예상실적(EST)</td><td>${p.amt}억</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+        </table>
+        <div style="margin-top:14px">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <div class="cfg-field" style="margin-bottom:0"><div class="cfg-label">초기계획 M/M 수정</div><input class="cfg-input" id="de-planMM" type="number" step="0.1" value="${p.planMM||0}"></div>
+            <div class="cfg-field" style="margin-bottom:0"><div class="cfg-label">누적 실투입 M/M 수정</div><input class="cfg-input" id="de-actualMM" type="number" step="0.1" value="${p.actualMM||0}"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dtab-sec" id="dtab-mm">
+        <div class="cfg-label" style="margin-bottom:10px">전체 요약</div>
+        <table class="perf-tbl" style="margin-bottom:14px">
+          <tr><th>구분</th><th>인원(명)</th><th>공수(M/M)</th><th>달성률</th></tr>
+          <tr class="plan-row"><td>초기계획</td><td>${p.team}</td><td>${p.planMM||0}</td><td>100%</td></tr>
+          <tr class="act-row"><td>실투입</td><td>${p.team}</td><td>${p.actualMM||0}</td><td>${p.planMM?((p.actualMM||0)/p.planMM*100).toFixed(1):'0'}%</td></tr>
+        </table>
+        <div style="background:var(--bg);border-radius:8px;padding:12px 14px;font-size:12px;color:var(--ink3)">
+          상세 투입 현황(부서/직무/성명별)은 ERP 연동 후 자동 연결됩니다.
+          <div style="margin-top:8px;color:var(--amber);font-weight:600">⚡ ERP API 연동 → 설정 페이지에서 구성</div>
+        </div>
+      </div>
+    `;
+  } else {
+    const c=idx>=0?CLIENT_DATA[idx]:{name:'',bu:'DX',type:'',amt:'',contact:'',tel:'',expire:'',memo:'',stat:'정상'};
+    document.getElementById('drawerTitle').textContent=idx>=0?'고객사 편집':'고객사 추가';
+    document.getElementById('drawerSub').textContent=idx>=0?c.type:'신규 고객사';
+    document.getElementById('drawerBody').innerHTML=`
+      <div class="cfg-field"><div class="cfg-label">고객사명</div><input class="cfg-input" id="ce-name" value="${c.name}"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="cfg-field"><div class="cfg-label">담당 BU</div>
+          <select class="cfg-input" id="ce-bu">
+            ${['DX','AD','SM','DX+AD','대관'].map(b=>`<option${c.bu===b?' selected':''}>${b}</option>`).join('')}
+          </select>
+        </div>
+        <div class="cfg-field"><div class="cfg-label">계약 상태</div>
+          <select class="cfg-input" id="ce-stat">
+            ${['정상','주의','위험'].map(s=>`<option${c.stat===s?' selected':''}>${s}</option>`).join('')}
+          </select>
+        </div>
+      </div>
+      <div class="cfg-field"><div class="cfg-label">계약 유형</div><input class="cfg-input" id="ce-type" value="${c.type}"></div>
+      <div class="cfg-field"><div class="cfg-label">계약금액</div><input class="cfg-input" id="ce-amt" value="${c.amt}"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="cfg-field"><div class="cfg-label">담당자</div><input class="cfg-input" id="ce-contact" value="${c.contact}"></div>
+        <div class="cfg-field"><div class="cfg-label">연락처</div><input class="cfg-input" id="ce-tel" value="${c.tel}"></div>
+      </div>
+      <div class="cfg-field"><div class="cfg-label">계약 만료일</div><input class="cfg-input" id="ce-expire" value="${c.expire}"></div>
+      <div class="cfg-field"><div class="cfg-label">메모</div><textarea class="cfg-textarea" id="ce-memo" style="min-height:80px">${c.memo}</textarea></div>
+    `;
+  }
+  ov.classList.add('open');
+  dr.classList.add('open');
+}
+function closeDrawer(){
+  document.getElementById('drawerOv').classList.remove('open');
+  document.getElementById('editDrawer').classList.remove('open');
+}
+
+// ─── 드로어 탭 전환 ───
+function switchDTab(btn, id){
+  btn.closest('.dtab-nav').querySelectorAll('.dtab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  btn.closest('#drawerBody').querySelectorAll('.dtab-sec').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// ─── 영업관리 데이터 ───
+const SALES_DATA = [
+  {bu:'DX', category:'플랫폼 구축', pm:'김○○', name:'OO금융 웹 리뉴얼', client:'OO금융', clientContact:'이○○ 팀장', status:'제안중', propStart:'2026.06.01', propEnd:'2026.07.15', ptDate:'2026.07.10', budget:4.5, competitor:'제로원디자인, 메조미디어', contact:'인맥 소개', reqDate:'2026.05.20', tf:'김○○, 이○○', salesPm:'박○○', memo:'예산 확정 전. 추가 검토 필요.'},
+  {bu:'DX', category:'운영', pm:'한○○', name:'OO제조 인트라넷 운영', client:'OO제조', clientContact:'최○○ 부장', status:'검토중', propStart:'2026.07.01', propEnd:'2026.08.30', ptDate:'', budget:2.4, competitor:'없음(수의)', contact:'기존 고객', reqDate:'2026.06.10', tf:'한○○', salesPm:'김○○', memo:'기존 유지보수 계약 연장 가능성.'},
+  {bu:'DX', category:'신규구축', pm:'정○○', name:'OO유통 이커머스 구축', client:'OO유통', clientContact:'강○○ 팀장', status:'PT준비', propStart:'2026.05.15', propEnd:'2026.06.30', ptDate:'2026.06.28', budget:8.0, competitor:'NHN커머스, 카페24', contact:'공개입찰', reqDate:'2026.05.01', tf:'정○○, 김○○, 이○○', salesPm:'이○○', memo:'PT 준비 중. NHN커머스 경쟁 분석 필요.'},
+  {bu:'DX', category:'리뉴얼', pm:'이○○', name:'OO보험 사이트 리뉴얼', client:'OO보험', clientContact:'윤○○ 과장', status:'탈락', propStart:'2026.04.01', propEnd:'2026.05.15', ptDate:'2026.05.10', budget:3.5, competitor:'아이파트너즈', contact:'공개입찰', reqDate:'2026.03.20', tf:'이○○, 박○○', salesPm:'박○○', memo:'아이파트너즈 탈락. 가격 경쟁 열세.'},
+  {bu:'AD', category:'캠페인', pm:'윤○○', name:'OO소비재 디지털 캠페인', client:'OO소비재', clientContact:'임○○ 차장', status:'수주', propStart:'2026.05.01', propEnd:'2026.06.20', ptDate:'2026.06.15', budget:2.2, competitor:'이노션, 제일기획', contact:'기존 고객', reqDate:'2026.04.25', tf:'윤○○, 최○○', salesPm:'최○○', memo:'수주 완료. 6월 말 계약 예정.'},
+  {bu:'AD', category:'브랜딩', pm:'최○○', name:'OO스타트업 브랜드 아이덴티티', client:'OO스타트업', clientContact:'장○○ 대표', status:'제안중', propStart:'2026.06.15', propEnd:'2026.07.31', ptDate:'2026.07.25', budget:1.5, competitor:'오즈디자인', contact:'네트워킹', reqDate:'2026.06.05', tf:'최○○', salesPm:'윤○○', memo:''},
+  {bu:'AD', category:'캠페인', pm:'임○○', name:'OO식품 시즌 캠페인', client:'OO식품', clientContact:'서○○ 팀장', status:'보류', propStart:'2026.07.01', propEnd:'2026.08.15', ptDate:'', budget:3.0, competitor:'대홍기획', contact:'기존 고객', reqDate:'2026.06.20', tf:'임○○, 윤○○', salesPm:'최○○', memo:'고객사 내부 예산 재검토 중. 8월 재개 예상.'},
+];
+let salesBuFilter='all', salesStatFilter='all', salesDone=false;
+
+function initSales(){
+  if(salesDone) return; salesDone=true;
+  renderSalesTable();
+}
+function filterSalesBu(bu, btn){
+  salesBuFilter=bu;
+  document.querySelectorAll('#salesBuTab .tab-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderSalesTable();
+}
+function filterSalesStat(stat, btn){
+  salesStatFilter=stat;
+  document.querySelectorAll('#salesStatTab .tab-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderSalesTable();
+}
+function renderSalesTable(){
+  let list=SALES_DATA.filter(s=>(salesBuFilter==='all'||s.bu===salesBuFilter)&&(salesStatFilter==='all'||s.status===salesStatFilter));
+  const total=list.length;
+  const ongoing=list.filter(s=>['제안중','PT준비','검토중'].includes(s.status)).length;
+  const won=list.filter(s=>s.status==='수주').length;
+  const decided=SALES_DATA.filter(s=>['수주','탈락'].includes(s.status)).length;
+  const winRate=decided?Math.round(won/decided*100):0;
+  const totalBudget=list.reduce((a,s)=>a+s.budget,0).toFixed(1);
+  const dxCnt=list.filter(s=>s.bu==='DX').length;
+  const adCnt=list.filter(s=>s.bu==='AD').length;
+
+  // KPI 업데이트
+  document.querySelector('#sk-total .kpi-val').innerHTML=`${total}<span class="kpi-unit">건</span>`;
+  document.getElementById('sk-total-sub').textContent=`DX ${dxCnt}건 · AD ${adCnt}건`;
+  document.querySelector('#sk-ongoing .kpi-val').innerHTML=`${ongoing}<span class="kpi-unit">건</span>`;
+  document.querySelector('#sk-won .kpi-val').innerHTML=`${won}<span class="kpi-unit">건</span>`;
+  document.getElementById('sk-winrate').textContent=`수주율 ${winRate}%`;
+  document.querySelector('#sk-budget .kpi-val').innerHTML=`${totalBudget}<span class="kpi-unit">억</span>`;
+
+  // 상태별 현황 바
+  const STATS=['검토중','제안중','PT준비','수주','탈락','보류'];
+  const STAT_COLORS={'검토중':'var(--blue)','제안중':'var(--amber)','PT준비':'var(--blue)','수주':'var(--green)','탈락':'var(--red)','보류':'var(--ink4)'};
+  const maxStat=Math.max(...STATS.map(st=>SALES_DATA.filter(s=>s.status===st).length),1);
+  document.getElementById('salesStatCount').textContent=`총 ${SALES_DATA.length}건`;
+  document.getElementById('salesStatBars').innerHTML=STATS.map(st=>{
+    const cnt=list.filter(s=>s.status===st).length;
+    const allCnt=SALES_DATA.filter(s=>s.status===st).length;
+    const pct=Math.round(allCnt/maxStat*100);
+    return `<div class="bar-row"><div class="bar-lbl" style="font-size:12px;width:56px">${st}</div><div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${STAT_COLORS[st]}"></div></div><div class="bar-val" style="color:${cnt?'var(--ink1)':'var(--ink4)'}">${cnt}건</div></div>`;
+  }).join('');
+
+  // BU 요약 테이블
+  const buRows=['DX','AD'].map(bu=>{
+    const bList=list.filter(s=>s.bu===bu);
+    const bBudget=bList.reduce((a,s)=>a+s.budget,0).toFixed(1);
+    const bWon=bList.filter(s=>s.status==='수주').length;
+    const bLost=bList.filter(s=>s.status==='탈락').length;
+    return `<tr><td style="color:var(--${bu==='DX'?'blue':'amber'});font-weight:700">${bu}</td><td>${bList.length}건</td><td class="td-num">${bBudget}억</td><td class="td-num" style="color:var(--green)">${bWon}건</td><td class="td-num" style="color:var(--red)">${bLost}건</td></tr>`;
+  }).join('');
+  document.querySelector('#salesBuSummary tbody').innerHTML=buRows;
+
+  // 분류별 비중 바
+  const CATS=['신규구축','운영','리뉴얼','캠페인','브랜딩','기타'];
+  const catMax=Math.max(...CATS.map(c=>list.filter(s=>s.category===c).length),1);
+  document.getElementById('salesCatBars').innerHTML='<div class="f-label" style="margin-bottom:6px">분류별 비중</div>'+CATS.map(c=>{
+    const cnt=list.filter(s=>s.category===c).length;
+    if(!cnt) return '';
+    return `<div class="bar-row"><div class="bar-lbl" style="font-size:12px">${c}</div><div class="bar-track"><div class="bar-fill" style="width:${Math.round(cnt/catMax*100)}%"></div></div><div class="bar-val">${cnt}건</div></div>`;
+  }).filter(Boolean).join('');
+
+  // 목록 테이블
+  document.getElementById('salesTableBody').innerHTML=list.length?list.map((s)=>{
+    const gi=SALES_DATA.indexOf(s);
+    return `<tr style="cursor:pointer" onclick="openSalesDrawer(${gi})">
+      <td><span class="bx bx-${s.bu==='DX'?'blue':'amber'}" style="font-size:11px">${s.bu}</span></td>
+      <td style="font-weight:600">${s.name}</td>
+      <td style="color:var(--ink3)">${s.client}<div style="font-size:11px;color:var(--ink4)">${s.clientContact}</div></td>
+      <td><span style="font-size:12px">${s.category}</span></td>
+      <td><span class="stat-badge sb-${s.status}">${s.status}</span></td>
+      <td style="font-size:12px;white-space:nowrap">${s.propStart}${s.propEnd?' ~ '+s.propEnd:''}</td>
+      <td style="font-size:12px;color:${s.ptDate?'var(--ink1)':'var(--ink4)'}">${s.ptDate||'-'}</td>
+      <td style="font-weight:700;color:var(--blue)">${s.budget}억</td>
+      <td style="font-size:12px;color:var(--ink3);max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${s.competitor||'-'}</td>
+      <td style="font-size:12px">${s.salesPm}</td>
+      <td onclick="event.stopPropagation()">
+        <button class="btn" style="padding:3px 9px;font-size:11px;margin-right:3px" onclick="openSalesDrawer(${gi})">편집</button>
+        <button class="btn" style="padding:3px 9px;font-size:11px;color:var(--red)" onclick="delSales(${gi})">삭제</button>
+      </td>
+    </tr>`;
+  }).join(''):'<tr><td colspan="11" style="text-align:center;padding:24px;color:var(--ink4)">해당하는 제안이 없습니다</td></tr>';
+}
+async function delSales(i){
+  if(!confirm(`"${SALES_DATA[i].name}"을 삭제할까요?`)) return;
+  const id = SALES_DATA[i].id;
+  SALES_DATA.splice(i,1);
+  renderSalesTable();
+  await deleteSaleFromDb(id);
+}
+function openSalesDrawer(idx){
+  drawerType='sales'; drawerIdx=idx;
+  const s=idx>=0?SALES_DATA[idx]:{bu:'DX',category:'신규구축',pm:'',name:'',client:'',clientContact:'',status:'검토중',propStart:'',propEnd:'',ptDate:'',budget:0,competitor:'',contact:'',reqDate:'',tf:'',salesPm:'',memo:''};
+  document.getElementById('drawerTitle').textContent=idx>=0?'제안 프로젝트 편집':'제안 프로젝트 등록';
+  document.getElementById('drawerSub').textContent=idx>=0?s.client:'신규 제안';
+  const CATS=['신규구축','운영','리뉴얼','캠페인','브랜딩','기타'];
+  const STATS=['검토중','제안중','PT준비','수주','탈락','보류'];
+  document.getElementById('drawerBody').innerHTML=`
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div class="cfg-field"><div class="cfg-label">사업부</div>
+        <select class="cfg-input" id="se-bu">
+          ${['DX','AD'].map(b=>`<option${s.bu===b?' selected':''}>${b}</option>`).join('')}
+        </select>
+      </div>
+      <div class="cfg-field"><div class="cfg-label">제안 분류</div>
+        <select class="cfg-input" id="se-cat">
+          ${CATS.map(c=>`<option${s.category===c?' selected':''}>${c}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+    <div class="cfg-field"><div class="cfg-label">프로젝트명</div><input class="cfg-input" id="se-name" value="${s.name}"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div class="cfg-field"><div class="cfg-label">고객사</div><input class="cfg-input" id="se-client" value="${s.client}"></div>
+      <div class="cfg-field"><div class="cfg-label">고객 담당자</div><input class="cfg-input" id="se-contact2" value="${s.clientContact}"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div class="cfg-field"><div class="cfg-label">제안 PM</div><input class="cfg-input" id="se-pm" value="${s.pm}"></div>
+      <div class="cfg-field"><div class="cfg-label">영업 PM</div><input class="cfg-input" id="se-salesPm" value="${s.salesPm}"></div>
+    </div>
+    <div class="cfg-field"><div class="cfg-label">제안 상태</div>
+      <select class="cfg-input" id="se-stat">
+        ${STATS.map(st=>`<option${s.status===st?' selected':''}>${st}</option>`).join('')}
+      </select>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div class="cfg-field"><div class="cfg-label">제안일정 시작</div><input class="cfg-input" id="se-propStart" value="${s.propStart}"></div>
+      <div class="cfg-field"><div class="cfg-label">제안일정 종료</div><input class="cfg-input" id="se-propEnd" value="${s.propEnd}"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div class="cfg-field"><div class="cfg-label">PT 일정</div><input class="cfg-input" id="se-ptDate" value="${s.ptDate}"></div>
+      <div class="cfg-field"><div class="cfg-label">제안 의뢰일</div><input class="cfg-input" id="se-reqDate" value="${s.reqDate}"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div class="cfg-field"><div class="cfg-label">추정 예산 (억)</div><input class="cfg-input" id="se-budget" type="number" step="0.1" value="${s.budget}"></div>
+      <div class="cfg-field"><div class="cfg-label">컨텍 경로</div><input class="cfg-input" id="se-contact" value="${s.contact}"></div>
+    </div>
+    <div class="cfg-field"><div class="cfg-label">경쟁사</div><input class="cfg-input" id="se-competitor" value="${s.competitor}"></div>
+    <div class="cfg-field"><div class="cfg-label">제안 TF</div><input class="cfg-input" id="se-tf" value="${s.tf}"></div>
+    <div class="cfg-field" style="margin-bottom:0"><div class="cfg-label">메모</div><textarea class="cfg-textarea" id="se-memo" style="min-height:70px">${s.memo}</textarea></div>
+  `;
+  document.querySelector('#editDrawer .drawer-ft .btn-primary').onclick = saveSalesDrawer;
+  document.getElementById('drawerOv').classList.add('open');
+  document.getElementById('editDrawer').classList.add('open');
+}
+function saveSalesDrawer(){
+  const s=drawerIdx>=0?SALES_DATA[drawerIdx]:{};
+  s.bu=document.getElementById('se-bu').value;
+  s.category=document.getElementById('se-cat').value;
+  s.name=document.getElementById('se-name').value||'이름 없음';
+  s.client=document.getElementById('se-client').value;
+  s.clientContact=document.getElementById('se-contact2').value;
+  s.pm=document.getElementById('se-pm').value;
+  s.salesPm=document.getElementById('se-salesPm').value;
+  s.status=document.getElementById('se-stat').value;
+  s.propStart=document.getElementById('se-propStart').value;
+  s.propEnd=document.getElementById('se-propEnd').value;
+  s.ptDate=document.getElementById('se-ptDate').value;
+  s.reqDate=document.getElementById('se-reqDate').value;
+  s.budget=parseFloat(document.getElementById('se-budget').value)||0;
+  s.contact=document.getElementById('se-contact').value;
+  s.competitor=document.getElementById('se-competitor').value;
+  s.tf=document.getElementById('se-tf').value;
+  s.memo=document.getElementById('se-memo').value;
+  if(drawerIdx<0) SALES_DATA.push(s);
+  renderSalesTable();
+  closeDrawer();
+  document.querySelector('#editDrawer .drawer-ft .btn-primary').onclick = saveDrawer;
+  saveSaleToDb(s).then(()=>showToast('저장되었습니다'));
+}
+// saveDrawer handled per type via onclick override
+
+function saveDrawer(){
+  if(drawerType==='proj'){
+    const p=drawerIdx>=0?PROJ_DATA[drawerIdx]:{};
+    p.name=document.getElementById('de-name').value;
+    p.client=document.getElementById('de-client').value;
+    p.bu=document.getElementById('de-bu').value;
+    p.type=document.getElementById('de-type').value;
+    p.amt=parseFloat(document.getElementById('de-amt').value)||0;
+    p.team=parseInt(document.getElementById('de-team').value)||0;
+    p.margin=parseInt(document.getElementById('de-margin').value)||0;
+    p.pct=parseInt(document.getElementById('de-pct').value)||0;
+    p.due=document.getElementById('de-due').value;
+    p.stat=document.getElementById('de-stat').value;
+    p.pm=document.getElementById('de-pm')?.value||'';
+    p.cStart=document.getElementById('de-cStart')?.value||'';
+    p.cEnd=document.getElementById('de-cEnd')?.value||'';
+    p.planMM=parseFloat(document.getElementById('de-planMM')?.value)||0;
+    p.actualMM=parseFloat(document.getElementById('de-actualMM')?.value)||0;
+    if(drawerIdx<0) PROJ_DATA.push(p);
+    renderProjCards();
+    if(projDone){ projDone=false; }
+    saveProjectToDb(p).then(()=>showToast('저장되었습니다'));
+  } else {
+    const c=drawerIdx>=0?CLIENT_DATA[drawerIdx]:{};
+    c.name=document.getElementById('ce-name').value;
+    c.bu=document.getElementById('ce-bu').value;
+    c.type=document.getElementById('ce-type').value;
+    c.amt=document.getElementById('ce-amt').value;
+    c.contact=document.getElementById('ce-contact').value;
+    c.tel=document.getElementById('ce-tel').value;
+    c.expire=document.getElementById('ce-expire').value;
+    c.memo=document.getElementById('ce-memo').value;
+    c.stat=document.getElementById('ce-stat').value;
+    if(drawerIdx<0) CLIENT_DATA.push(c);
+    renderClientCards();
+    saveClientToDb(c).then(()=>showToast('저장되었습니다'));
+  }
+  closeDrawer();
+}
+
+// ─── TOAST 알림 ───
+function showToast(msg, type='success'){
+  const el=document.createElement('div');
+  el.style.cssText=`position:fixed;bottom:24px;right:24px;background:${type==='error'?'#DC2626':'#111827'};color:#fff;padding:10px 18px;border-radius:8px;font-size:13px;font-weight:600;z-index:99999;box-shadow:0 4px 14px rgba(0,0,0,.3);transition:opacity .3s`;
+  el.textContent=msg;
+  document.body.appendChild(el);
+  setTimeout(()=>{ el.style.opacity='0'; setTimeout(()=>el.remove(),300); },2000);
+}
+
+// ─── MISC ───
+function openEdit(s){document.getElementById('editSub').textContent=s;document.getElementById('editOv').classList.add('open');}
+function closeM(id){document.getElementById(id).classList.remove('open');}
+function toggleNotif(){document.getElementById('notifPanel').classList.toggle('open');}
+function togglePresent(){const on=document.body.classList.toggle('present');document.getElementById('presBtn').textContent=on?'편집 모드':'발표 모드';}
+</script>
+
+<!-- ──────── 편집 드로어 오버레이 ──────── -->
+<div class="drawer-ov" id="drawerOv" onclick="closeDrawer()"></div>
+<div class="edit-drawer" id="editDrawer">
+  <div class="drawer-hd">
+    <div style="display:flex;align-items:center;justify-content:space-between">
+      <div>
+        <div class="drawer-title" id="drawerTitle">편집</div>
+        <div class="drawer-sub" id="drawerSub"></div>
+      </div>
+      <button class="modal-x" onclick="closeDrawer()">✕</button>
+    </div>
+  </div>
+  <div class="drawer-body" id="drawerBody"></div>
+  <div class="drawer-ft">
+    <button class="btn" onclick="closeDrawer()">취소</button>
+    <button class="btn btn-primary" onclick="saveDrawer()">저장</button>
+  </div>
+</div>
+
+
+</div><!-- /app -->
+</body>
+</html>
