@@ -1451,39 +1451,28 @@ body.present .notif-panel { display: none !important; }
       <!-- ③ 멤버 & 권한 -->
       <div class="cfg-sec" id="cfgSec-mem">
         <div class="card" style="margin-bottom:12px">
-          <div class="card-hd"><div class="card-title">멤버 관리</div>
-            <button class="btn btn-primary" onclick="alert('초대 이메일을 발송합니다')">+ 멤버 초대</button>
-          </div>
+          <div class="card-hd"><div class="card-title">멤버 초대</div></div>
           <div class="cfg-field">
             <div class="cfg-label">이메일로 초대</div>
-            <div style="display:flex;gap:8px">
-              <input class="cfg-input" type="email" placeholder="example@d2.co.kr" style="flex:1">
-              <select class="cfg-input" style="width:auto">
-                <option>뷰어</option><option>편집자</option><option>관리자</option>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <input class="cfg-input" type="email" id="inviteEmail" placeholder="example@d2.co.kr" style="flex:1;min-width:180px">
+              <select class="cfg-input" id="inviteRole" style="width:auto">
+                <option value="viewer">뷰어</option>
+                <option value="editor" selected>편집자</option>
+                <option value="admin">관리자</option>
               </select>
-              <button class="btn btn-primary" onclick="alert('초대 발송')">초대</button>
+              <button class="btn btn-primary" id="inviteBtn" onclick="doInviteMember()">초대 발송</button>
             </div>
+            <div id="inviteMsg" style="margin-top:8px;font-size:12px;display:none"></div>
           </div>
-          <div id="memberList">
-            <div class="member-row">
-              <div class="member-avatar">J</div>
-              <div style="flex:1"><div class="member-name">Jake Byun</div><div class="member-role">jake.byun@d2.co.kr · 사업부장</div></div>
-              <select class="role-select"><option selected>관리자</option><option>편집자</option><option>뷰어</option></select>
-              <span class="bx bx-green" style="margin-left:6px">활성</span>
-            </div>
-            <div class="member-row">
-              <div class="member-avatar" style="background:var(--green-tint);color:var(--green)">K</div>
-              <div style="flex:1"><div class="member-name">김○○</div><div class="member-role">kim@d2.co.kr · DX 팀장</div></div>
-              <select class="role-select"><option>관리자</option><option selected>편집자</option><option>뷰어</option></select>
-              <span class="bx bx-green" style="margin-left:6px">활성</span>
-            </div>
-            <div class="member-row">
-              <div class="member-avatar" style="background:var(--amber-tint);color:var(--amber)">L</div>
-              <div style="flex:1"><div class="member-name">이○○</div><div class="member-role">lee@d2.co.kr · AD 팀장</div></div>
-              <select class="role-select"><option>관리자</option><option selected>편집자</option><option>뷰어</option></select>
-              <span class="bx bx-green" style="margin-left:6px">활성</span>
-            </div>
-
+        </div>
+        <div class="card" style="margin-bottom:12px">
+          <div class="card-hd">
+            <div class="card-title">팀원 목록</div>
+            <button class="btn" onclick="loadMembers()" style="font-size:12px">새로고침</button>
+          </div>
+          <div id="memberList" style="padding:4px 0">
+            <div style="color:var(--ink4);font-size:13px;padding:12px 0">로딩 중...</div>
           </div>
         </div>
         <div class="card">
@@ -1750,6 +1739,80 @@ async function doLogout(){
 }
 
 // ─── 데이터 로드 ───
+// ─── 팀원 관리 ───
+async function loadMembers(){
+  const listEl = document.getElementById('memberList');
+  if(!listEl) return;
+  listEl.innerHTML = '<div style="color:var(--ink4);font-size:13px;padding:12px 0">로딩 중...</div>';
+  const {data, error} = await SB.from('profiles').select('*').order('created_at');
+  if(error){ listEl.innerHTML = '<div style="color:#DC2626;font-size:13px;padding:12px 0">불러오기 실패: '+error.message+'</div>'; return; }
+  if(!data||data.length===0){ listEl.innerHTML = '<div style="color:var(--ink4);font-size:13px;padding:12px 0">팀원 없음</div>'; return; }
+  const roleLabel = {admin:'관리자', editor:'편집자', viewer:'뷰어'};
+  const roleColor = {admin:'bx-red', editor:'bx-blue', viewer:'bx-gray'};
+  const colors = ['var(--blue-tint)','var(--green-tint)','var(--amber-tint)'];
+  const tcolors = ['var(--blue)','var(--green)','var(--amber)'];
+  listEl.innerHTML = data.map((m,i) => {
+    const initial = (m.name||m.email||'?')[0].toUpperCase();
+    const isMe = m.id === currentUser?.id;
+    const ci = i % 3;
+    const canChange = currentProfile?.role === 'admin' && !isMe;
+    return `<div class="member-row">
+      <div class="member-avatar" style="background:${colors[ci]};color:${tcolors[ci]}">${initial}</div>
+      <div style="flex:1">
+        <div class="member-name">${m.name||'(이름 없음)'}${isMe?' <span style="font-size:11px;color:var(--ink4)">(나)</span>':''}</div>
+        <div class="member-role">${m.email||''} · ${m.bu||'전사'}</div>
+      </div>
+      ${canChange
+        ? `<select class="cfg-input" style="width:auto;font-size:12px;padding:3px 6px" onchange="changeMemberRole('${m.id}',this.value)">
+            <option value="viewer"${m.role==='viewer'?' selected':''}>뷰어</option>
+            <option value="editor"${m.role==='editor'?' selected':''}>편집자</option>
+            <option value="admin"${m.role==='admin'?' selected':''}>관리자</option>
+          </select>`
+        : `<span class="bx ${roleColor[m.role]||'bx-gray'}" style="margin-left:6px">${roleLabel[m.role]||m.role}</span>`
+      }
+    </div>`;
+  }).join('');
+}
+
+async function doInviteMember(){
+  const email = document.getElementById('inviteEmail').value.trim();
+  const role  = document.getElementById('inviteRole').value;
+  const msgEl = document.getElementById('inviteMsg');
+  const btn   = document.getElementById('inviteBtn');
+  if(!email){ msgEl.style.display='block'; msgEl.style.color='#DC2626'; msgEl.textContent='이메일을 입력하세요.'; return; }
+  btn.textContent='발송 중…'; btn.disabled=true;
+  msgEl.style.display='none';
+  // Supabase Admin API는 클라이언트에서 직접 호출 불가 → signUp으로 계정 생성 후 role 업데이트
+  // 실제 초대 메일은 Supabase 대시보드 Auth 설정에서 활성화 필요
+  const {data, error} = await SB.auth.signUp({
+    email,
+    password: Math.random().toString(36).slice(-10) + 'A1!', // 임시 비밀번호
+    options: { data: { role } }
+  });
+  btn.textContent='초대 발송'; btn.disabled=false;
+  if(error){
+    msgEl.style.display='block'; msgEl.style.color='#DC2626';
+    msgEl.textContent = error.message.includes('already registered')
+      ? '이미 가입된 이메일입니다. Supabase 대시보드에서 직접 초대하세요.'
+      : '오류: ' + error.message;
+    return;
+  }
+  // 생성된 유저 프로필에 role 업데이트
+  if(data.user){
+    await SB.from('profiles').upsert({id:data.user.id, email, role, bu:'전사', name:email.split('@')[0]},{onConflict:'id'});
+  }
+  msgEl.style.display='block'; msgEl.style.color='#16A34A';
+  msgEl.textContent = `✅ ${email} 초대 완료! 상대방이 이메일을 확인 후 비밀번호를 재설정하면 접속 가능합니다.`;
+  document.getElementById('inviteEmail').value='';
+  setTimeout(()=>loadMembers(), 1000);
+}
+
+async function changeMemberRole(userId, newRole){
+  const {error} = await SB.from('profiles').update({role:newRole}).eq('id',userId);
+  if(error){ showToast('권한 변경 실패: '+error.message,'error'); return; }
+  showToast('권한이 변경되었습니다');
+}
+
 async function loadAllData(){
   await Promise.all([loadProjects(), loadSales(), loadClients(), loadIntegrations()]);
 }
@@ -2432,6 +2495,7 @@ function showCfg(sec, btn){
   if(sec==='sys'){ renderErpList(); renderGsList(); }
   if(sec==='pcard') renderProjCards();
   if(sec==='ccard') renderClientCards();
+  if(sec==='mem') loadMembers();
 }
 // ─── ERP / GS 연동 목록 ───
 let ERP_LIST = [
