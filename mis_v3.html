@@ -548,41 +548,11 @@ body.present .notif-panel { display: none !important; }
 <body id="body">
 
 <!-- ──────────── 로그인 화면 ──────────── -->
-<div id="loginScreen" style="position:fixed;inset:0;background:#F9FAFB;z-index:9999;display:flex;align-items:center;justify-content:center">
-  <div style="width:380px">
-    <div style="text-align:center;margin-bottom:32px">
-      <div style="font-size:11px;font-weight:700;color:#3B82F6;letter-spacing:.15em;text-transform:uppercase;margin-bottom:6px">digitalDigm</div>
-      <div style="font-size:26px;font-weight:900;color:#111827;letter-spacing:-.03em">MIS Dashboard</div>
-      <div style="font-size:13px;color:#9CA3AF;margin-top:6px">사업부 통합 관리 시스템</div>
-    </div>
-    <div style="background:#fff;border:1px solid #E5E7EB;border-radius:12px;padding:28px">
-      <div style="margin-bottom:14px">
-        <div style="font-size:12px;font-weight:600;color:#6B7280;margin-bottom:5px">이메일</div>
-        <input id="li-email" type="email" placeholder="example@d2.co.kr"
-          style="width:100%;padding:9px 12px;border:1px solid #D1D5DB;border-radius:7px;font-size:13px;color:#111827;box-sizing:border-box;outline:none"
-          onkeydown="if(event.key==='Enter')document.getElementById('li-pw').focus()">
-      </div>
-      <div style="margin-bottom:18px">
-        <div style="font-size:12px;font-weight:600;color:#6B7280;margin-bottom:5px">비밀번호</div>
-        <input id="li-pw" type="password" placeholder="••••••••"
-          style="width:100%;padding:9px 12px;border:1px solid #D1D5DB;border-radius:7px;font-size:13px;color:#111827;box-sizing:border-box;outline:none"
-          onkeydown="if(event.key==='Enter')doLogin()">
-      </div>
-      <div id="li-err" style="display:none;color:#DC2626;font-size:12px;margin-bottom:12px;padding:8px 10px;background:#FEF2F2;border-radius:6px"></div>
-      <button id="li-btn" onclick="doLogin()"
-        style="width:100%;padding:10px;background:#3B82F6;color:#fff;font-size:14px;font-weight:700;border:none;border-radius:8px;cursor:pointer">
-        로그인
-      </button>
-    </div>
-    <div style="text-align:center;margin-top:16px;font-size:12px;color:#9CA3AF">
-      계정 문의: jake.byun@d2.co.kr
-    </div>
-  </div>
-</div>
+<div id="loginScreen" style="display:none"></div>
 
 
 <!-- ──────────────────── SIDEBAR ──────────────────── -->
-<div id="app" style="display:none;width:100%;height:100%;flex:1;overflow:hidden"><aside class="sidebar">
+<div id="app" style="display:flex;width:100%;height:100%;flex:1;overflow:hidden"><aside class="sidebar">
   <div class="logo-area">
     <div class="logo-mark">
       <div class="logo-sq">d2</div>
@@ -635,10 +605,10 @@ body.present .notif-panel { display: none !important; }
       <button class="btn" onclick="togglePresent()" id="presBtn">발표 모드</button>
       <div class="notif-btn" onclick="toggleNotif()"></div>
       <div class="role-sel">
-        <div class="role-av" id="userAv">?</div>
+        <div class="role-av" id="userAv">d2</div>
         <div style="display:flex;flex-direction:column;gap:1px">
-          <span id="userName" style="font-size:12px;font-weight:700;color:var(--ink1)">로그인 중...</span>
-          <button onclick="doLogout()" style="font-size:11px;color:var(--ink4);background:none;border:none;cursor:pointer;text-align:left;padding:0">로그아웃</button>
+          <span id="userName" style="font-size:12px;font-weight:700;color:var(--ink1)">digitalDigm</span>
+          <span id="userInfoLine" style="font-size:11px;color:var(--ink4)">사업부 MIS</span>
         </div>
       </div>
     </div>
@@ -1691,52 +1661,14 @@ const SB = createClient('https://wuqffbtuftuyynntsxrw.supabase.co', 'eyJhbGciOiJ
 let currentUser = null, currentProfile = null;
 
 async function initApp(){
-  const {data:{session}} = await SB.auth.getSession();
-  if(!session){ showLogin(); return; }
-  await onSignedIn(session.user);
-}
-async function onSignedIn(user){
-  currentUser = user;
-  const {data:prof} = await SB.from('profiles').select('*').eq('id',user.id).single();
-  currentProfile = prof;
-  const name = prof?.name || user.email.split('@')[0];
-  document.getElementById('userName').textContent = name;
-  document.getElementById('userAv').textContent = name[0].toUpperCase();
-  document.getElementById('userInfoLine').textContent = (prof?.role==='admin'?'관리자':'편집자') + ' · ' + (prof?.bu||'전사');
   document.getElementById('dbSyncLine').textContent = '● Supabase 연결됨';
-  hideLogin();
   await loadAllData();
   sw('sm');
 }
-function showLogin(){
-  document.getElementById('loginScreen').style.display='flex';
-  document.getElementById('app').style.display='none';
-}
-function hideLogin(){
-  document.getElementById('loginScreen').style.display='none';
-  document.getElementById('app').style.display='flex';
-}
-async function doLogin(){
-  const email = document.getElementById('li-email').value.trim();
-  const pw = document.getElementById('li-pw').value;
-  const errEl = document.getElementById('li-err');
-  const btn = document.getElementById('li-btn');
-  errEl.style.display='none';
-  btn.textContent='로그인 중…'; btn.disabled=true;
-  const {error} = await SB.auth.signInWithPassword({email, password:pw});
-  btn.textContent='로그인'; btn.disabled=false;
-  if(error){
-    errEl.textContent = error.message.includes('Invalid')?'이메일 또는 비밀번호가 올바르지 않습니다':error.message;
-    errEl.style.display='block'; return;
-  }
-  const {data:{session}} = await SB.auth.getSession();
-  await onSignedIn(session.user);
-}
-async function doLogout(){
-  await SB.auth.signOut();
-  currentUser=null; currentProfile=null;
-  showLogin();
-}
+function showLogin(){ /* 로그인 불필요 */ }
+function hideLogin(){ /* 로그인 불필요 */ }
+async function doLogin(){ /* 로그인 불필요 */ }
+async function doLogout(){ /* 로그아웃 불필요 */ }
 
 // ─── 데이터 로드 ───
 // ─── 팀원 관리 ───
