@@ -548,6 +548,9 @@ body.present .notif-panel { display: none !important; }
   box-shadow:0 24px 64px rgba(0,0,0,.3);
   transform:translateY(16px) scale(.96);transition:transform .22s cubic-bezier(.4,0,.2,1);
 }
+.hist-modal-scroll {
+  flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;
+}
 .hist-bg.open .hist-modal { transform:translateY(0) scale(1); }
 .hist-modal-hd {
   display:flex;align-items:center;justify-content:space-between;
@@ -725,7 +728,7 @@ body.present .notif-panel { display: none !important; }
           <div class="ch" style="height:170px"><canvas id="cSmRev"></canvas></div>
         </div>
         <div class="card">
-          <div class="card-hd"><div class="card-title">사업부별 매출 비중</div></div>
+          <div class="card-hd"><div class="card-title">BU별 매출 비중</div><span class="bx bx-gray" style="font-size:10px">SM 제외</span></div>
           <div class="ch" style="height:170px"><canvas id="cSmPie"></canvas></div>
         </div>
       </div>
@@ -2023,7 +2026,13 @@ function toggleCostView(){
 }
 function toggleBuView(){
   buViewOn=!buViewOn;
-  document.getElementById('buToggleBtn').textContent=buViewOn?'합산 보기':'사업부별 보기';
+  if(buViewOn && curHistKey!=='매출'){
+    // 사업부별은 전사 합산 매출 키에서만 동작 — 자동 전환
+    curHistKey='매출';
+    document.getElementById('histTitle').textContent='전사 매출 — 사업부별 비교';
+    document.getElementById('buToggleBtn').style.display='';
+  }
+  document.getElementById('buToggleBtn').textContent=buViewOn?'합산 보기':'사업부별';
   document.getElementById('buToggleBtn').classList.toggle('btn-primary',buViewOn);
   if(curBtn) setH(curFilter, curBtn);
 }
@@ -2078,7 +2087,7 @@ new Chart(document.getElementById('cSmRev').getContext('2d'),{
 });
 new Chart(document.getElementById('cSmPie').getContext('2d'),{
   type:'doughnut',
-  data:{labels:['DX','AD','SM','대관'],datasets:[{data:[44,28,19,9],backgroundColor:[C_BLUE,'#374151',C_GRAY,'#111827'],borderWidth:0,hoverOffset:4}]},
+  data:{labels:['DX','AD','대관','기타(직영)'],datasets:[{data:[44,28,9,19],backgroundColor:[C_BLUE,'#374151','#111827',C_GRAY],borderWidth:0,hoverOffset:4}]},
   options:{responsive:true,maintainAspectRatio:false,cutout:'64%',plugins:{legend:{position:'bottom',labels:{font:{size:12,family:'Inter'},color:'#374151'}}}}
 });
 // cSmProj: replaced with DX/AD text breakdown in HTML
@@ -2182,8 +2191,11 @@ const HIST_UNITS={'매출':'억원','DX매출':'억원','AD매출':'억원','PEZ
 
 function openHist(key,title){
   curHistKey=key; buViewOn=false;
-  document.getElementById('buToggleBtn').textContent='사업부별';
-  document.getElementById('buToggleBtn').classList.remove('btn-primary');
+  const buBtn=document.getElementById('buToggleBtn');
+  buBtn.textContent='사업부별';
+  buBtn.classList.remove('btn-primary');
+  // 사업부별 버튼은 전사 합산 매출(key==='매출')일 때만 의미 있음
+  buBtn.style.display=(key==='매출')?'':'none';
   document.getElementById('histTitle').textContent=title;
   document.getElementById('histBg').classList.add('open');
   const btn=document.querySelectorAll('#tabRow .hist-tab-pill')[1];
@@ -2281,15 +2293,21 @@ function setH(filter,btn){
     const yr=(filter==='2026'||filter==='2yr')?4:4;
     buKeys.forEach((k,i)=>{
       const data=BU_HIST_YRS[k][yr];
+      const h1=data.reduce((s,v)=>s+(v||0),0);
       const row=document.createElement('tr');
-      row.innerHTML=`<td class="td-hi" style="color:${buColors[i]}">${buLabels[i]}</td>`+data.map(v=>`<td class="td-num">${v.toFixed(2)}</td>`).join('');
+      row.innerHTML=`<td class="td-hi" style="color:${buColors[i]}">${buLabels[i]}</td>`
+        +data.map(v=>`<td class="td-num">${v.toFixed(2)}</td>`).join('')
+        +`<td class="td-num" style="font-weight:700;color:var(--ink1)">${h1.toFixed(2)}</td>`;
       tbl.appendChild(row);
     });
     // 합산 행
     const totals=MONTHS.map((_,mi)=>buKeys.reduce((s,k)=>s+(BU_HIST_YRS[k][yr][mi]||0),0));
+    const grandTotal=totals.reduce((s,v)=>s+v,0);
     const totRow=document.createElement('tr');
     totRow.style.borderTop='2px solid var(--ink1)';
-    totRow.innerHTML=`<td style="font-weight:700">합계</td>`+totals.map(v=>`<td class="td-num" style="color:var(--blue)">${v.toFixed(2)}</td>`).join('');
+    totRow.innerHTML=`<td style="font-weight:700">합계</td>`
+      +totals.map(v=>`<td class="td-num" style="color:var(--blue)">${v.toFixed(2)}</td>`).join('')
+      +`<td class="td-num" style="color:var(--blue);font-weight:700">${grandTotal.toFixed(2)}</td>`;
     tbl.appendChild(totRow);
     document.getElementById('buTable').style.display='block';
     document.getElementById('histNumTable').style.display='none';
@@ -3260,17 +3278,19 @@ function togglePresent(){const on=document.body.classList.toggle('present');docu
       <button class="hist-tab-pill active" onclick="setH('2yr',this)">2개년 비교</button>
       <button class="hist-tab-pill" onclick="setH('5yr',this)">5개년 추이</button>
     </div>
-    <div class="hist-canvas-wrap">
-      <canvas id="cHist"></canvas>
+    <div class="hist-modal-scroll">
+      <div class="hist-canvas-wrap">
+        <canvas id="cHist"></canvas>
+      </div>
+      <div id="histNumTable" class="hist-num-tbl"></div>
+      <div id="buTable" class="bu-hist-tbl" style="display:none">
+        <table>
+          <thead><tr><th>BU</th><th>1월</th><th>2월</th><th>3월</th><th>4월</th><th>5월</th><th>6월</th><th>H1합계</th></tr></thead>
+          <tbody id="buHistBody"></tbody>
+        </table>
+      </div>
+      <div id="histInsight" class="hist-insight-box"></div>
     </div>
-    <div id="histNumTable" class="hist-num-tbl"></div>
-    <div id="buTable" class="bu-hist-tbl" style="display:none">
-      <table>
-        <thead><tr><th>BU</th><th>1월</th><th>2월</th><th>3월</th><th>4월</th><th>5월</th><th>6월</th><th>H1합계</th></tr></thead>
-        <tbody id="buHistBody"></tbody>
-      </table>
-    </div>
-    <div id="histInsight" class="hist-insight-box"></div>
   </div>
 </div>
 
