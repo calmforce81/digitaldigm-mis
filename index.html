@@ -707,7 +707,7 @@ body.present .notif-panel { display: none !important; }
       <div class="sh"><span class="sh-title">핵심 지표 — 2026년 6월</span><span class="sh-action" onclick="openHist('매출','전사 5개년 추이')">추이 분석</span></div>
       <div class="kpi-grid g5" style="margin-bottom:16px">
         <div class="kpi accent"><div class="kpi-lbl">6월 매출 — 전사 합산</div><div class="kpi-val">6.8<span class="kpi-unit">억</span></div><div class="kpi-chg up">+8.3% vs 전월</div><button class="hist-btn" onclick="openHist('매출','전사 월별 매출 5개년 추이')">📊 과거 데이터 보기</button></div>
-        <div class="kpi"><div class="kpi-lbl">수주 잔고 — 전사 합산</div><div class="kpi-val">32.4<span class="kpi-unit">억</span></div><div class="kpi-chg up">신규 수주 +2.1억</div><button class="hist-btn" onclick="openHist('수주잔고','수주잔고 5개년 추이')">📊 과거 데이터 보기</button></div>
+        <div class="kpi"><div class="kpi-lbl">H1 손익 — 전사 합산</div><div class="kpi-val" style="color:var(--green)">+0.70<span class="kpi-unit">억</span></div><div class="kpi-chg up">2025 대비 +6.26억 개선</div><button class="hist-btn" onclick="openHist('수익','전사 손익 5개년 추이')">📊 과거 데이터 보기</button></div>
         <div class="kpi warn"><div class="kpi-lbl">전사 가동율 — 합산</div><div class="kpi-val">76<span class="kpi-unit">%</span></div><div class="kpi-chg flat">목표 80% 대비 -4%p</div><button class="hist-btn" onclick="openHist('가동율','전사 가동율 5개년 추이')">📊 과거 데이터 보기</button></div>
         <div class="kpi danger"><div class="kpi-lbl">미수금 — 전사 합산</div><div class="kpi-val">3.2<span class="kpi-unit">억</span></div><div class="kpi-chg down">90일 초과 0.8억</div><button class="hist-btn" onclick="openHist('미수금','미수금 5개년 추이')">📊 과거 데이터 보기</button></div>
         <div class="kpi"><div class="kpi-lbl">전체 인원 — 합산</div><div class="kpi-val">61<span class="kpi-unit">명</span></div><div class="kpi-chg flat">정규 57 · 계약 4</div><button class="hist-btn" onclick="openHist('인원','전사 인원 5개년 추이')">📊 과거 데이터 보기</button></div>
@@ -1932,7 +1932,13 @@ const MONTHS=['1월','2월','3월','4월','5월','6월'];
 const YRS=['2022','2023','2024','2025','2026'];
 const HIST={
   매출:{yrs:[[6.44,6.97,7.58,4.60,8.07,10.22],[5.34,6.67,6.88,7.28,6.99,6.94],[6.18,6.52,8.33,5.63,5.88,11.73],[5.23,6.70,8.18,7.26,6.85,7.23],[5.2,5.8,6.0,5.9,6.3,6.8]],insight:'전사 순매출(H1 기준). 2024년 6월 11.7억은 SKT 대형 집행 피크. 2022 H1 43.9억 → 2025 H1 41.5억으로 소폭 감소. 2026 H1 현재 추정치 기준.'},
-  수주잔고:{yrs:[[18,19,20,21,22,24],[22,24,25,26,27,28],[25,27,28,29,30,31],[28,29,30,31,32,33],[30,31,32,31,32,32.4]],insight:'수주잔고 5개년 지속 증가. 2026년 32억대 안정 유지. 하반기 신규 수주 합산 시 35억+ 가능성.'},
+  수익:{yrs:[
+    [0.28, 0.21, 0.44,-0.12, 0.38, 0.32],  // 2022 H1 +1.51억
+    [0.05, 0.04, 0.12,-0.25, 0.06,-0.22],   // 2023 H1 -0.20억
+    [-0.10,-0.18, 0.08,-0.32, 0.14,-0.22],  // 2024 H1 -0.60억
+    [-0.82,-0.95,-0.48,-1.18,-1.05,-1.08],  // 2025 H1 -5.56억
+    [0.15,-0.12, 0.35, 0.18,-0.08, 0.22]   // 2026 H1 +0.70억
+  ],insight:'전사 월별 손익(H1 기준). 2022 H1 +1.5억 흑자에서 2025 H1 -5.6억으로 급락. 2026 H1 +0.7억 흑자 전환 추세. DX 구조 개선(H1 누적 +1.58억) 및 고정비 절감 효과. AD 구조적 적자 해소가 연간 흑자 전환의 핵심 과제.'},
   가동율:{yrs:[[72,74,75,73,76,78],[75,76,77,75,78,79],[77,78,79,77,80,81],[79,80,80,79,81,82],[76,77,78,76,75,76]],insight:'가동율 2022~2025 꾸준 상승. 2026년 76%는 AD 유휴 인력 영향. 80% 달성을 위해 프로젝트 배분 최적화 필요.'},
   미수금:{yrs:[[1.2,1.0,0.8,1.1,0.9,1.0],[1.1,1.0,0.9,1.2,1.0,1.1],[1.3,1.2,1.0,1.3,1.1,1.2],[2.0,1.8,1.6,2.1,1.9,2.0],[3.0,2.8,2.6,3.1,3.0,3.2]],insight:'미수금 2025~2026 증가 추세. SKT·CJ프레시웨이 반복 지연 패턴. 90일 초과분 0.8억 즉시 대응 필요.'},
   인원:{yrs:[[102,100,99,99,97,97],[94,92,94,95,100,101],[96,96,96,96,96,96],[97,96,97,96,95,94],[61,61,62,61,61,61]],insight:'2022~2025 전사 인원 94~102명(외주 포함 FTE 기준). 2026년 61명은 사내 직원 기준으로 측정 방식 변경. 2024년 구조조정 이후 슬림화 진행.'},
@@ -2187,7 +2193,7 @@ qData.forEach(q=>{
 
 // ─── HIST MODAL ───
 let hChart=null, curHistKey='매출';
-const HIST_UNITS={'매출':'억원','DX매출':'억원','AD매출':'억원','PEZ매출':'억원','수주잔고':'억원','미수금':'억원','외주비':'억원','가동율':'%','AD가동율':'%','인원':'명','MM단가':'만원'};
+const HIST_UNITS={'매출':'억원','DX매출':'억원','AD매출':'억원','PEZ매출':'억원','수익':'억원','미수금':'억원','외주비':'억원','가동율':'%','AD가동율':'%','인원':'명','MM단가':'만원'};
 
 function openHist(key,title){
   curHistKey=key; buViewOn=false;
@@ -2212,21 +2218,22 @@ function renderNumTable(filter){
   const isAmt=(unit==='억원');
   const isNum=(unit==='만원'||unit==='명'||unit==='%');
   const fmt=v=>isAmt?Number(v).toFixed(2):isNum?Number(v).toFixed(0):Number(v).toFixed(2);
+  // 포인트-인-타임 지표: 월 합산이 의미 없어 H1합계 열 생략
+  const isPoint=['인원','가동율','AD가동율','MM단가'].includes(curHistKey);
   const tbl=document.getElementById('histNumTable');
   if(filter==='5yr'){
-    let h=`<table><thead><tr><th>연도</th>${MONTHS.map(m=>`<th>${m}</th>`).join('')}<th style="color:var(--ink1)">H1합계</th><th>YoY</th></tr></thead><tbody>`;
+    let h=`<table><thead><tr><th>연도</th>${MONTHS.map(m=>`<th>${m}</th>`).join('')}${isPoint?'':'<th style="color:var(--ink1)">H1합계</th><th>YoY</th>'}</tr></thead><tbody>`;
     YRS.forEach((yr,i)=>{
       const data=d.yrs[i]||[];
       const h1=data.reduce((s,v)=>s+(v||0),0);
       const prev=i>0?(d.yrs[i-1]||[]).reduce((s,v)=>s+(v||0),0):null;
-      const yoy=prev!=null?((h1-prev)/Math.max(prev,0.01)*100).toFixed(2):null;
+      const yoy=prev!=null?((h1-prev)/Math.max(Math.abs(prev),0.01)*100).toFixed(2):null;
       const yoyHtml=yoy!=null?`<span class="${h1>=prev?'hn-up':'hn-dn'}">${h1>=prev?'+':''}${yoy}%</span>`:'-';
       const isCur=i===4;
       h+=`<tr${isCur?' class="hn-cur"':''}>
         <td>${yr}${isCur?'<span style="font-size:9px;color:var(--ink4);margin-left:3px">추정</span>':''}</td>
         ${data.map(v=>`<td>${fmt(v)}</td>`).join('')}
-        <td class="hn-total">${fmt(h1)}${unit}</td>
-        <td>${yoyHtml}</td>
+        ${isPoint?'':`<td class="hn-total">${fmt(h1)}${unit}</td><td>${yoyHtml}</td>`}
       </tr>`;
     });
     h+=`</tbody></table>`;
@@ -2242,20 +2249,24 @@ function renderNumTable(filter){
         <td><span class="${diff>=0?'hn-up':'hn-dn'}">${diff>=0?'+':''}${fmt(diff)}${unit}</span></td>
       </tr>`;
     });
-    const s25=d25.reduce((s,v)=>s+(v||0),0), s26=d26.reduce((s,v)=>s+(v||0),0), dt=s26-s25;
-    h+=`<tr style="border-top:2px solid var(--border)">
-      <td><strong>H1 합계</strong></td>
-      <td><strong>${fmt(s25)}${unit}</strong></td>
-      <td style="color:var(--blue);font-weight:800">${fmt(s26)}${unit}</td>
-      <td><strong><span class="${dt>=0?'hn-up':'hn-dn'}">${dt>=0?'+':''}${fmt(dt)}${unit}</span></strong></td>
-    </tr></tbody></table>`;
+    if(!isPoint){
+      const s25=d25.reduce((s,v)=>s+(v||0),0), s26=d26.reduce((s,v)=>s+(v||0),0), dt=s26-s25;
+      h+=`<tr style="border-top:2px solid var(--border)">
+        <td><strong>H1 합계</strong></td>
+        <td><strong>${fmt(s25)}${unit}</strong></td>
+        <td style="color:var(--blue);font-weight:800">${fmt(s26)}${unit}</td>
+        <td><strong><span class="${dt>=0?'hn-up':'hn-dn'}">${dt>=0?'+':''}${fmt(dt)}${unit}</span></strong></td>
+      </tr>`;
+    }
+    h+=`</tbody></table>`;
     tbl.innerHTML=h;
   } else {
     const data=d.yrs[4]||[];
     let cum=0;
-    let h=`<table><thead><tr><th>2026</th>${MONTHS.map(m=>`<th>${m}</th>`).join('')}<th>H1 누계</th></tr></thead><tbody><tr><td>실적/추정</td>`;
+    let h=`<table><thead><tr><th>2026</th>${MONTHS.map(m=>`<th>${m}</th>`).join('')}${isPoint?'':'<th>H1 누계</th>'}</tr></thead><tbody><tr><td>실적/추정</td>`;
     data.forEach(v=>{cum+=(v||0); h+=`<td style="color:var(--blue);font-weight:600">${fmt(v)}${unit}</td>`;});
-    h+=`<td class="hn-total" style="color:var(--blue)">${fmt(cum)}${unit}</td></tr></tbody></table>`;
+    if(!isPoint) h+=`<td class="hn-total" style="color:var(--blue)">${fmt(cum)}${unit}</td>`;
+    h+=`</tr></tbody></table>`;
     tbl.innerHTML=h;
   }
   tbl.style.display='block';
