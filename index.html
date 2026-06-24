@@ -676,6 +676,7 @@ body.present .notif-panel { display: none !important; }
       <div class="topbar-meta" id="topMeta">2026년 6월 기준 · 전 사업부 통합</div>
     </div>
     <div class="topbar-actions">
+      <span id="syncBadge" style="font-size:10px;color:var(--ink4);padding:3px 8px;border:1px solid var(--border);border-radius:10px;cursor:pointer" onclick="syncFromSupabase()" title="클릭 시 수동 동기화">⟳ 동기화 중...</span>
       <button class="btn" onclick="openEdit('데이터 편집')">편집</button>
       <button class="btn" onclick="togglePresent()" id="presBtn">발표 모드</button>
       <div class="notif-btn" onclick="toggleNotif()"></div>
@@ -707,7 +708,7 @@ body.present .notif-panel { display: none !important; }
       <!-- KPI -->
       <div class="sh"><span class="sh-title">핵심 지표 — 2026년 6월</span><span class="sh-action" onclick="openHist('매출','전사 5개년 추이')">추이 분석</span></div>
       <div class="kpi-grid g5" style="margin-bottom:16px">
-        <div class="kpi accent"><div class="kpi-lbl">6월 매출 — 전사 합산</div><div class="kpi-val">9.85<span class="kpi-unit">억</span></div><div class="kpi-chg up">+37.0% vs 전월</div><button class="hist-btn" onclick="openHist('매출','전사 월별 매출 5개년 추이')">📊 과거 데이터 보기</button></div>
+        <div class="kpi accent"><div class="kpi-lbl">6월 매출 — 전사 합산</div><div class="kpi-val" id="kpi-sm-jun-val">9.85<span class="kpi-unit">억</span></div><div class="kpi-chg up" id="kpi-sm-jun-chg">+37.0% vs 전월</div><button class="hist-btn" onclick="openHist('매출','전사 월별 매출 5개년 추이')">📊 과거 데이터 보기</button></div>
         <div class="kpi"><div class="kpi-lbl">H1 손익 — 전사 합산</div><div class="kpi-val" style="color:var(--green)">+0.70<span class="kpi-unit">억</span></div><div class="kpi-chg up">2025 대비 +6.26억 개선</div><button class="hist-btn" onclick="openHist('수익','전사 손익 5개년 추이')">📊 과거 데이터 보기</button></div>
         <div class="kpi warn"><div class="kpi-lbl">전사 가동율 — 합산</div><div class="kpi-val">76<span class="kpi-unit">%</span></div><div class="kpi-chg flat">목표 80% 대비 -4%p</div><button class="hist-btn" onclick="openHist('가동율','전사 가동율 5개년 추이')">📊 과거 데이터 보기</button></div>
         <div class="kpi danger"><div class="kpi-lbl">미수금 — 전사 합산</div><div class="kpi-val">3.2<span class="kpi-unit">억</span></div><div class="kpi-chg down">90일 초과 0.8억</div><button class="hist-btn" onclick="openHist('미수금','미수금 5개년 추이')">📊 과거 데이터 보기</button></div>
@@ -882,10 +883,10 @@ body.present .notif-panel { display: none !important; }
     <div class="view-pane" id="view-dx">
       <div class="sh"><span class="sh-title">DX 사업부 — 2026 상반기</span><span class="sh-action" onclick="openHist('DX매출','DX 매출 추이')">5개년 추이</span></div>
       <div class="kpi-grid g6" style="margin-bottom:16px">
-        <div class="kpi accent"><div class="kpi-lbl">6월 매출</div><div class="kpi-val">6.05<span class="kpi-unit">억</span></div><div class="kpi-chg up">+64.0% vs 5월</div><button class="hist-btn" onclick="openHist('DX매출','DX 매출 5개년 추이')">📊 과거 데이터 보기</button></div>
-        <div class="kpi accent"><div class="kpi-lbl">상반기 누적</div><div class="kpi-val">31.80<span class="kpi-unit">억</span></div><div class="kpi-chg up">목표 31.84억 대비</div><button class="hist-btn" onclick="openHist('DX매출','DX 매출 5개년 추이')">📊 과거 데이터 보기</button></div>
-        <div class="kpi accent"><div class="kpi-lbl">달성률</div><div class="kpi-val" style="color:var(--green)">99.9<span class="kpi-unit">%</span></div><div class="kpi-chg up">목표 초과 달성</div></div>
-        <div class="kpi accent"><div class="kpi-lbl">YoY</div><div class="kpi-val" style="color:var(--green)">+20.7<span class="kpi-unit">%</span></div><div class="kpi-chg up">전년 26.35억 대비</div></div>
+        <div class="kpi accent"><div class="kpi-lbl">6월 매출</div><div class="kpi-val" id="kpi-dx-jun-val">6.05<span class="kpi-unit">억</span></div><div class="kpi-chg up" id="kpi-dx-jun-chg">+64.0% vs 5월</div><button class="hist-btn" onclick="openHist('DX매출','DX 매출 5개년 추이')">📊 과거 데이터 보기</button></div>
+        <div class="kpi accent"><div class="kpi-lbl">상반기 누적</div><div class="kpi-val" id="kpi-dx-h1-val">31.80<span class="kpi-unit">억</span></div><div class="kpi-chg up" id="kpi-dx-h1-chg">목표 31.84억 대비</div><button class="hist-btn" onclick="openHist('DX매출','DX 매출 5개년 추이')">📊 과거 데이터 보기</button></div>
+        <div class="kpi accent"><div class="kpi-lbl">달성률</div><div class="kpi-val" id="kpi-dx-ach-val" style="color:var(--green)">99.9<span class="kpi-unit">%</span></div><div class="kpi-chg up" id="kpi-dx-ach-chg">목표 초과 달성</div></div>
+        <div class="kpi accent"><div class="kpi-lbl">YoY</div><div class="kpi-val" id="kpi-dx-yoy-val" style="color:var(--green)">+20.7<span class="kpi-unit">%</span></div><div class="kpi-chg up" id="kpi-dx-yoy-chg">전년 26.35억 대비</div></div>
         <div class="kpi"><div class="kpi-lbl">누적 손익</div><div class="kpi-val" style="color:var(--green)">+1.58<span class="kpi-unit">억</span></div><div class="kpi-chg up">흑자 유지</div></div>
         <div class="kpi"><div class="kpi-lbl">외주비 누적</div><div class="kpi-val">3.43<span class="kpi-unit">억</span></div><div class="kpi-chg flat">연 예산 44%</div><button class="hist-btn" onclick="openHist('외주비','외주비 5개년 추이')">📊 과거 데이터 보기</button></div>
       </div>
@@ -2063,7 +2064,8 @@ const smRevTotalsPlugin = {
     ctx.restore();
   }
 };
-new Chart(document.getElementById('cSmRev').getContext('2d'),{
+const MIS_CHARTS = {}; // 동적 업데이트용 차트 레퍼런스
+MIS_CHARTS.smRev = new Chart(document.getElementById('cSmRev').getContext('2d'),{
   type:'bar',
   plugins:[smRevTotalsPlugin],
   data:{labels:MONTHS,datasets:[
@@ -2092,7 +2094,7 @@ new Chart(document.getElementById('cSmRev').getContext('2d'),{
     scales:{...BASE_OPT.scales,x:{...BASE_OPT.scales.x,stacked:true},y:{...BASE_OPT.scales.y,stacked:true,ticks:{...BASE_OPT.scales.y.ticks,callback:v=>v+'억'}}}
   }
 });
-new Chart(document.getElementById('cSmPie').getContext('2d'),{
+MIS_CHARTS.smPie = new Chart(document.getElementById('cSmPie').getContext('2d'),{
   type:'doughnut',
   data:{labels:['DX','AD','대관','기타(직영)'],datasets:[{data:[61,19,9,11],backgroundColor:[C_BLUE,'#374151','#111827',C_GRAY],borderWidth:0,hoverOffset:4}]},
   options:{responsive:true,maintainAspectRatio:false,cutout:'64%',plugins:{legend:{position:'bottom',labels:{font:{size:12,family:'Inter'},color:'#374151'}}}}
@@ -2100,7 +2102,7 @@ new Chart(document.getElementById('cSmPie').getContext('2d'),{
 // cSmProj: replaced with DX/AD text breakdown in HTML
 
 // ─── DX CHARTS ───
-new Chart(document.getElementById('cDxRvT').getContext('2d'),{
+MIS_CHARTS.dxRvT = new Chart(document.getElementById('cDxRvT').getContext('2d'),{
   type:'bar',
   data:{labels:MONTHS,datasets:[
     {label:'실적',data:[3.46,5.07,7.29,6.24,3.69,6.05],backgroundColor:([3.46,5.07,7.29,6.24,3.69,6.05]).map(v=>v<0?C_RED:C_BLUE),borderRadius:5,borderSkipped:false,order:2},
@@ -2108,7 +2110,7 @@ new Chart(document.getElementById('cDxRvT').getContext('2d'),{
   ]},
   options:{...BASE_OPT,plugins:{legend:{display:true,position:'bottom',labels:{font:{size:11,family:'Inter'},color:'#374151',boxWidth:8}}}}
 });
-new Chart(document.getElementById('cDxYoY').getContext('2d'),{
+MIS_CHARTS.dxYoY = new Chart(document.getElementById('cDxYoY').getContext('2d'),{
   type:'line',
   data:{labels:MONTHS,datasets:[
     {label:'2025 누적',data:[3.73,8.25,13.14,17.65,21.60,26.35],borderColor:C_GRAY,borderDash:[5,3],borderWidth:1.5,pointRadius:0,fill:false},
@@ -3251,6 +3253,190 @@ function openEdit(s){document.getElementById('editSub').textContent=s;document.g
 function closeM(id){document.getElementById(id).classList.remove('open');}
 function toggleNotif(){document.getElementById('notifPanel').classList.toggle('open');}
 function togglePresent(){const on=document.body.classList.toggle('present');document.getElementById('presBtn').textContent=on?'편집 모드':'발표 모드';}
+
+// ══════════════════════════════════════════════════════════════════
+// ─── SUPABASE 자동 동기화 ─────────────────────────────────────────
+// Google Sheets → Supabase → MIS 실시간 반영
+// ══════════════════════════════════════════════════════════════════
+const SB_BASE     = 'https://wuqffbtuftuyynntsxrw.supabase.co/rest/v1/bu_metrics';
+const SB_SYNC_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind1cWZmYnR1ZnR1eXlubnRzeHJ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxODUwNTQsImV4cCI6MjA5Nzc2MTA1NH0.ITLhyjKJA6twC3JjPJ8bT-YG10PDOW5DPWsqyblak74';
+
+// BU 매핑: Supabase 키 → MIS 내부 키
+const BU_MAP       = { DX:'DX', AD:'AD', FZ:'PEZ', DH:'기타' };
+const DX_H1_TARGET = 31.84;  // 2026 DX H1 목표 (억원)
+const DX_H1_2025   = 26.35;  // 2025 DX H1 실적 (억원)
+
+async function syncFromSupabase() {
+  const syncBadge = document.getElementById('syncBadge');
+  try {
+    if (syncBadge) syncBadge.textContent = '⟳ 동기화 중...';
+
+    // 6개 메트릭 일괄 fetch (bu_metrics 통합 테이블)
+    const res = await fetch(
+      SB_BASE + '?select=metric,year,bu,period_type,period,value&order=metric,year,bu,period',
+      { headers: { 'apikey': SB_SYNC_KEY, 'Authorization': 'Bearer ' + SB_SYNC_KEY } }
+    );
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const rows = await res.json();
+    if (!Array.isArray(rows) || rows.length === 0) {
+      if (syncBadge) syncBadge.textContent = '⚠ 데이터 없음';
+      return;
+    }
+
+    // ── 1. db[metric][year][bu][period] = value ──
+    const db = {};
+    rows.forEach(r => {
+      if (!db[r.metric]) db[r.metric] = {};
+      if (!db[r.metric][r.year]) db[r.metric][r.year] = {};
+      if (!db[r.metric][r.year][r.bu]) db[r.metric][r.year][r.bu] = {};
+      db[r.metric][r.year][r.bu][r.period] = Number(r.value);
+    });
+
+    const H1      = [1,2,3,4,5,6];
+    const YRS_NUM = [2022, 2023, 2024, 2025, 2026];
+    const getV = (metric, yr, bu, p) => db[metric]?.[yr]?.[bu]?.[p] ?? null;
+
+    // ── 2. SALES: BU_HIST_YRS + BU_MON + HIST 재계산 ──
+    if (db.sales) {
+      Object.entries(BU_MAP).forEach(([sBu, mBu]) => {
+        YRS_NUM.forEach((yr, i) => {
+          BU_HIST_YRS[mBu][i] = H1.map((mo, mi) => {
+            const v = getV('sales', yr, sBu, mo);
+            return v !== null ? v / 100 : (BU_HIST_YRS[mBu][i][mi] || 0);
+          });
+        });
+      });
+      Object.entries(BU_MAP).forEach(([sBu, mBu]) => {
+        BU_MON[mBu] = H1.map((mo, mi) => {
+          const v = getV('sales', 2026, sBu, mo);
+          return v !== null ? v / 100 : BU_MON[mBu][mi];
+        });
+      });
+      YRS_NUM.forEach((yr, i) => {
+        HIST['매출'].yrs[i] = H1.map((mo, mi) => {
+          const tot = getV('sales', yr, '합계', mo);
+          if (tot !== null) return tot / 100;
+          return Object.entries(BU_MAP).reduce((s, [sBu, mBu]) => s + (BU_HIST_YRS[mBu][i][mi]||0), 0);
+        });
+        if (db.sales[yr]?.['DX'])
+          HIST['DX매출'].yrs[i] = H1.map((mo, mi) => { const v=getV('sales',yr,'DX',mo); return v!==null?v/100:HIST['DX매출'].yrs[i][mi]; });
+        if (db.sales[yr]?.['AD'])
+          HIST['AD매출'].yrs[i] = H1.map((mo, mi) => { const v=getV('sales',yr,'AD',mo); return v!==null?v/100:HIST['AD매출'].yrs[i][mi]; });
+      });
+    }
+
+    // ── 3. PROFIT: HIST['수익'] ──
+    if (db.profit) {
+      YRS_NUM.forEach((yr, i) => {
+        if (!db.profit[yr]) return;
+        HIST['수익'].yrs[i] = H1.map(mo => {
+          const tot = getV('profit', yr, '합계', mo);
+          if (tot !== null) return tot / 100;
+          const buSum = Object.keys(BU_MAP).reduce((s, sBu) => {
+            const v = getV('profit', yr, sBu, mo); return s + (v !== null ? v / 100 : 0);
+          }, 0);
+          return buSum || HIST['수익'].yrs[i][mo-1] || 0;
+        });
+      });
+    }
+
+    // ── 4. HEADCOUNT: HIST['인원'] ──
+    if (db.headcount) {
+      YRS_NUM.forEach((yr, i) => {
+        if (!db.headcount[yr]) return;
+        HIST['인원'].yrs[i] = H1.map((mo, mi) => {
+          const tot = getV('headcount', yr, '합계', mo);
+          return tot !== null ? Math.round(tot) : HIST['인원'].yrs[i][mi];
+        });
+      });
+    }
+
+    // ── 5. MM단가: HIST['MM단가'] (분기 Q1→월1-3, Q2→월4-6) ──
+    if (db.mm_price) {
+      YRS_NUM.forEach((yr, i) => {
+        if (!db.mm_price[yr]) return;
+        const q1dx = getV('mm_price',yr,'DX',1), q2dx = getV('mm_price',yr,'DX',2);
+        const q1ad = getV('mm_price',yr,'AD',1), q2ad = getV('mm_price',yr,'AD',2);
+        if (q1dx==null && q1ad==null) return;
+        const q1arr = [q1dx,q1ad].filter(v=>v!=null);
+        const q2arr = [q2dx,q2ad].filter(v=>v!=null);
+        const q1avg = q1arr.length ? Math.round(q1arr.reduce((s,v)=>s+v,0)/q1arr.length/10000) : null;
+        const q2avg = q2arr.length ? Math.round(q2arr.reduce((s,v)=>s+v,0)/q2arr.length/10000) : null;
+        if (q1avg) { HIST['MM단가'].yrs[i][0]=q1avg; HIST['MM단가'].yrs[i][1]=q1avg; HIST['MM단가'].yrs[i][2]=q1avg; }
+        if (q2avg) { HIST['MM단가'].yrs[i][3]=q2avg; HIST['MM단가'].yrs[i][4]=q2avg; HIST['MM단가'].yrs[i][5]=q2avg; }
+      });
+    }
+
+    // ── 6. 차트 업데이트 ──
+    if (MIS_CHARTS.smRev) {
+      MIS_CHARTS.smRev.data.datasets[0].data = [...BU_MON.DX];
+      MIS_CHARTS.smRev.data.datasets[1].data = [...BU_MON.AD];
+      MIS_CHARTS.smRev.data.datasets[2].data = [...BU_MON.PEZ];
+      MIS_CHARTS.smRev.data.datasets[3].data = [...BU_MON['기타']];
+      MIS_CHARTS.smRev.update('none');
+    }
+    const dx26 = BU_HIST_YRS.DX[4];
+    if (MIS_CHARTS.dxRvT) {
+      MIS_CHARTS.dxRvT.data.datasets[0].data = [...dx26];
+      MIS_CHARTS.dxRvT.data.datasets[0].backgroundColor = dx26.map(v => v < 0 ? C_RED : C_BLUE);
+      MIS_CHARTS.dxRvT.update('none');
+    }
+    if (MIS_CHARTS.dxYoY) {
+      let cum = 0;
+      MIS_CHARTS.dxYoY.data.datasets[1].data = dx26.map(v => Math.round((cum += v) * 100) / 100);
+      MIS_CHARTS.dxYoY.update('none');
+    }
+    const buTotals = {
+      DX:  BU_MON.DX .reduce((s,v)=>s+v,0),
+      AD:  BU_MON.AD .reduce((s,v)=>s+v,0),
+      PEZ: BU_MON.PEZ.reduce((s,v)=>s+v,0),
+      기타: BU_MON['기타'].reduce((s,v)=>s+v,0)
+    };
+    const grand = Object.values(buTotals).reduce((s,v)=>s+v,0);
+    if (MIS_CHARTS.smPie && grand > 0) {
+      MIS_CHARTS.smPie.data.datasets[0].data = [
+        Math.round(buTotals.DX/grand*100), Math.round(buTotals.AD/grand*100),
+        Math.round(buTotals.PEZ/grand*100), Math.round(buTotals['기타']/grand*100)
+      ];
+      MIS_CHARTS.smPie.update('none');
+    }
+
+    // ── 7. KPI 카드 ──
+    const dx6 = dx26[5], dx5 = dx26[4];
+    const dxH1  = dx26.reduce((s,v)=>s+v,0);
+    const dxAch = dxH1 / DX_H1_TARGET * 100;
+    const dxYoY = (dxH1 - DX_H1_2025) / DX_H1_2025 * 100;
+    const sm6   = Object.values(BU_MON).reduce((s,arr)=>s+arr[5],0);
+    const sm5   = Object.values(BU_MON).reduce((s,arr)=>s+arr[4],0);
+    const setVal = (id, txt) => { const el=document.getElementById(id); if(el) el.innerHTML=txt; };
+
+    setVal('kpi-sm-jun-val', sm6.toFixed(2)+'<span class="kpi-unit">억</span>');
+    setVal('kpi-sm-jun-chg', (sm6>=sm5?'+':'')+(((sm6-sm5)/Math.max(sm5,0.01))*100).toFixed(1)+'% vs 전월');
+    setVal('kpi-dx-jun-val', dx6.toFixed(2)+'<span class="kpi-unit">억</span>');
+    setVal('kpi-dx-jun-chg', (dx6>=dx5?'+':'')+(((dx6-dx5)/Math.max(dx5,0.01))*100).toFixed(1)+'% vs 5월');
+    setVal('kpi-dx-h1-val',  dxH1.toFixed(2)+'<span class="kpi-unit">억</span>');
+    setVal('kpi-dx-h1-chg',  '목표 '+DX_H1_TARGET+'억 대비');
+    const achColor = dxAch>=100?'var(--green)':'var(--red)';
+    setVal('kpi-dx-ach-val', '<span style="color:'+achColor+'">'+dxAch.toFixed(1)+'<span class="kpi-unit">%</span></span>');
+    setVal('kpi-dx-ach-chg', dxAch>=100?'목표 초과 달성':'목표 미달');
+    const yoyColor = dxYoY>=0?'var(--green)':'var(--red)';
+    setVal('kpi-dx-yoy-val', '<span style="color:'+yoyColor+'">'+(dxYoY>=0?'+':'')+dxYoY.toFixed(1)+'<span class="kpi-unit">%</span></span>');
+    setVal('kpi-dx-yoy-chg', '전년 '+DX_H1_2025+'억 대비');
+
+    // ── 8. 동기화 상태 ──
+    const now = new Date();
+    const ts  = now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0');
+    if (syncBadge) syncBadge.textContent = '✓ ' + ts + ' 동기화됨';
+    console.log('[MIS Sync] 완료 — ' + rows.length + '행, ' + ts);
+
+  } catch(err) {
+    console.warn('[MIS Sync] 실패:', err.message);
+    if (syncBadge) syncBadge.textContent = '⚠ 동기화 실패';
+  }
+}
+
+// 페이지 로드 시 자동 실행
+syncFromSupabase();
 </script>
 
 <!-- ──────── 편집 드로어 오버레이 ──────── -->
