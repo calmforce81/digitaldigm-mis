@@ -676,7 +676,7 @@ body.present .notif-panel { display: none !important; }
       <div class="topbar-meta" id="topMeta">2026년 6월 기준 · 전 사업부 통합</div>
     </div>
     <div class="topbar-actions">
-      <span id="syncBadge" style="font-size:10px;color:var(--ink4);padding:3px 8px;border:1px solid var(--border);border-radius:10px;cursor:pointer" onclick="syncFromSupabase()" title="클릭 시 수동 동기화">⟳ 동기화 중...</span>
+      <span id="syncBadge" style="font-size:10px;color:var(--ink4);padding:3px 8px;border:1px solid var(--border);border-radius:10px;cursor:pointer" onclick="fullSync()" title="클릭 시 시트→Supabase→화면 전체 동기화">⟳ 동기화 중...</span>
       <button class="btn" onclick="openEdit('데이터 편집')">편집</button>
       <button class="btn" onclick="togglePresent()" id="presBtn">발표 모드</button>
       <div class="notif-btn" onclick="toggleNotif()"></div>
@@ -3261,10 +3261,34 @@ function togglePresent(){const on=document.body.classList.toggle('present');docu
 const SB_BASE     = 'https://wuqffbtuftuyynntsxrw.supabase.co/rest/v1/bu_metrics';
 const SB_SYNC_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind1cWZmYnR1ZnR1eXlubnRzeHJ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxODUwNTQsImV4cCI6MjA5Nzc2MTA1NH0.ITLhyjKJA6twC3JjPJ8bT-YG10PDOW5DPWsqyblak74';
 
+// Apps Script Web App URL (배포 후 여기에 붙여넣기)
+// 배포 방법: script.google.com -> 배포 -> 새 배포 -> 웹 앱 -> URL 복사
+const WEBAPP_URL    = 'https://script.google.com/macros/s/AKfycbyNa275P72_HVnut1qliwSTqnNQsI9SN4LfYOSQDmh3hqf0jpyV3ly7cB7ZlMhJYDkJkA/exec';
+const WEBAPP_SECRET = 'ddmis2026';
+
 // BU 매핑: Supabase 키 → MIS 내부 키
 const BU_MAP       = { DX:'DX', AD:'AD', FZ:'PEZ', DH:'기타' };
 const DX_H1_TARGET = 31.84;  // 2026 DX H1 목표 (억원)
 const DX_H1_2025   = 26.35;  // 2025 DX H1 실적 (억원)
+
+// 전체 동기화: 시트 → Supabase → MIS
+async function fullSync() {
+  const syncBadge = document.getElementById('syncBadge');
+  if (!WEBAPP_URL) {
+    // Web App URL 미설정 시 Supabase 새로고침만
+    return syncFromSupabase();
+  }
+  try {
+    if (syncBadge) { syncBadge.textContent = '⟳ 시트 동기화 중...'; syncBadge.style.pointerEvents = 'none'; }
+    const res = await fetch(WEBAPP_URL + '?key=' + WEBAPP_SECRET);
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.error || '동기화 실패');
+    await syncFromSupabase();
+  } catch(e) {
+    if (syncBadge) { syncBadge.textContent = '⚠ 동기화 실패'; syncBadge.style.pointerEvents = ''; }
+    console.error('fullSync 오류:', e);
+  }
+}
 
 async function syncFromSupabase() {
   const syncBadge = document.getElementById('syncBadge');
