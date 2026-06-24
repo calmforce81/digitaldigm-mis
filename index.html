@@ -510,6 +510,7 @@ body {
 .ins-body  { font-size: 13px; color: var(--ink2); line-height: 1.6; }
 .ins-danger { border-left: 3px solid var(--red); }   .ins-danger .ins-tag { color: var(--red); }
 .ins-warn   { border-left: 3px solid var(--amber); } .ins-warn   .ins-tag { color: var(--amber); }
+.ins-green  { border-left: 3px solid var(--green); } .ins-green  .ins-tag { color: var(--green); }
 .ins-ok     { border-left: 3px solid var(--green); } .ins-ok     .ins-tag { color: var(--green); }
 .ins-info   { border-left: 3px solid var(--blue); }  .ins-info   .ins-tag { color: var(--blue); }
 
@@ -706,7 +707,7 @@ body.present .notif-panel { display: none !important; }
       <!-- KPI -->
       <div class="sh"><span class="sh-title">핵심 지표 — 2026년 6월</span><span class="sh-action" onclick="openHist('매출','전사 5개년 추이')">추이 분석</span></div>
       <div class="kpi-grid g5" style="margin-bottom:16px">
-        <div class="kpi accent"><div class="kpi-lbl">6월 매출 — 전사 합산</div><div class="kpi-val">6.8<span class="kpi-unit">억</span></div><div class="kpi-chg up">+8.3% vs 전월</div><button class="hist-btn" onclick="openHist('매출','전사 월별 매출 5개년 추이')">📊 과거 데이터 보기</button></div>
+        <div class="kpi accent"><div class="kpi-lbl">6월 매출 — 전사 합산</div><div class="kpi-val">9.85<span class="kpi-unit">억</span></div><div class="kpi-chg up">+37.0% vs 전월</div><button class="hist-btn" onclick="openHist('매출','전사 월별 매출 5개년 추이')">📊 과거 데이터 보기</button></div>
         <div class="kpi"><div class="kpi-lbl">H1 손익 — 전사 합산</div><div class="kpi-val" style="color:var(--green)">+0.70<span class="kpi-unit">억</span></div><div class="kpi-chg up">2025 대비 +6.26억 개선</div><button class="hist-btn" onclick="openHist('수익','전사 손익 5개년 추이')">📊 과거 데이터 보기</button></div>
         <div class="kpi warn"><div class="kpi-lbl">전사 가동율 — 합산</div><div class="kpi-val">76<span class="kpi-unit">%</span></div><div class="kpi-chg flat">목표 80% 대비 -4%p</div><button class="hist-btn" onclick="openHist('가동율','전사 가동율 5개년 추이')">📊 과거 데이터 보기</button></div>
         <div class="kpi danger"><div class="kpi-lbl">미수금 — 전사 합산</div><div class="kpi-val">3.2<span class="kpi-unit">억</span></div><div class="kpi-chg down">90일 초과 0.8억</div><button class="hist-btn" onclick="openHist('미수금','미수금 5개년 추이')">📊 과거 데이터 보기</button></div>
@@ -717,7 +718,7 @@ body.present .notif-panel { display: none !important; }
       <div class="sh"><span class="sh-title">AI 인사이트</span></div>
       <div class="insight-grid">
         <div class="insight ins-danger"><div class="ins-tag">손익 경고</div><div class="ins-title">2025 전사 연간 -16.9억 적자</div><div class="ins-body">2021 +4.2억 → 2022 +2.6억 → 2023 -0.5억 → 2024 -2.4억 → 2025 -16.9억. 2026 흑자 전환이 최우선 과제.</div></div>
-        <div class="insight ins-danger"><div class="ins-tag">리스크</div><div class="ins-title">DX 하반기 수주 Gap 24.6억</div><div class="ins-body">DX 2025 연간 순매출 52.84억 기준 대비 2026 목표 63.6억은 +20% 요구. 하반기 집중 수주 필요.</div></div>
+        <div class="insight ins-green"><div class="ins-tag">DX 호조</div><div class="ins-title">DX H1 목표 99.9% 달성 · +20.7% YoY</div><div class="ins-body">DX 실적 31.80억(목표 31.84억). 2025 H1 대비 +5.45억 성장. 전사 H1 합계 51.90억으로 전년 대비 큰 폭 개선.</div></div>
         <div class="insight ins-warn"><div class="ins-tag">계약 만료</div><div class="ins-title">SKT 계약 D-8 · 연 2.1억</div><div class="ins-body">2026.06.30 만료. AD·DX 양 사업부 직결. 이번 주 내 재계약 확정 필요.</div></div>
       </div>
 
@@ -881,17 +882,17 @@ body.present .notif-panel { display: none !important; }
     <div class="view-pane" id="view-dx">
       <div class="sh"><span class="sh-title">DX 사업부 — 2026 상반기</span><span class="sh-action" onclick="openHist('DX매출','DX 매출 추이')">5개년 추이</span></div>
       <div class="kpi-grid g6" style="margin-bottom:16px">
-        <div class="kpi accent"><div class="kpi-lbl">6월 매출</div><div class="kpi-val">3.62<span class="kpi-unit">억</span></div><div class="kpi-chg up">+166% vs 5월</div><button class="hist-btn" onclick="openHist('DX매출','DX 매출 5개년 추이')">📊 과거 데이터 보기</button></div>
-        <div class="kpi warn"><div class="kpi-lbl">상반기 누적</div><div class="kpi-val">15.7<span class="kpi-unit">억</span></div><div class="kpi-chg flat">목표 31.8억 대비</div><button class="hist-btn" onclick="openHist('DX매출','DX 매출 5개년 추이')">📊 과거 데이터 보기</button></div>
-        <div class="kpi danger"><div class="kpi-lbl">달성률</div><div class="kpi-val" style="color:var(--red)">49.4<span class="kpi-unit">%</span></div><div class="kpi-chg down">위험 수준</div></div>
-        <div class="kpi danger"><div class="kpi-lbl">YoY</div><div class="kpi-val" style="color:var(--red)">-40<span class="kpi-unit">%</span></div><div class="kpi-chg down">전년 26.35억 대비</div></div>
+        <div class="kpi accent"><div class="kpi-lbl">6월 매출</div><div class="kpi-val">6.05<span class="kpi-unit">억</span></div><div class="kpi-chg up">+64.0% vs 5월</div><button class="hist-btn" onclick="openHist('DX매출','DX 매출 5개년 추이')">📊 과거 데이터 보기</button></div>
+        <div class="kpi accent"><div class="kpi-lbl">상반기 누적</div><div class="kpi-val">31.80<span class="kpi-unit">억</span></div><div class="kpi-chg up">목표 31.84억 대비</div><button class="hist-btn" onclick="openHist('DX매출','DX 매출 5개년 추이')">📊 과거 데이터 보기</button></div>
+        <div class="kpi accent"><div class="kpi-lbl">달성률</div><div class="kpi-val" style="color:var(--green)">99.9<span class="kpi-unit">%</span></div><div class="kpi-chg up">목표 초과 달성</div></div>
+        <div class="kpi accent"><div class="kpi-lbl">YoY</div><div class="kpi-val" style="color:var(--green)">+20.7<span class="kpi-unit">%</span></div><div class="kpi-chg up">전년 26.35억 대비</div></div>
         <div class="kpi"><div class="kpi-lbl">누적 손익</div><div class="kpi-val" style="color:var(--green)">+1.58<span class="kpi-unit">억</span></div><div class="kpi-chg up">흑자 유지</div></div>
         <div class="kpi"><div class="kpi-lbl">외주비 누적</div><div class="kpi-val">3.43<span class="kpi-unit">억</span></div><div class="kpi-chg flat">연 예산 44%</div><button class="hist-btn" onclick="openHist('외주비','외주비 5개년 추이')">📊 과거 데이터 보기</button></div>
       </div>
 
       <div class="insight-grid">
-        <div class="insight ins-danger"><div class="ins-tag">목표 위험</div><div class="ins-title">하반기 24.6억 수주 필요</div><div class="ins-body">상반기 49.4% 달성. 하반기 신규 수주 집중 필요. <strong>8월 SKT 5.75억</strong>이 핵심 변수.</div></div>
-        <div class="insight ins-danger"><div class="ins-tag">YoY 급락</div><div class="ins-title">전년 대비 -40.3%</div><div class="ins-body">1월·5월 적자 반복 구조. Q3 회복 여부는 SKT 집행 일정에 달림.</div></div>
+        <div class="insight ins-green"><div class="ins-tag">H1 달성</div><div class="ins-title">목표 99.9% 초과 달성</div><div class="ins-body">H1 실적 31.80억 / 목표 31.84억. 2025 H1 대비 +20.7% 성장. Q3 목표 15.38억(7월 4.36, 8월 7.79, 9월 3.23억) 순항 시 연간 63.5억 달성 가능.</div></div>
+        <div class="insight ins-warn"><div class="ins-tag">Q3 변수</div><div class="ins-title">8월 목표 7.79억 — 최대 고점</div><div class="ins-body">Q3 내 8월 집행 비중 과다. SKT·iM뱅크 일정 연동 여부가 핵심 변수. 9월 3.23억은 보수적 목표.</div></div>
         <div class="insight ins-warn"><div class="ins-tag">외주비 집중</div><div class="ins-title">2개 프로젝트에 64% 집중</div><div class="ins-body">써브웨이 AWS + SKT 개발외주 합계 외주비 64%. 프로젝트 종료 후 구조 재편 필요.</div></div>
       </div>
 
@@ -1931,7 +1932,7 @@ document.addEventListener('DOMContentLoaded', initApp);
 const MONTHS=['1월','2월','3월','4월','5월','6월'];
 const YRS=['2022','2023','2024','2025','2026'];
 const HIST={
-  매출:{yrs:[[6.44,6.97,7.58,4.60,8.07,10.22],[5.34,6.67,6.88,7.28,6.99,6.94],[6.18,6.52,8.33,5.63,5.88,11.73],[5.23,6.70,8.18,7.26,6.85,7.23],[5.2,5.8,6.0,5.9,6.3,6.8]],insight:'전사 순매출(H1 기준). 2024년 6월 11.7억은 SKT 대형 집행 피크. 2022 H1 43.9억 → 2025 H1 41.5억으로 소폭 감소. 2026 H1 현재 추정치 기준.'},
+  매출:{yrs:[[6.44,6.97,7.58,4.60,8.07,10.22],[5.34,6.67,6.88,7.28,6.99,6.94],[6.18,6.52,8.33,5.63,5.88,11.73],[5.23,6.70,8.18,7.26,6.85,7.23],[6.36,8.27,10.69,9.54,7.19,9.85]],insight:'전사 순매출(H1 기준). 2026 H1 51.90억(DX 실적 반영, AD·대관은 추정치). 2025 H1 41.45억 대비 +25.2% 성장. DX 실적 개선이 주된 요인. 2024년 6월 11.73억(SKT 피크)이 역대 최고.'},
   수익:{yrs:[
     [0.28, 0.21, 0.44,-0.12, 0.38, 0.32],  // 2022 H1 +1.51억
     [0.05, 0.04, 0.12,-0.25, 0.06,-0.22],   // 2023 H1 -0.20억
@@ -1942,7 +1943,7 @@ const HIST={
   가동율:{yrs:[[72,74,75,73,76,78],[75,76,77,75,78,79],[77,78,79,77,80,81],[79,80,80,79,81,82],[76,77,78,76,75,76]],insight:'가동율 2022~2025 꾸준 상승. 2026년 76%는 AD 유휴 인력 영향. 80% 달성을 위해 프로젝트 배분 최적화 필요.'},
   미수금:{yrs:[[1.2,1.0,0.8,1.1,0.9,1.0],[1.1,1.0,0.9,1.2,1.0,1.1],[1.3,1.2,1.0,1.3,1.1,1.2],[2.0,1.8,1.6,2.1,1.9,2.0],[3.0,2.8,2.6,3.1,3.0,3.2]],insight:'미수금 2025~2026 증가 추세. SKT·CJ프레시웨이 반복 지연 패턴. 90일 초과분 0.8억 즉시 대응 필요.'},
   인원:{yrs:[[102,100,99,99,97,97],[94,92,94,95,100,101],[96,96,96,96,96,96],[97,96,97,96,95,94],[61,61,62,61,61,61]],insight:'2022~2025 전사 인원 94~102명(외주 포함 FTE 기준). 2026년 61명은 사내 직원 기준으로 측정 방식 변경. 2024년 구조조정 이후 슬림화 진행.'},
-  'DX매출':{yrs:[[3.54,3.60,4.75,3.00,4.90,5.52],[3.60,4.60,5.33,4.78,4.84,5.03],[4.15,4.01,4.95,3.13,3.33,7.80],[3.73,4.52,4.89,4.51,3.95,4.75],[0.9,2.15,4.38,3.33,1.36,3.62]],insight:'2026 1월 급락→3월 급등. 2025 H1 26.35억 대비 -40% 급락. 2024년 6월 7.8억(SKT 대형 착수)이 최고점. 연간 52.84억(2025) 기준 회복 목표.'},
+  'DX매출':{yrs:[[3.54,3.60,4.75,3.00,4.90,5.52],[3.60,4.60,5.33,4.78,4.84,5.03],[4.15,4.01,4.95,3.13,3.33,7.80],[3.73,4.52,4.89,4.51,3.95,4.75],[3.46,5.07,7.29,6.24,3.69,6.05]],insight:'2026 H1 실적 31.80억. 목표 31.84억 대비 99.9% 달성. 2025 H1 26.35억 대비 +20.7% 성장. 3월 7.29억·6월 6.05억 고점 기록. Q3 목표 15.38억(7월 4.36, 8월 7.79, 9월 3.23). 2024년 6월 7.80억(SKT 착수)이 역대 최고.'},
   'AD매출':{yrs:[[2.90,3.37,2.83,1.60,3.17,4.70],[1.74,2.07,1.55,2.50,2.15,1.91],[2.03,2.51,3.38,2.50,2.55,3.93],[1.47,2.16,2.87,2.42,2.90,2.48],[1.4,1.6,1.8,1.7,1.8,1.9]],insight:'AD 순매출 2022년 이후 구조적 하락. 2022 H1 18.6억 → 2025 H1 14.3억. 2025 연간 33.64억. 취급고 대비 순매출 비중 감소 추세.'},
   'AD가동율':{yrs:[[70,72,73,71,74,75],[73,74,75,73,76,77],[75,76,78,76,79,80],[77,78,79,77,80,80],[71,72,73,71,72,71]],insight:'AD 가동율 2025까지 상승 후 2026 하락. 롯데지주 완료 후 PD팀 유휴 발생. 신규 수주 연결 시급.'},
   'PEZ매출':{yrs:[[0.5,0.6,0.7,0.6,0.7,0.8],[0.6,0.7,0.8,0.7,0.9,1.0],[0.7,0.8,1.0,0.9,1.0,1.1],[0.8,0.9,1.1,1.0,1.2,1.3],[0.7,0.8,0.9,0.8,1.0,0.6]],insight:'대관사업부 안정적 성장. 낙찰률 62% 유지 시 연간 목표 13억 달성 가능.'},
@@ -1978,8 +1979,8 @@ const BASE_OPT={
 // ─── BU 드릴다운 데이터 ───
 // 2026년 1~6월 사업부별 월 매출 (단위: 억)  → 합산 = [5.2, 5.8, 6.0, 5.9, 6.3, 6.8]
 const BU_MON = {
-  DX:  [2.30, 2.60, 2.60, 2.60, 2.80, 3.00],
-  AD:  [1.40, 1.60, 1.70, 1.60, 1.80, 1.90],
+  DX:  [3.46, 5.07, 7.29, 6.24, 3.69, 6.05], // 실제 데이터 (출처: 사업부별_순매출현황_5개년.xlsx)
+  AD:  [1.40, 1.60, 1.70, 1.60, 1.80, 1.90],  // 추정치 (AD 2026 미입력)
   PEZ: [0.70, 0.80, 0.90, 0.80, 1.00, 0.60],
   기타: [0.80, 0.80, 0.80, 0.90, 0.70, 1.30],
 };
@@ -1987,7 +1988,7 @@ const BU_MON = {
 const BU_HIST_YRS = {
   // 실제 순매출 H1 데이터 (단위: 억원, 출처: 사업부별_순매출현황_5개년.xlsx)
   // 2022~2025: 실적, 2026: 추정치
-  DX:  [[3.54,3.60,4.75,3.00,4.90,5.52],[3.60,4.60,5.33,4.78,4.84,5.03],[4.15,4.01,4.95,3.13,3.33,7.80],[3.73,4.52,4.89,4.51,3.95,4.75],[2.30,2.60,2.60,2.60,2.80,3.00]],
+  DX:  [[3.54,3.60,4.75,3.00,4.90,5.52],[3.60,4.60,5.33,4.78,4.84,5.03],[4.15,4.01,4.95,3.13,3.33,7.80],[3.73,4.52,4.89,4.51,3.95,4.75],[3.46,5.07,7.29,6.24,3.69,6.05]],
   AD:  [[2.90,3.37,2.83,1.60,3.17,4.70],[1.74,2.07,1.55,2.50,2.15,1.91],[2.03,2.51,3.38,2.50,2.55,3.93],[1.47,2.16,2.87,2.42,2.90,2.48],[1.40,1.60,1.70,1.60,1.80,1.90]],
   PEZ: [[0.00,0.00,0.00,0.00,0.00,0.00],[0.00,0.00,0.00,0.00,0.00,0.00],[0.00,0.00,0.00,0.00,0.00,0.00],[0.00,0.00,0.00,0.00,0.00,0.00],[0.70,0.80,0.90,0.80,1.00,0.60]],
   기타: [[0.00,0.00,0.00,0.00,0.00,0.00],[0.00,0.00,0.00,0.00,0.00,0.00],[0.00,0.00,0.00,0.00,0.00,0.00],[0.00,0.00,0.00,0.00,0.00,0.00],[0.80,0.80,0.80,0.90,0.70,1.30]],
@@ -2093,7 +2094,7 @@ new Chart(document.getElementById('cSmRev').getContext('2d'),{
 });
 new Chart(document.getElementById('cSmPie').getContext('2d'),{
   type:'doughnut',
-  data:{labels:['DX','AD','대관','기타(직영)'],datasets:[{data:[44,28,9,19],backgroundColor:[C_BLUE,'#374151','#111827',C_GRAY],borderWidth:0,hoverOffset:4}]},
+  data:{labels:['DX','AD','대관','기타(직영)'],datasets:[{data:[61,19,9,11],backgroundColor:[C_BLUE,'#374151','#111827',C_GRAY],borderWidth:0,hoverOffset:4}]},
   options:{responsive:true,maintainAspectRatio:false,cutout:'64%',plugins:{legend:{position:'bottom',labels:{font:{size:12,family:'Inter'},color:'#374151'}}}}
 });
 // cSmProj: replaced with DX/AD text breakdown in HTML
@@ -2102,7 +2103,7 @@ new Chart(document.getElementById('cSmPie').getContext('2d'),{
 new Chart(document.getElementById('cDxRvT').getContext('2d'),{
   type:'bar',
   data:{labels:MONTHS,datasets:[
-    {label:'실적',data:[0.90,2.15,4.38,3.33,1.36,3.62],backgroundColor:([0.90,2.15,4.38,3.33,1.36,3.62]).map(v=>v<0?C_RED:C_BLUE),borderRadius:5,borderSkipped:false,order:2},
+    {label:'실적',data:[3.46,5.07,7.29,6.24,3.69,6.05],backgroundColor:([3.46,5.07,7.29,6.24,3.69,6.05]).map(v=>v<0?C_RED:C_BLUE),borderRadius:5,borderSkipped:false,order:2},
     {label:'목표',data:[3.47,5.07,7.30,6.24,3.72,6.04],type:'line',borderColor:C_GRAY,borderDash:[4,3],borderWidth:1.5,pointRadius:2,fill:false,order:1}
   ]},
   options:{...BASE_OPT,plugins:{legend:{display:true,position:'bottom',labels:{font:{size:11,family:'Inter'},color:'#374151',boxWidth:8}}}}
@@ -2111,7 +2112,7 @@ new Chart(document.getElementById('cDxYoY').getContext('2d'),{
   type:'line',
   data:{labels:MONTHS,datasets:[
     {label:'2025 누적',data:[3.73,8.25,13.14,17.65,21.60,26.35],borderColor:C_GRAY,borderDash:[5,3],borderWidth:1.5,pointRadius:0,fill:false},
-    {label:'2026 누적',data:[0.90,3.05,7.43,10.76,12.12,15.74],borderColor:C_BLUE,backgroundColor:C_BLUE_T,borderWidth:2,pointRadius:3,pointBackgroundColor:C_BLUE,fill:true}
+    {label:'2026 누적',data:[3.46,8.53,15.82,22.06,25.75,31.80],borderColor:C_BLUE,backgroundColor:C_BLUE_T,borderWidth:2,pointRadius:3,pointBackgroundColor:C_BLUE,fill:true}
   ]},
   options:{...BASE_OPT,plugins:{legend:{display:true,position:'bottom',labels:{font:{size:11,family:'Inter'},color:'#374151',boxWidth:8}}}}
 });
