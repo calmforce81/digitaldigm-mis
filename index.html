@@ -3297,7 +3297,7 @@ async function syncFromSupabase() {
 
     // 6개 메트릭 일괄 fetch (bu_metrics 통합 테이블)
     const res = await fetch(
-      SB_BASE + '?select=metric,year,bu,period_type,period,value&order=metric,year,bu,period',
+      SB_BASE + '?select=metric,year,bu,period_type,period,value&order=metric,year,bu,period&limit=5000',
       { headers: { 'apikey': SB_SYNC_KEY, 'Authorization': 'Bearer ' + SB_SYNC_KEY } }
     );
     if (!res.ok) throw new Error('HTTP ' + res.status);
