@@ -3295,14 +3295,22 @@ async function syncFromSupabase() {
   try {
     if (syncBadge) syncBadge.textContent = '⟳ 동기화 중...';
 
-    // 6개 메트릭 일괄 fetch (bu_metrics 통합 테이블)
-    const res = await fetch(
-      SB_BASE + '?select=metric,year,bu,period_type,period,value&order=metric,year,bu,period&limit=5000',
-      { headers: { 'apikey': SB_SYNC_KEY, 'Authorization': 'Bearer ' + SB_SYNC_KEY } }
-    );
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    const rows = await res.json();
-    if (!Array.isArray(rows) || rows.length === 0) {
+    // 6개 메트릭 일괄 fetch — 페이지네이션 (Supabase max 1000행 우회)
+    const rows = [];
+    let offset = 0;
+    while (true) {
+      const res = await fetch(
+        SB_BASE + '?select=metric,year,bu,period_type,period,value&order=metric,year,bu,period&limit=1000&offset=' + offset,
+        { headers: { 'apikey': SB_SYNC_KEY, 'Authorization': 'Bearer ' + SB_SYNC_KEY } }
+      );
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const batch = await res.json();
+      if (!Array.isArray(batch) || batch.length === 0) break;
+      rows.push(...batch);
+      if (batch.length < 1000) break;
+      offset += 1000;
+    }
+    if (rows.length === 0) {
       if (syncBadge) syncBadge.textContent = '⚠ 데이터 없음';
       return;
     }
