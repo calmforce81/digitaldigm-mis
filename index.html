@@ -2091,12 +2091,13 @@ MIS_CHARTS.smRev = new Chart(document.getElementById('cSmRev').getContext('2d'),
         footerColor:'#1D4ED8'
       }
     },
+    layout:{padding:{top:28}},
     scales:{...BASE_OPT.scales,x:{...BASE_OPT.scales.x,stacked:true},y:{...BASE_OPT.scales.y,stacked:true,ticks:{...BASE_OPT.scales.y.ticks,callback:v=>v+'억'}}}
   }
 });
 MIS_CHARTS.smPie = new Chart(document.getElementById('cSmPie').getContext('2d'),{
   type:'doughnut',
-  data:{labels:['DX','AD','대관','기타(직영)'],datasets:[{data:[61,19,9,11],backgroundColor:[C_BLUE,'#374151','#111827',C_GRAY],borderWidth:0,hoverOffset:4}]},
+  data:{labels:['DX','AD','대관'],datasets:[{data:[65,21,14],backgroundColor:[C_BLUE,'#374151','#111827'],borderWidth:0,hoverOffset:4}]},
   options:{responsive:true,maintainAspectRatio:false,cutout:'64%',plugins:{legend:{position:'bottom',labels:{font:{size:12,family:'Inter'},color:'#374151'}}}}
 });
 // cSmProj: replaced with DX/AD text breakdown in HTML
@@ -3421,14 +3422,13 @@ async function syncFromSupabase() {
     const buTotals = {
       DX:  BU_MON.DX .reduce((s,v)=>s+v,0),
       AD:  BU_MON.AD .reduce((s,v)=>s+v,0),
-      PEZ: BU_MON.PEZ.reduce((s,v)=>s+v,0),
-      기타: BU_MON['기타'].reduce((s,v)=>s+v,0)
+      PEZ: BU_MON.PEZ.reduce((s,v)=>s+v,0)
     };
     const grand = Object.values(buTotals).reduce((s,v)=>s+v,0);
     if (MIS_CHARTS.smPie && grand > 0) {
       MIS_CHARTS.smPie.data.datasets[0].data = [
         Math.round(buTotals.DX/grand*100), Math.round(buTotals.AD/grand*100),
-        Math.round(buTotals.PEZ/grand*100), Math.round(buTotals['기타']/grand*100)
+        Math.round(buTotals.PEZ/grand*100)
       ];
       MIS_CHARTS.smPie.update('none');
     }
