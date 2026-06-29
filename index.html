@@ -3653,10 +3653,96 @@ async function syncFromSupabase() {
     if (syncBadge) syncBadge.textContent = '✓ ' + ts + ' 동기화됨';
     console.log('[MIS Sync] 완료 — ' + rows.length + '행, ' + ts);
 
+    // ── 10. 디버그 패널 (?debug=1 일 때만) ──
+    if (new URLSearchParams(location.search).get('debug') === '1') {
+      renderDebugPanel(db, rows.length, curMonth);
+    }
+
   } catch(err) {
     console.warn('[MIS Sync] 실패:', err.message);
     if (syncBadge) syncBadge.textContent = '⚠ 동기화 실패';
   }
+}
+
+// ─── 디버그 패널 렌더링 ───────────────────────────────────────────────
+function renderDebugPanel(db, totalRows, curMonth) {
+  // 기존 패널 제거
+  document.getElementById('mis-debug-panel')?.remove();
+
+  const CY = new Date().getFullYear();
+  const fv = v => (v === null || v === undefined) ? '<span style="color:#ef4444">null</span>' : '<b style="color:#22c55e">'+Number(v).toFixed(2)+'</b>';
+
+  // metric별 row 수
+  const metricCounts = {};
+  Object.keys(db).forEach(m => {
+    let cnt = 0;
+    Object.values(db[m]).forEach(yr => Object.values(yr).forEach(bu => { cnt += Object.keys(bu).length; }));
+    metricCounts[m] = cnt;
+  });
+
+  // BU_MON 현황
+  const buMonRows = Object.entries(BU_MON).map(([bu, arr]) => {
+    const sum = arr.slice(0, curMonth+1).reduce((s,v)=>s+v,0);
+    return `<tr><td>${bu}</td><td>${arr.slice(0,6).map((v,i)=>`<span style="color:${v>0?'#22c55e':'#6b7280'}">${v.toFixed(2)}</span>`).join(' ')}</td><td><b>${sum.toFixed(2)}억</b></td></tr>`;
+  }).join('');
+
+  // BU_MON_PROFIT 현황
+  const profRows = BU_MON_PROFIT
+    ? Object.entries(BU_MON_PROFIT).map(([bu, arr]) => {
+        const sum = arr.slice(0, curMonth+1).reduce((s,v)=>s+v,0);
+        return `<tr><td>${bu}</td><td>${arr.slice(0,6).map(v=>`<span style="color:${v>0?'#22c55e':v<0?'#ef4444':'#6b7280'}">${v.toFixed(2)}</span>`).join(' ')}</td><td style="color:${sum>=0?'#22c55e':'#ef4444'}"><b>${sum>=0?'+':''}${sum.toFixed(2)}억</b></td></tr>`;
+      }).join('')
+    : '<tr><td colspan="3" style="color:#ef4444">BU_MON_PROFIT = null (profit 데이터 없음)</td></tr>';
+
+  // gross_sales 현황
+  let gsRows = '<tr><td colspan="3" style="color:#ef4444">gross_sales 데이터 없음</td></tr>';
+  if (db.gross_sales && db.gross_sales[CY]) {
+    gsRows = Object.entries(db.gross_sales[CY]).map(([bu, periods]) => {
+      const vals = Object.entries(periods).sort((a,b)=>a[0]-b[0]).map(([p,v])=>`<span style="color:${v>0?'#22c55e':'#6b7280'}">${(v/100).toFixed(1)}</span>`).join(' ');
+      return `<tr><td>${bu}</td><td>${vals}</td><td></td></tr>`;
+    }).join('');
+  } else if (db.gross_sales) {
+    const yrs = Object.keys(db.gross_sales).sort().reverse();
+    gsRows = `<tr><td colspan="3" style="color:#f59e0b">2026년 데이터 없음. 보유 연도: ${yrs.join(', ')}</td></tr>`;
+  }
+
+  const panel = document.createElement('div');
+  panel.id = 'mis-debug-panel';
+  panel.style.cssText = 'position:fixed;bottom:0;left:0;right:0;z-index:9999;background:#111827;color:#f9fafb;font-size:12px;font-family:monospace;max-height:55vh;overflow-y:auto;border-top:2px solid #3b82f6;padding:12px 16px';
+  panel.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+      <span style="color:#60a5fa;font-weight:700;font-size:13px">🔍 MIS Debug Panel — URL에 ?debug=1 있을 때만 표시</span>
+      <button onclick="document.getElementById('mis-debug-panel').remove()" style="background:#374151;color:#fff;border:none;border-radius:4px;padding:2px 8px;cursor:pointer">✕ 닫기</button>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
+      <div>
+        <div style="color:#60a5fa;font-weight:600;margin-bottom:6px">📦 Supabase 수신 현황 (총 ${totalRows}행)</div>
+        <table style="border-collapse:collapse;width:100%">
+          ${Object.entries(metricCounts).map(([m,c])=>`<tr><td style="padding:2px 6px;color:#d1d5db">${m}</td><td style="padding:2px 6px;color:${c>0?'#22c55e':'#ef4444'};font-weight:700">${c}행</td></tr>`).join('')}
+        </table>
+      </div>
+      <div>
+        <div style="color:#34d399;font-weight:600;margin-bottom:6px">💰 순매출 BU_MON (1~${curMonth+1}월 누적)</div>
+        <table style="border-collapse:collapse;width:100%">
+          <tr style="color:#9ca3af"><td>BU</td><td>1~6월 값</td><td>누적합</td></tr>
+          ${buMonRows}
+        </table>
+      </div>
+      <div>
+        <div style="color:#f472b6;font-weight:600;margin-bottom:6px">📈 영업이익 BU_MON_PROFIT</div>
+        <table style="border-collapse:collapse;width:100%">
+          <tr style="color:#9ca3af"><td>BU</td><td>1~6월 값</td><td>누적합</td></tr>
+          ${profRows}
+        </table>
+        <div style="color:#fbbf24;font-weight:600;margin:8px 0 4px">🛒 취급고 gross_sales (${CY}년)</div>
+        <table style="border-collapse:collapse;width:100%">
+          <tr style="color:#9ca3af"><td>BU</td><td>월별 (÷100 후 억)</td><td></td></tr>
+          ${gsRows}
+        </table>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(panel);
 }
 
 // 페이지 로드 시 자동 실행
