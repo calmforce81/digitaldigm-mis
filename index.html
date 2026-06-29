@@ -3485,30 +3485,36 @@ async function syncFromSupabase() {
     // ── 3b. GROSS_SALES: 취급고매출 KPI ──
     if (db.gross_sales) {
       const curMonth = new Date().getMonth(); // 0-based, 6월=5
-      let gsTot = 0;
-      // 합계 행 우선 사용
-      const hasGsTotal = db.gross_sales[2026] && db.gross_sales[2026]['합계'];
-      if (hasGsTotal) {
-        for (let m = 1; m <= curMonth + 1; m++) {
-          const v = getV('gross_sales', 2026, '합계', m);
-          if (v !== null) gsTot += v / 100;
-        }
-      }
-      // 합계 없으면 BU 합산
-      if (gsTot === 0) {
-        ['DX','AD','FZ','DH'].forEach(bu => {
+      const curYear  = new Date().getFullYear(); // 2026
+      // 최신 연도부터 역순 탐색 (2026 없으면 2025도 사용)
+      let gsTot = 0, gsYear = null;
+      for (let yr = curYear; yr >= curYear - 1; yr--) {
+        if (!db.gross_sales[yr]) continue;
+        let tot = 0;
+        // 합계 행 우선
+        if (db.gross_sales[yr]['합계']) {
           for (let m = 1; m <= curMonth + 1; m++) {
-            const v = getV('gross_sales', 2026, bu, m);
-            if (v !== null) gsTot += v / 100;
+            const v = getV('gross_sales', yr, '합계', m);
+            if (v !== null) tot += v / 100;
           }
-        });
+        }
+        // 없으면 BU 합산
+        if (tot === 0) {
+          ['DX','AD','FZ','DH'].forEach(bu => {
+            for (let m = 1; m <= curMonth + 1; m++) {
+              const v = getV('gross_sales', yr, bu, m);
+              if (v !== null) tot += v / 100;
+            }
+          });
+        }
+        if (tot > 0) { gsTot = tot; gsYear = yr; break; }
       }
-      const gsEl = document.getElementById('kpi-sm-gross-val');
+      const gsEl    = document.getElementById('kpi-sm-gross-val');
       const gsChgEl = document.getElementById('kpi-sm-gross-chg');
-      if (gsTot > 0) {
-        if (gsEl) gsEl.innerHTML = gsTot.toFixed(2) + '<span class="kpi-unit">억</span>';
-        if (gsChgEl) gsChgEl.innerHTML = curMonth + '개월 누적 · 취급고';
-        gsEl?.closest('.kpi')?.style?.removeProperty('opacity');
+      if (gsTot > 0 && gsEl) {
+        gsEl.innerHTML = gsTot.toFixed(2) + '<span class="kpi-unit">억</span>';
+        if (gsChgEl) gsChgEl.innerHTML = (gsYear !== curYear ? gsYear + '년 ' : '') + curMonth + '개월 누적 · 취급고';
+        gsEl.closest('.kpi')?.style?.removeProperty('opacity');
       }
     }
 
