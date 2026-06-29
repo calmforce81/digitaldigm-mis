@@ -3580,8 +3580,11 @@ async function syncFromSupabase() {
     }
 
     // ── 7. KPI 카드 ──
-    const dx6 = dx26[5], dx5 = dx26[4];
-    const dxH1  = dx26.reduce((s,v)=>s+v,0);
+    // DX 순매출: BU_MON.DX 직접 사용 (SM 총괄과 동일 소스, Supabase 갱신 보장)
+    const dxMon  = BU_MON.DX; // H1 6개월 배열
+    const dx6 = dxMon[5] ?? (dx26[5] || 0);
+    const dx5 = dxMon[4] ?? (dx26[4] || 0);
+    const dxH1  = dxMon.reduce((s,v)=>s+v, 0) || dx26.reduce((s,v)=>s+v, 0);
     const dxAch = dxH1 / DX_H1_TARGET * 100;
     const dxYoY = (dxH1 - DX_H1_2025) / DX_H1_2025 * 100;
     // SM 총괄 KPI — 누적 순매출
