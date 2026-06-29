@@ -1021,7 +1021,7 @@ body.present .notif-panel { display: none !important; }
       <div class="kpi-grid g6" style="margin-bottom:16px">
         <div class="kpi" style="opacity:.6"><div class="kpi-lbl">취급고매출 — 누적</div><div class="kpi-val">—<span class="kpi-unit">억</span></div><div class="kpi-chg flat">데이터 연동 준비중</div></div>
         <div class="kpi accent"><div class="kpi-lbl">순매출 — 누적</div><div class="kpi-val">4.80<span class="kpi-unit">억</span></div><div class="kpi-chg up">전년 +22%</div><button class="hist-btn" onclick="openHist('PEZ매출','FZ 매출 5개년 추이')">📊 과거 데이터 보기</button></div>
-        <div class="kpi"><div class="kpi-lbl">영업이익 — 누적</div><div class="kpi-val" style="color:var(--green)">+0.48<span class="kpi-unit">억</span></div><div class="kpi-chg up">흑자 유지</div></div>
+        <div class="kpi" id="kpi-fz-profit-card"><div class="kpi-lbl">영업이익 — 누적</div><div class="kpi-val" id="kpi-fz-profit-val" style="color:var(--green)">+0.48<span class="kpi-unit">억</span></div><div class="kpi-chg up" id="kpi-fz-profit-chg">흑자 유지</div></div>
         <div class="kpi"><div class="kpi-lbl">전년대비 증감률</div><div class="kpi-val" style="color:var(--green)">+22<span class="kpi-unit">%</span></div><div class="kpi-chg up">4개 사업부 최고</div></div>
         <div class="kpi"><div class="kpi-lbl">가동율</div><div class="kpi-val" style="color:var(--green)">88<span class="kpi-unit">%</span></div><div class="kpi-chg up">목표 초과 +8%p</div></div>
         <div class="kpi"><div class="kpi-lbl">인원</div><div class="kpi-val">4<span class="kpi-unit">명</span></div><div class="kpi-chg flat">공공·정부 담당</div></div>
@@ -3484,28 +3484,31 @@ async function syncFromSupabase() {
 
     // ── 3b. GROSS_SALES: 취급고매출 KPI ──
     if (db.gross_sales) {
-      // 2026년 전사 누적 취급고
-      const curMonth = new Date().getMonth();
-      const gsCum = ['DX','AD','FZ','DH','합계'].reduce((best, bu) => {
-        const arr = Array.from({length:12}, (_,i) => {
-          const v = getV('gross_sales', 2026, bu, i+1);
-          return v !== null ? v / 100 : 0;
-        });
-        if (bu === '합계') return arr.slice(0, curMonth+1).reduce((s,v)=>s+v, 0);
-        return best;
-      }, null);
+      const curMonth = new Date().getMonth(); // 0-based, 6월=5
+      let gsTot = 0;
+      // 합계 행 우선 사용
+      const hasGsTotal = db.gross_sales[2026] && db.gross_sales[2026]['합계'];
+      if (hasGsTotal) {
+        for (let m = 1; m <= curMonth + 1; m++) {
+          const v = getV('gross_sales', 2026, '합계', m);
+          if (v !== null) gsTot += v / 100;
+        }
+      }
       // 합계 없으면 BU 합산
-      const gsTot = gsCum !== null ? gsCum : ['DX','AD','FZ','DH'].reduce((s, bu) => {
-        return s + Array.from({length:curMonth+1}, (_,i) => {
-          const v = getV('gross_sales', 2026, bu, i+1);
-          return v !== null ? v / 100 : 0;
-        }).reduce((a,b)=>a+b, 0);
-      }, 0);
+      if (gsTot === 0) {
+        ['DX','AD','FZ','DH'].forEach(bu => {
+          for (let m = 1; m <= curMonth + 1; m++) {
+            const v = getV('gross_sales', 2026, bu, m);
+            if (v !== null) gsTot += v / 100;
+          }
+        });
+      }
+      const gsEl = document.getElementById('kpi-sm-gross-val');
+      const gsChgEl = document.getElementById('kpi-sm-gross-chg');
       if (gsTot > 0) {
-        const setVal = (id, txt) => { const el=document.getElementById(id); if(el) el.innerHTML=txt; };
-        setVal('kpi-sm-gross-val', gsTot.toFixed(2)+'<span class="kpi-unit">억</span>');
-        setVal('kpi-sm-gross-chg', curMonth+'개월 누적 · 취급고');
-        document.querySelector('#kpi-sm-gross-val')?.closest('.kpi')?.style?.removeProperty('opacity');
+        if (gsEl) gsEl.innerHTML = gsTot.toFixed(2) + '<span class="kpi-unit">억</span>';
+        if (gsChgEl) gsChgEl.innerHTML = curMonth + '개월 누적 · 취급고';
+        gsEl?.closest('.kpi')?.style?.removeProperty('opacity');
       }
     }
 
@@ -3617,7 +3620,25 @@ async function syncFromSupabase() {
     setVal('kpi-dx-yoy-val', '<span style="color:'+yoyColor+'">'+(dxYoY>=0?'+':'')+dxYoY.toFixed(1)+'<span class="kpi-unit">%</span></span>');
     setVal('kpi-dx-yoy-chg', '전년 '+DX_H1_2025+'억 대비');
 
-    // ── 8. 동기화 상태 ──
+    // ── 8. 사업부별 영업이익 KPI (BU_MON_PROFIT 활용) ──
+    if (BU_MON_PROFIT) {
+      const buProfitMap = { FZ: 'kpi-fz-profit' };
+      // BU_MAP 역방향: FZ → Supabase key 'FZ'
+      const buSupaKeys = { FZ: 'FZ', DX: 'DX', AD: 'AD' };
+      Object.entries(buProfitMap).forEach(([buKey, idPrefix]) => {
+        const supaKey = buSupaKeys[buKey];
+        const profArr = BU_MON_PROFIT[supaKey] || BU_MON_PROFIT[buKey];
+        if (!profArr) return;
+        const pCum = profArr.slice(0, curMonth + 1).reduce((s, v) => s + v, 0);
+        const pColor = pCum >= 0 ? 'var(--green)' : 'var(--red)';
+        const pSign = pCum >= 0 ? '+' : '';
+        setVal(idPrefix + '-val', '<span style="color:' + pColor + '">' + pSign + pCum.toFixed(2) + '<span class="kpi-unit">억</span></span>');
+        setVal(idPrefix + '-chg', pCum >= 0 ? '흑자 유지' : '적자 — 전환 필요');
+        if (pCum < 0) document.getElementById(idPrefix + '-card')?.classList.add('danger');
+      });
+    }
+
+    // ── 9. 동기화 상태 ──
     const now = new Date();
     const ts  = now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0');
     if (syncBadge) syncBadge.textContent = '✓ ' + ts + ' 동기화됨';
