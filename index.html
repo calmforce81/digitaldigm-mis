@@ -924,17 +924,33 @@ body.present .notif-panel { display: none !important; }
         </div>
       </div>
 
+      <!-- 고객사별 매출 현황 (2026 목표, Google Sheets 검증) -->
       <div class="card" style="margin-bottom:12px">
-        <div class="card-hd"><div class="card-title">DX 프로젝트 현황</div><span class="bx bx-blue">Google Sheets 연동</span></div>
+        <div class="card-hd"><div class="card-title">고객사별 연간 매출 현황</div><span class="bx bx-blue">2026 목표 65.66억 · 시트 검증 완료</span></div>
         <table class="tbl">
-          <thead><tr><th>프로젝트</th><th>고객사</th><th>계약금</th><th>유형</th><th>주요 이슈</th><th>상태</th></tr></thead>
+          <thead><tr><th>#</th><th>고객사</th><th>연간 합계</th><th>H1 실적</th><th>운영</th><th>구축</th><th>비고</th></tr></thead>
           <tbody>
-            <tr><td class="td-hi">플랫폼 유지보수</td><td>삼성자산운용</td><td class="td-num">6.50억/년</td><td><span class="bx bx-green">운영</span></td><td>KODEX ETF · 안정</td><td><span class="bx bx-green">정상</span></td></tr>
-            <tr><td class="td-hi">디자인시스템 고도화</td><td>SKT</td><td class="td-num">11.88억</td><td><span class="bx bx-blue">구축</span></td><td>개발외주 2.37억 · 8월 집중</td><td><span class="bx bx-blue">진행중</span></td></tr>
-            <tr><td class="td-hi">온라인채널 운영</td><td>써브웨이</td><td class="td-num">11.33억</td><td><span class="bx bx-green">운영</span></td><td>AWS 2.64억 · 마진 관리</td><td><span class="bx bx-green">정상</span></td></tr>
-            <tr><td class="td-hi">AS앱·이커머스</td><td>재규어랜드로버</td><td class="td-num">9.27억</td><td><span class="bx bx-green">운영</span></td><td>파생 수주 확보 양호</td><td><span class="bx bx-green">정상</span></td></tr>
-            <tr><td class="td-hi">디자인시스템 구축</td><td>iM뱅크</td><td class="td-num">2.78억</td><td><span class="bx bx-blue">구축</span></td><td>8월 납기 일정 리스크</td><td><span class="bx bx-amber">일정 주의</span></td></tr>
-            <tr><td class="td-hi">프레시밀 운영</td><td>CJ프레시웨이</td><td class="td-num">3.97억</td><td><span class="bx bx-green">운영</span></td><td>마진율 재검토 필요</td><td><span class="bx bx-red">마진 주의</span></td></tr>
+            <tr><td>1</td><td class="td-hi">SKT</td><td class="td-num">16.00억</td><td class="td-num">5.90억</td><td>—</td><td>디자인시스템 구축·고도화</td><td><span class="bx bx-blue">8월 집중 리스크</span></td></tr>
+            <tr><td>2</td><td class="td-hi">써브웨이</td><td class="td-num">11.34억</td><td class="td-num">7.44억</td><td>온라인채널 운영 7.91억</td><td>고도화 3.43억</td><td><span class="bx bx-green">정상</span></td></tr>
+            <tr><td>3</td><td class="td-hi">삼성자산운용</td><td class="td-num">9.08억</td><td class="td-num">5.37억</td><td>홈페이지 유지보수 6.50억</td><td>이벤트·TDF 2.58억</td><td><span class="bx bx-green">정상</span></td></tr>
+            <tr><td>4</td><td class="td-hi">재규어랜드로버</td><td class="td-num">5.38억</td><td class="td-num">2.14억</td><td>AS앱·APP·이커머스 3.84억</td><td>멤버십·클라우드 1.54억</td><td><span class="bx bx-green">정상</span></td></tr>
+            <tr><td>5</td><td class="td-hi">CJ프레시웨이</td><td class="td-num">4.25억</td><td class="td-num">0.84억</td><td>프레시밀 운영 1.40억</td><td>고도화 2.85억 (10~12월)</td><td><span class="bx bx-amber">후반 집중</span></td></tr>
+            <tr><td>6</td><td class="td-hi">레드버튼</td><td class="td-num">3.34억</td><td class="td-num">1.00억</td><td>—</td><td>리뉴얼 구축</td><td><span class="bx bx-blue">진행중</span></td></tr>
+            <tr><td>7</td><td class="td-hi">하이브</td><td class="td-num">3.27억</td><td class="td-num">1.80억</td><td>온라인채널 연간운영 2.94억</td><td>파생 0.33억</td><td><span class="bx bx-green">정상</span></td></tr>
+            <tr><td>8</td><td class="td-hi">iM뱅크</td><td class="td-num">2.78억</td><td class="td-num">0.93억</td><td>—</td><td>디자인시스템 구축</td><td><span class="bx bx-amber">일정 주의</span></td></tr>
+            <tr><td>9</td><td class="td-hi">본아이에프</td><td class="td-num">2.58억</td><td class="td-num">1.21억</td><td>온라인 통합 운영 2.16억</td><td>파생 0.42억</td><td><span class="bx bx-green">정상</span></td></tr>
+            <tr><td>10</td><td class="td-hi">카버코리아(AHC)</td><td class="td-num">1.69억</td><td class="td-num">0.85억</td><td>AHC 쇼핑몰 운영 1.64억</td><td>파생 0.05억</td><td><span class="bx bx-green">정상</span></td></tr>
+            <tr><td>11</td><td class="td-hi">롯데지주</td><td class="td-num">1.44억</td><td class="td-num">0.72억</td><td>홈페이지 운영</td><td>—</td><td><span class="bx bx-green">정상</span></td></tr>
+            <tr><td>12</td><td class="td-hi">11번가</td><td class="td-num">1.24억</td><td class="td-num">1.24억</td><td>—</td><td>이벤트 개발운영 (1~3월)</td><td><span class="bx bx-gray">완료</span></td></tr>
+            <tr style="opacity:.75"><td>13</td><td>PNC월드</td><td class="td-num">0.81억</td><td class="td-num">0.45억</td><td>탭오더 운영 0.72억</td><td>파생 0.09억</td><td><span class="bx bx-green">정상</span></td></tr>
+            <tr style="opacity:.75"><td>14</td><td>아우디코리아</td><td class="td-num">0.75억</td><td class="td-num">0.75억</td><td>—</td><td>서버 통합+운영 (1~5월)</td><td><span class="bx bx-gray">완료</span></td></tr>
+            <tr style="opacity:.75"><td>15</td><td>바이에른오토</td><td class="td-num">0.53억</td><td class="td-num">0.32억</td><td>홈페이지 운영</td><td>파생 0.14억</td><td><span class="bx bx-green">정상</span></td></tr>
+            <tr style="opacity:.75"><td>16</td><td>삼성전자</td><td class="td-num">0.48억</td><td class="td-num">0.29억</td><td>퍼블리싱 운영</td><td>—</td><td><span class="bx bx-green">정상</span></td></tr>
+            <tr style="opacity:.75"><td>17</td><td>폭스바겐</td><td class="td-num">0.32억</td><td class="td-num">0.32억</td><td>VDL 운영 (1~4월)</td><td>서버통합</td><td><span class="bx bx-gray">완료</span></td></tr>
+            <tr style="opacity:.75"><td>18</td><td>다이닝웨이브</td><td class="td-num">0.21억</td><td class="td-num">0.11억</td><td>썬앳푸드 S오더 운영</td><td>—</td><td><span class="bx bx-green">정상</span></td></tr>
+            <tr style="opacity:.75"><td>19</td><td>프리텔레콤</td><td class="td-num">0.12억</td><td class="td-num">0.12억</td><td>홈페이지 운영 (1~3월)</td><td>—</td><td><span class="bx bx-gray">완료</span></td></tr>
+            <tr style="opacity:.75"><td>20</td><td>세이브더칠드런</td><td class="td-num">0.05억</td><td class="td-num">0.05억</td><td>—</td><td>APP 구축 컨설팅 (3월)</td><td><span class="bx bx-gray">완료</span></td></tr>
+            <tr style="background:var(--bg2);font-weight:600"><td colspan="2">합계 (20개 고객사)</td><td class="td-num">65.66억</td><td class="td-num">31.83억</td><td>운영 32.75억</td><td>구축 32.91억</td><td><span class="bx bx-gray">시트 검증 ✅</span></td></tr>
           </tbody>
         </table>
       </div>
@@ -2169,7 +2185,7 @@ MIS_CHARTS.dxYoY = new Chart(document.getElementById('cDxYoY').getContext('2d'),
   ]},
   options:{...BASE_OPT,plugins:{legend:{display:true,position:'bottom',labels:{font:{size:11,family:'Inter'},color:'#374151',boxWidth:8}}}}
 });
-const plD=[-1.44,0.55,2.75,1.74,-1.46,1.82];
+const plD=[0.33,0.47,0.19,0.46,0.08,0.05];
 new Chart(document.getElementById('cDxPnL').getContext('2d'),{
   type:'bar',
   data:{labels:MONTHS,datasets:[{data:plD,backgroundColor:plD.map(v=>v>=0?C_GREEN:C_RED),borderRadius:5,borderSkipped:false}]},
@@ -2190,7 +2206,7 @@ new Chart(document.getElementById('cDxUtil').getContext('2d'),{
 });
 new Chart(document.getElementById('cDxClient').getContext('2d'),{
   type:'doughnut',
-  data:{labels:['SKT','써브웨이','재규어LR','삼성운용','CJ','레드버튼','iM뱅크','기타'],datasets:[{data:[15.39,11.33,9.27,6.50,3.97,3.34,2.78,6.90],backgroundColor:['#111827','#1F2937','#374151','#4B5563','#6B7280','#9CA3AF','#D1D5DB','#E5E7EB'],borderWidth:2,borderColor:'#fff'}]},
+  data:{labels:['SKT','써브웨이','삼성운용','재규어LR','CJ프레시웨이','레드버튼','하이브','기타'],datasets:[{data:[16.00,11.34,9.08,5.38,4.25,3.34,3.27,13.00],backgroundColor:['#111827','#1F2937','#374151','#4B5563','#6B7280','#9CA3AF','#D1D5DB','#E5E7EB'],borderWidth:2,borderColor:'#fff'}]},
   options:{responsive:true,maintainAspectRatio:false,cutout:'55%',plugins:{legend:{display:true,position:'right',labels:{font:{size:11,family:'Inter'},color:'#374151',boxWidth:8}}}}
 });
 
