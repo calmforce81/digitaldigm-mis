@@ -712,7 +712,7 @@ body.present .notif-panel { display: none !important; }
         <div class="kpi" style="opacity:.55"><div class="kpi-lbl">취급고매출 — 누적</div><div class="kpi-val" id="kpi-sm-gross-val">—<span class="kpi-unit">억</span></div><div class="kpi-chg flat" id="kpi-sm-gross-chg">데이터 연동 준비중</div><button class="hist-btn" onclick="openHist('매출','취급고 5개년 추이')">📊 과거 데이터 보기</button></div>
         <div class="kpi accent"><div class="kpi-lbl">순매출 — 누적</div><div class="kpi-val" id="kpi-sm-rev-val">—<span class="kpi-unit">억</span></div><div class="kpi-chg up" id="kpi-sm-rev-chg">전년동기 대비</div><button class="hist-btn" onclick="openHist('매출','전사 월별 매출 5개년 추이')">📊 과거 데이터 보기</button></div>
         <div class="kpi" id="kpi-sm-profit-card"><div class="kpi-lbl">영업이익 — 누적</div><div class="kpi-val" id="kpi-sm-profit-val">—<span class="kpi-unit">억</span></div><div class="kpi-chg" id="kpi-sm-profit-chg">전년동기 대비</div><button class="hist-btn" onclick="openHist('수익','전사 손익 5개년 추이')">📊 과거 데이터 보기</button></div>
-        <div class="kpi" id="kpi-sm-yoy-card"><div class="kpi-lbl">전년대비 증감률</div><div class="kpi-val" id="kpi-sm-yoy-val">—<span class="kpi-unit">%</span></div><div class="kpi-chg" id="kpi-sm-yoy-chg">순매출 기준</div></div>
+        <div class="kpi" id="kpi-sm-yoy-card"><div class="kpi-lbl">전년대비 증감률</div><div class="kpi-val" id="kpi-sm-yoy-val">—<span class="kpi-unit">%</span></div><div class="kpi-chg" id="kpi-sm-yoy-chg">순매출 기준</div><button class="hist-btn" onclick="openHist('매출','전사 월별 매출 5개년 추이')">📊 과거 데이터 보기</button></div>
         <div class="kpi warn"><div class="kpi-lbl">전사 가동율</div><div class="kpi-val">76<span class="kpi-unit">%</span></div><div class="kpi-chg flat">목표 80% 대비 -4%p</div><button class="hist-btn" onclick="openHist('가동율','전사 가동율 5개년 추이')">📊 과거 데이터 보기</button></div>
         <div class="kpi"><div class="kpi-lbl">전체 인원</div><div class="kpi-val">61<span class="kpi-unit">명</span></div><div class="kpi-chg flat">정규 57 · 계약 4</div><button class="hist-btn" onclick="openHist('인원','전사 인원 5개년 추이')">📊 과거 데이터 보기</button></div>
       </div>
@@ -880,10 +880,10 @@ body.present .notif-panel { display: none !important; }
     <div class="view-pane" id="view-dx">
       <div class="sh"><span class="sh-title">DX 사업부 — 2026 상반기</span><span class="sh-action" onclick="openHist('DX매출','DX 매출 추이')">5개년 추이</span></div>
       <div class="kpi-grid g6" style="margin-bottom:16px">
-        <div class="kpi" id="kpi-dx-gross-card" style="opacity:.6"><div class="kpi-lbl">취급고매출 — 누적</div><div class="kpi-val" id="kpi-dx-gross-val">—<span class="kpi-unit">억</span></div><div class="kpi-chg flat" id="kpi-dx-gross-chg">데이터 연동 준비중</div></div>
+        <div class="kpi" id="kpi-dx-gross-card" style="opacity:.6"><div class="kpi-lbl">취급고매출 — 누적</div><div class="kpi-val" id="kpi-dx-gross-val">—<span class="kpi-unit">억</span></div><div class="kpi-chg flat" id="kpi-dx-gross-chg">데이터 연동 준비중</div><button class="hist-btn" onclick="openHist('DX매출','DX 매출 5개년 추이')">📊 과거 데이터 보기</button></div>
         <div class="kpi accent"><div class="kpi-lbl">순매출 — 누적</div><div class="kpi-val" id="kpi-dx-h1-val">31.80<span class="kpi-unit">억</span></div><div class="kpi-chg up" id="kpi-dx-h1-chg">목표 31.84억 대비</div><button class="hist-btn" onclick="openHist('DX매출','DX 매출 5개년 추이')">📊 과거 데이터 보기</button></div>
         <div class="kpi" id="kpi-dx-profit-card"><div class="kpi-lbl">영업이익 — 누적</div><div class="kpi-val" id="kpi-dx-profit-val" style="color:var(--green)">+1.58<span class="kpi-unit">억</span></div><div class="kpi-chg up" id="kpi-dx-profit-chg">흑자 유지</div><button class="hist-btn" onclick="openHist('수익','전사 손익 5개년 추이')">📊 과거 데이터 보기</button></div>
-        <div class="kpi"><div class="kpi-lbl">전년대비 증감률</div><div class="kpi-val" id="kpi-dx-yoy-val" style="color:var(--green)">+20.7<span class="kpi-unit">%</span></div><div class="kpi-chg up" id="kpi-dx-yoy-chg">전년 26.35억 대비</div></div>
+        <div class="kpi"><div class="kpi-lbl">전년대비 증감률</div><div class="kpi-val" id="kpi-dx-yoy-val" style="color:var(--green)">+20.7<span class="kpi-unit">%</span></div><div class="kpi-chg up" id="kpi-dx-yoy-chg">전년 26.35억 대비</div><button class="hist-btn" onclick="openHist('DX매출','DX 매출 5개년 추이')">📊 과거 데이터 보기</button></div>
         <div class="kpi"><div class="kpi-lbl">가동율</div><div class="kpi-val">76<span class="kpi-unit">%</span></div><div class="kpi-chg flat">목표 80% 대비 -4%p</div><button class="hist-btn" onclick="openHist('가동율','전사 가동율 5개년 추이')">📊 과거 데이터 보기</button></div>
         <div class="kpi"><div class="kpi-lbl">인원</div><div class="kpi-val">33<span class="kpi-unit">명</span></div><div class="kpi-chg flat">정규 30 · 계약 3</div><button class="hist-btn" onclick="openHist('인원','전사 인원 5개년 추이')">📊 과거 데이터 보기</button></div>
       </div>
@@ -958,12 +958,12 @@ body.present .notif-panel { display: none !important; }
     <div class="view-pane" id="view-ad">
       <div class="sh"><span class="sh-title">AD 사업부 — 2026</span><span class="sh-action" onclick="openHist('AD매출','AD 매출 추이')">5개년 추이</span></div>
       <div class="kpi-grid g6" style="margin-bottom:16px">
-        <div class="kpi" id="kpi-ad-gross-card" style="opacity:.6"><div class="kpi-lbl">취급고매출 — 누적</div><div class="kpi-val" id="kpi-ad-gross-val">—<span class="kpi-unit">억</span></div><div class="kpi-chg flat" id="kpi-ad-gross-chg">데이터 연동 준비중</div></div>
+        <div class="kpi" id="kpi-ad-gross-card" style="opacity:.6"><div class="kpi-lbl">취급고매출 — 누적</div><div class="kpi-val" id="kpi-ad-gross-val">—<span class="kpi-unit">억</span></div><div class="kpi-chg flat" id="kpi-ad-gross-chg">데이터 연동 준비중</div><button class="hist-btn" onclick="openHist('AD매출','AD 매출 5개년 추이')">📊 과거 데이터 보기</button></div>
         <div class="kpi accent"><div class="kpi-lbl">순매출 — 누적</div><div class="kpi-val" id="kpi-ad-h1-val">11.40<span class="kpi-unit">억</span></div><div class="kpi-chg flat" id="kpi-ad-h1-chg">H1 기준</div><button class="hist-btn" onclick="openHist('AD매출','AD 매출 5개년 추이')">📊 과거 데이터 보기</button></div>
         <div class="kpi danger" id="kpi-ad-profit-card"><div class="kpi-lbl">영업이익 — 누적</div><div class="kpi-val" id="kpi-ad-profit-val" style="color:var(--red)">-2.10<span class="kpi-unit">억</span></div><div class="kpi-chg down" id="kpi-ad-profit-chg">적자 — 흑자전환 필요</div><button class="hist-btn" onclick="openHist('수익','전사 손익 5개년 추이')">📊 과거 데이터 보기</button></div>
-        <div class="kpi"><div class="kpi-lbl">전년대비 증감률</div><div class="kpi-val">+3.8<span class="kpi-unit">%</span></div><div class="kpi-chg up">전년 10.98억 대비</div></div>
+        <div class="kpi"><div class="kpi-lbl">전년대비 증감률</div><div class="kpi-val">+3.8<span class="kpi-unit">%</span></div><div class="kpi-chg up">전년 10.98억 대비</div><button class="hist-btn" onclick="openHist('AD매출','AD 매출 5개년 추이')">📊 과거 데이터 보기</button></div>
         <div class="kpi warn"><div class="kpi-lbl">가동율</div><div class="kpi-val">71<span class="kpi-unit">%</span></div><div class="kpi-chg down">목표 -9%p</div><button class="hist-btn" onclick="openHist('AD가동율','AD 가동율 5개년 추이')">📊 과거 데이터 보기</button></div>
-        <div class="kpi"><div class="kpi-lbl">인원</div><div class="kpi-val">14<span class="kpi-unit">명</span></div><div class="kpi-chg flat">AE · CD · PD</div></div>
+        <div class="kpi"><div class="kpi-lbl">인원</div><div class="kpi-val">14<span class="kpi-unit">명</span></div><div class="kpi-chg flat">AE · CD · PD</div><button class="hist-btn" onclick="openHist('인원','전사 인원 5개년 추이')">📊 과거 데이터 보기</button></div>
       </div>
 
       <div class="insight-grid">
@@ -1017,14 +1017,14 @@ body.present .notif-panel { display: none !important; }
 
     <!-- ═══════ PEZ ═══════ -->
     <div class="view-pane" id="view-pez">
-      <div class="sh"><span class="sh-title">FZ 사업부 — 2026</span><span class="sh-action" onclick="openHist('PEZ매출','대관 매출 추이')">5개년 추이</span></div>
+      <div class="sh"><span class="sh-title">FZ 사업부 — 2026</span><span class="sh-action" onclick="openHist('PEZ매출','FZ 매출 추이')">5개년 추이</span></div>
       <div class="kpi-grid g6" style="margin-bottom:16px">
-        <div class="kpi" id="kpi-fz-gross-card" style="opacity:.6"><div class="kpi-lbl">취급고매출 — 누적</div><div class="kpi-val" id="kpi-fz-gross-val">—<span class="kpi-unit">억</span></div><div class="kpi-chg flat" id="kpi-fz-gross-chg">데이터 연동 준비중</div></div>
+        <div class="kpi" id="kpi-fz-gross-card" style="opacity:.6"><div class="kpi-lbl">취급고매출 — 누적</div><div class="kpi-val" id="kpi-fz-gross-val">—<span class="kpi-unit">억</span></div><div class="kpi-chg flat" id="kpi-fz-gross-chg">데이터 연동 준비중</div><button class="hist-btn" onclick="openHist('PEZ매출','FZ 매출 5개년 추이')">📊 과거 데이터 보기</button></div>
         <div class="kpi accent"><div class="kpi-lbl">순매출 — 누적</div><div class="kpi-val" id="kpi-fz-h1-val">4.80<span class="kpi-unit">억</span></div><div class="kpi-chg up" id="kpi-fz-h1-chg">전년 +22%</div><button class="hist-btn" onclick="openHist('PEZ매출','FZ 매출 5개년 추이')">📊 과거 데이터 보기</button></div>
         <div class="kpi" id="kpi-fz-profit-card"><div class="kpi-lbl">영업이익 — 누적</div><div class="kpi-val" id="kpi-fz-profit-val" style="color:var(--green)">+0.48<span class="kpi-unit">억</span></div><div class="kpi-chg up" id="kpi-fz-profit-chg">흑자 유지</div><button class="hist-btn" onclick="openHist('수익','전사 손익 5개년 추이')">📊 과거 데이터 보기</button></div>
-        <div class="kpi"><div class="kpi-lbl">전년대비 증감률</div><div class="kpi-val" style="color:var(--green)">+22<span class="kpi-unit">%</span></div><div class="kpi-chg up">4개 사업부 최고</div></div>
-        <div class="kpi"><div class="kpi-lbl">가동율</div><div class="kpi-val" style="color:var(--green)">88<span class="kpi-unit">%</span></div><div class="kpi-chg up">목표 초과 +8%p</div></div>
-        <div class="kpi"><div class="kpi-lbl">인원</div><div class="kpi-val">4<span class="kpi-unit">명</span></div><div class="kpi-chg flat">공공·정부 담당</div></div>
+        <div class="kpi"><div class="kpi-lbl">전년대비 증감률</div><div class="kpi-val" style="color:var(--green)">+22<span class="kpi-unit">%</span></div><div class="kpi-chg up">4개 사업부 최고</div><button class="hist-btn" onclick="openHist('PEZ매출','FZ 매출 5개년 추이')">📊 과거 데이터 보기</button></div>
+        <div class="kpi"><div class="kpi-lbl">가동율</div><div class="kpi-val" style="color:var(--green)">88<span class="kpi-unit">%</span></div><div class="kpi-chg up">목표 초과 +8%p</div><button class="hist-btn" onclick="openHist('가동율','전사 가동율 5개년 추이')">📊 과거 데이터 보기</button></div>
+        <div class="kpi"><div class="kpi-lbl">인원</div><div class="kpi-val">4<span class="kpi-unit">명</span></div><div class="kpi-chg flat">공공·정부 담당</div><button class="hist-btn" onclick="openHist('인원','전사 인원 5개년 추이')">📊 과거 데이터 보기</button></div>
       </div>
 
       <div class="insight-grid" style="grid-template-columns:1fr 1fr">
@@ -1074,12 +1074,12 @@ body.present .notif-panel { display: none !important; }
     <div class="view-pane" id="view-dh">
       <div class="sh"><span class="sh-title">DH 사업부 — 2026</span><span class="sh-action">데이터 연동 준비중</span></div>
       <div class="kpi-grid g6" style="margin-bottom:16px;opacity:.6">
-        <div class="kpi" id="kpi-dh-gross-card"><div class="kpi-lbl">취급고매출 — 누적</div><div class="kpi-val" id="kpi-dh-gross-val">—<span class="kpi-unit">억</span></div><div class="kpi-chg flat" id="kpi-dh-gross-chg">데이터 없음</div></div>
-        <div class="kpi" id="kpi-dh-h1-card"><div class="kpi-lbl">순매출 — 누적</div><div class="kpi-val" id="kpi-dh-h1-val">—<span class="kpi-unit">억</span></div><div class="kpi-chg flat" id="kpi-dh-h1-chg">데이터 없음</div></div>
-        <div class="kpi" id="kpi-dh-profit-card"><div class="kpi-lbl">영업이익 — 누적</div><div class="kpi-val" id="kpi-dh-profit-val">—<span class="kpi-unit">억</span></div><div class="kpi-chg flat" id="kpi-dh-profit-chg">데이터 없음</div></div>
-        <div class="kpi"><div class="kpi-lbl">전년대비 증감률</div><div class="kpi-val">—<span class="kpi-unit">%</span></div><div class="kpi-chg flat">데이터 없음</div></div>
-        <div class="kpi"><div class="kpi-lbl">가동률</div><div class="kpi-val">—<span class="kpi-unit">%</span></div><div class="kpi-chg flat">데이터 없음</div></div>
-        <div class="kpi"><div class="kpi-lbl">인원</div><div class="kpi-val">—<span class="kpi-unit">명</span></div><div class="kpi-chg flat">데이터 없음</div></div>
+        <div class="kpi" id="kpi-dh-gross-card"><div class="kpi-lbl">취급고매출 — 누적</div><div class="kpi-val" id="kpi-dh-gross-val">—<span class="kpi-unit">억</span></div><div class="kpi-chg flat" id="kpi-dh-gross-chg">데이터 없음</div><button class="hist-btn" onclick="openHist('매출','전사 월별 매출 5개년 추이')">📊 과거 데이터 보기</button></div>
+        <div class="kpi" id="kpi-dh-h1-card"><div class="kpi-lbl">순매출 — 누적</div><div class="kpi-val" id="kpi-dh-h1-val">—<span class="kpi-unit">억</span></div><div class="kpi-chg flat" id="kpi-dh-h1-chg">데이터 없음</div><button class="hist-btn" onclick="openHist('매출','전사 월별 매출 5개년 추이')">📊 과거 데이터 보기</button></div>
+        <div class="kpi" id="kpi-dh-profit-card"><div class="kpi-lbl">영업이익 — 누적</div><div class="kpi-val" id="kpi-dh-profit-val">—<span class="kpi-unit">억</span></div><div class="kpi-chg flat" id="kpi-dh-profit-chg">데이터 없음</div><button class="hist-btn" onclick="openHist('수익','전사 손익 5개년 추이')">📊 과거 데이터 보기</button></div>
+        <div class="kpi"><div class="kpi-lbl">전년대비 증감률</div><div class="kpi-val">—<span class="kpi-unit">%</span></div><div class="kpi-chg flat">데이터 없음</div><button class="hist-btn" onclick="openHist('매출','전사 월별 매출 5개년 추이')">📊 과거 데이터 보기</button></div>
+        <div class="kpi"><div class="kpi-lbl">가동률</div><div class="kpi-val">—<span class="kpi-unit">%</span></div><div class="kpi-chg flat">데이터 없음</div><button class="hist-btn" onclick="openHist('가동율','전사 가동율 5개년 추이')">📊 과거 데이터 보기</button></div>
+        <div class="kpi"><div class="kpi-lbl">인원</div><div class="kpi-val">—<span class="kpi-unit">명</span></div><div class="kpi-chg flat">데이터 없음</div><button class="hist-btn" onclick="openHist('인원','전사 인원 5개년 추이')">📊 과거 데이터 보기</button></div>
       </div>
       <div class="card" style="text-align:center;padding:40px 20px">
         <div style="font-size:32px;margin-bottom:12px">📋</div>
@@ -1326,7 +1326,7 @@ body.present .notif-panel { display: none !important; }
           <div class="card-hd"><div class="card-title">2026 주요 시장 트렌드</div></div>
           <div style="display:flex;flex-direction:column;gap:9px;margin-top:4px">
             <div class="alert info"><div class="alert-tag">기회</div><div class="alert-msg">AI 에이전시 전환 수요 급증 — "AI First" 계약 요구 증가</div><div class="alert-detail">RFP에 AI 활용 계획 필수 기재 사례 증가. 내재화 조직이 절대 우위.</div></div>
-            <div class="alert info"><div class="alert-tag">기회</div><div class="alert-msg">공공·금융 DX 예산 확대 — 대관 사업부 성장 기회</div><div class="alert-detail">2026 공공 IT 예산 전년 대비 +18%. FZ 사업부 파이프라인 확대 직결.</div></div>
+            <div class="alert info"><div class="alert-tag">기회</div><div class="alert-msg">공공·금융 DX 예산 확대 — FZ 사업부 성장 기회</div><div class="alert-detail">2026 공공 IT 예산 전년 대비 +18%. FZ 사업부 파이프라인 확대 직결.</div></div>
             <div class="alert warn"><div class="alert-tag">위협</div><div class="alert-msg">생성AI 직접 사용 고객 증가 — 단순 제작 수요 감소</div><div class="alert-detail">고객이 직접 AI로 초안 제작 후 정제만 의뢰하는 패턴. 고부가가치 기획 역량 강화 필요.</div></div>
             <div class="alert warn"><div class="alert-tag">위협</div><div class="alert-msg">글로벌 에이전시 로컬 공략 강화</div><div class="alert-detail">퍼블리시스·AKQA 국내 조직 확대. 대형 브랜드 영역 경쟁 심화.</div></div>
           </div>
@@ -1951,7 +1951,7 @@ document.addEventListener('DOMContentLoaded', initApp);
 const MONTHS=['1월','2월','3월','4월','5월','6월'];
 const YRS=['2022','2023','2024','2025','2026'];
 const HIST={
-  매출:{yrs:[[6.44,6.97,7.58,4.60,8.07,10.22],[5.34,6.67,6.88,7.28,6.99,6.94],[6.18,6.52,8.33,5.63,5.88,11.73],[5.23,6.70,8.18,7.26,6.85,7.23],[6.36,8.27,10.69,9.54,7.19,9.85]],insight:'전사 순매출(H1 기준). 2026 H1 51.90억(DX 실적 반영, AD·대관은 추정치). 2025 H1 41.45억 대비 +25.2% 성장. DX 실적 개선이 주된 요인. 2024년 6월 11.73억(SKT 피크)이 역대 최고.'},
+  매출:{yrs:[[6.44,6.97,7.58,4.60,8.07,10.22],[5.34,6.67,6.88,7.28,6.99,6.94],[6.18,6.52,8.33,5.63,5.88,11.73],[5.23,6.70,8.18,7.26,6.85,7.23],[6.36,8.27,10.69,9.54,7.19,9.85]],insight:'전사 순매출(H1 기준). 2026 H1 51.90억(DX 실적 반영, AD·FZ는 추정치). 2025 H1 41.45억 대비 +25.2% 성장. DX 실적 개선이 주된 요인. 2024년 6월 11.73억(SKT 피크)이 역대 최고.'},
   수익:{yrs:[
     [0.28, 0.21, 0.44,-0.12, 0.38, 0.32],  // 2022 H1 +1.51억
     [0.05, 0.04, 0.12,-0.25, 0.06,-0.22],   // 2023 H1 -0.20억
@@ -2089,8 +2089,8 @@ MIS_CHARTS.smRev = new Chart(document.getElementById('cSmRev').getContext('2d'),
   data:{labels:MONTHS,datasets:[
     {label:'DX',   data:BU_MON.DX,  backgroundColor:C_BLUE,  borderRadius:0,borderSkipped:false,stack:'s'},
     {label:'AD',   data:BU_MON.AD,  backgroundColor:'#374151',borderRadius:0,borderSkipped:false,stack:'s'},
-    {label:'대관', data:BU_MON.PEZ, backgroundColor:C_GRAY,  borderRadius:0,borderSkipped:false,stack:'s'},
-    {label:'기타', data:BU_MON.기타,backgroundColor:'#D1D5DB',borderRadius:[6,6,0,0],borderSkipped:false,stack:'s'},
+    {label:'FZ', data:BU_MON.PEZ, backgroundColor:C_GRAY,  borderRadius:0,borderSkipped:false,stack:'s'},
+    {label:'DH', data:BU_MON.기타,backgroundColor:'#D1D5DB',borderRadius:[6,6,0,0],borderSkipped:false,stack:'s'},
   ]},
   options:{...BASE_OPT,
     plugins:{
@@ -2338,7 +2338,7 @@ function setH(filter,btn){
   if(buViewOn && curHistKey==='매출'){
     const buKeys=['DX','AD','PEZ','기타'];
     const buColors=[C_BLUE,'#374151',C_GRAY,'#D1D5DB'];
-    const buLabels=['DX','AD','대관','기타'];
+    const buLabels=['DX','AD','FZ','DH'];
     if(filter==='2026'){
       hChart=new Chart(ctx,{type:'bar',data:{labels:MONTHS,datasets:buKeys.map((k,i)=>({label:buLabels[i],data:BU_HIST_YRS[k][4],backgroundColor:buColors[i],borderRadius:0,borderSkipped:false,stack:'s'}))},options:{...BASE_OPT,plugins:{legend:LEG},scales:{...BASE_OPT.scales,x:{...BASE_OPT.scales.x,stacked:true},y:{...BASE_OPT.scales.y,stacked:true,ticks:{...BASE_OPT.scales.y.ticks,callback:v=>v+'억'}}}}});
     } else if(filter==='2yr'){
@@ -2376,7 +2376,7 @@ function setH(filter,btn){
     tbl.appendChild(totRow);
     document.getElementById('buTable').style.display='block';
     document.getElementById('histNumTable').style.display='none';
-    document.getElementById('histInsight').textContent='사업부별 상세 보기: 2026년 기준. DX가 전체의 44%, AD 28%, 대관 9% 기여.';
+    document.getElementById('histInsight').textContent='사업부별 상세 보기: 2026년 기준. DX가 전체의 44%, AD 28%, FZ 9% 기여.';
     return;
   }
 
@@ -2417,7 +2417,7 @@ function setH(filter,btn){
 
 // ─── NAV ───
 const views={sm:'SM 총괄 — 전사 통합 현황',dx:'DX 사업부 대시보드',ad:'AD 사업부 대시보드',pez:'FZ 사업부 대시보드',dh:'DH 사업부 대시보드',ai:'AI / MCP 현황 — 전사 역량',mkt:'시장 & 경쟁사 현황',proj:'프로젝트 분석 — 전사 프로젝트 성과',sales:'영업관리 — 제안 프로젝트',cfg:'설정'};
-const metas={sm:'2026년 6월 기준 · 전 사업부 통합',dx:'디지털 플랫폼 구축·운영 · 2026 상반기',ad:'광고·캠페인·브랜드 · 2026',pez:'정부·공공기관 대관 사업 · 2026',dh:'DH 사업부 · 2026',ai:'AI 역량 진단 + MCP 연동 현황 · 2026.06',mkt:'국내 디지털 에이전시 시장 · 경쟁사 분석',proj:'ERP 연동 준비 중 · 샘플 데이터 기준 · 2026.06',sales:'DX · AD 사업부 · 2026 상반기',cfg:'시스템 연동 · 멤버 · 데이터 관리'};
+const metas={sm:'2026년 6월 기준 · 전 사업부 통합',dx:'디지털 플랫폼 구축·운영 · 2026 상반기',ad:'광고·캠페인·브랜드 · 2026',pez:'정부·공공기관 FZ 사업 · 2026',dh:'DH 사업부 · 2026',ai:'AI 역량 진단 + MCP 연동 현황 · 2026.06',mkt:'국내 디지털 에이전시 시장 · 경쟁사 분석',proj:'ERP 연동 준비 중 · 샘플 데이터 기준 · 2026.06',sales:'DX · AD 사업부 · 2026 상반기',cfg:'시스템 연동 · 멤버 · 데이터 관리'};
 function sw(v){
   document.querySelectorAll('.view-pane').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-item[id^="nav-"]').forEach(n=>n.classList.remove('active'));
@@ -2818,7 +2818,7 @@ function openConnDrawer(type, idx){
     <div class="cfg-field"><div class="cfg-label">연동 이름</div><input class="cfg-input" id="cn-name" placeholder="예: DX 사업부 ERP" value="${item.name}"></div>
     <div class="cfg-field"><div class="cfg-label">담당 BU / 용도</div>
       <select class="cfg-input" id="cn-bu">
-        ${['전사','DX','AD','SM','대관','재무'].map(b=>`<option${item.bu===b?' selected':''}>${b}</option>`).join('')}
+        ${['전사','DX','AD','SM','FZ','재무'].map(b=>`<option${item.bu===b?' selected':''}>${b}</option>`).join('')}
       </select>
     </div>
     <div class="cfg-field"><div class="cfg-label">ERP 서버 URL</div><input class="cfg-input" id="cn-url" type="text" placeholder="https://erp.company.com/api/v1" value="${item.url}"></div>
@@ -2844,7 +2844,7 @@ function openConnDrawer(type, idx){
     <div class="cfg-field"><div class="cfg-label">시트 이름</div><input class="cfg-input" id="cn-name" placeholder="예: DX 프로젝트 현황" value="${item.name}"></div>
     <div class="cfg-field"><div class="cfg-label">담당 BU / 용도</div>
       <select class="cfg-input" id="cn-bu">
-        ${['전사','DX','AD','SM','대관','재무'].map(b=>`<option${item.bu===b?' selected':''}>${b}</option>`).join('')}
+        ${['전사','DX','AD','SM','FZ','재무'].map(b=>`<option${item.bu===b?' selected':''}>${b}</option>`).join('')}
       </select>
     </div>
     <div class="cfg-field"><div class="cfg-label">스프레드시트 URL</div><input class="cfg-input" id="cn-url" type="text" placeholder="https://docs.google.com/spreadsheets/d/..." value="${item.url}"></div>
@@ -2980,7 +2980,7 @@ function openDrawer(type, idx){
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
           <div class="cfg-field"><div class="cfg-label">사업부</div>
             <select class="cfg-input" id="de-bu">
-              ${['DX','AD','SM','대관'].map(b=>`<option${p.bu===b?' selected':''}>${b}</option>`).join('')}
+              ${['DX','AD','SM','FZ'].map(b=>`<option${p.bu===b?' selected':''}>${b}</option>`).join('')}
             </select>
           </div>
           <div class="cfg-field"><div class="cfg-label">프로젝트 분류</div>
@@ -3079,7 +3079,7 @@ function openDrawer(type, idx){
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
         <div class="cfg-field"><div class="cfg-label">담당 BU</div>
           <select class="cfg-input" id="ce-bu">
-            ${['DX','AD','SM','DX+AD','대관'].map(b=>`<option${c.bu===b?' selected':''}>${b}</option>`).join('')}
+            ${['DX','AD','SM','DX+AD','FZ'].map(b=>`<option${c.bu===b?' selected':''}>${b}</option>`).join('')}
           </select>
         </div>
         <div class="cfg-field"><div class="cfg-label">계약 상태</div>
