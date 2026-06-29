@@ -188,6 +188,7 @@ body {
 .g4 { grid-template-columns: repeat(4, 1fr); }
 .g5 { grid-template-columns: repeat(5, 1fr); }
 .g6 { grid-template-columns: repeat(6, 1fr); }
+.g6 { grid-template-columns: repeat(6, 1fr); }
 .g3 { grid-template-columns: repeat(3, 1fr); }
 .g2 { grid-template-columns: 1fr 1fr; }
 
@@ -641,11 +642,11 @@ body.present .notif-panel { display: none !important; }
     <div class="nav-item active" id="nav-sm" onclick="sw('sm')"><div class="nav-dot"></div>SM 총괄</div>
     <div class="nav-item" id="nav-dx" onclick="sw('dx')"><div class="nav-dot"></div>DX 사업부</div>
     <div class="nav-item" id="nav-ad" onclick="sw('ad')"><div class="nav-dot"></div>AD 사업부</div>
-    <div class="nav-item" id="nav-pez" onclick="sw('pez')"><div class="nav-dot"></div>대관사업부</div>
+    <div class="nav-item" id="nav-pez" onclick="sw('pez')"><div class="nav-dot"></div>FZ 사업부</div>
+    <div class="nav-item" id="nav-dh" onclick="sw('dh')"><div class="nav-dot"></div>DH 사업부</div>
   </div>
   <div class="nav-group">
     <div class="nav-label">인텔리전스</div>
-    <div class="nav-item" id="nav-proj" onclick="sw('proj')"><div class="nav-dot"></div>프로젝트 분석</div>
     <div class="nav-item" id="nav-ai" onclick="sw('ai')"><div class="nav-dot"></div>AI / MCP 현황</div>
     <div class="nav-item" id="nav-mkt" onclick="sw('mkt')"><div class="nav-dot"></div>시장 & 경쟁사</div>
   </div>
@@ -706,21 +707,50 @@ body.present .notif-panel { display: none !important; }
     <div class="view-pane active" id="view-sm">
 
       <!-- KPI -->
-      <div class="sh"><span class="sh-title">핵심 지표 — 2026년 6월</span><span class="sh-action" onclick="openHist('매출','전사 5개년 추이')">추이 분석</span></div>
-      <div class="kpi-grid g5" style="margin-bottom:16px">
-        <div class="kpi accent"><div class="kpi-lbl">6월 매출 — 전사 합산</div><div class="kpi-val" id="kpi-sm-jun-val">9.85<span class="kpi-unit">억</span></div><div class="kpi-chg up" id="kpi-sm-jun-chg">+37.0% vs 전월</div><button class="hist-btn" onclick="openHist('매출','전사 월별 매출 5개년 추이')">📊 과거 데이터 보기</button></div>
-        <div class="kpi"><div class="kpi-lbl">H1 손익 — 전사 합산</div><div class="kpi-val" style="color:var(--green)">+0.70<span class="kpi-unit">억</span></div><div class="kpi-chg up">2025 대비 +6.26억 개선</div><button class="hist-btn" onclick="openHist('수익','전사 손익 5개년 추이')">📊 과거 데이터 보기</button></div>
-        <div class="kpi warn"><div class="kpi-lbl">전사 가동율 — 합산</div><div class="kpi-val">76<span class="kpi-unit">%</span></div><div class="kpi-chg flat">목표 80% 대비 -4%p</div><button class="hist-btn" onclick="openHist('가동율','전사 가동율 5개년 추이')">📊 과거 데이터 보기</button></div>
-        <div class="kpi danger"><div class="kpi-lbl">미수금 — 전사 합산</div><div class="kpi-val">3.2<span class="kpi-unit">억</span></div><div class="kpi-chg down">90일 초과 0.8억</div><button class="hist-btn" onclick="openHist('미수금','미수금 5개년 추이')">📊 과거 데이터 보기</button></div>
-        <div class="kpi"><div class="kpi-lbl">전체 인원 — 합산</div><div class="kpi-val">61<span class="kpi-unit">명</span></div><div class="kpi-chg flat">정규 57 · 계약 4</div><button class="hist-btn" onclick="openHist('인원','전사 인원 5개년 추이')">📊 과거 데이터 보기</button></div>
+      <div class="sh"><span class="sh-title">핵심 지표 — 2026 당월포함 누적</span><span class="sh-action" onclick="openHist('매출','전사 5개년 추이')">추이 분석</span></div>
+      <div class="kpi-grid g6" style="margin-bottom:16px">
+        <div class="kpi" style="opacity:.55"><div class="kpi-lbl">취급고매출 — 누적</div><div class="kpi-val" id="kpi-sm-gross-val">—<span class="kpi-unit">억</span></div><div class="kpi-chg flat" id="kpi-sm-gross-chg">데이터 연동 준비중</div><button class="hist-btn" onclick="openHist('매출','취급고 5개년 추이')">📊 과거 데이터 보기</button></div>
+        <div class="kpi accent"><div class="kpi-lbl">순매출 — 누적</div><div class="kpi-val" id="kpi-sm-rev-val">—<span class="kpi-unit">억</span></div><div class="kpi-chg up" id="kpi-sm-rev-chg">전년동기 대비</div><button class="hist-btn" onclick="openHist('매출','전사 월별 매출 5개년 추이')">📊 과거 데이터 보기</button></div>
+        <div class="kpi" id="kpi-sm-profit-card"><div class="kpi-lbl">영업이익 — 누적</div><div class="kpi-val" id="kpi-sm-profit-val">—<span class="kpi-unit">억</span></div><div class="kpi-chg" id="kpi-sm-profit-chg">전년동기 대비</div><button class="hist-btn" onclick="openHist('수익','전사 손익 5개년 추이')">📊 과거 데이터 보기</button></div>
+        <div class="kpi" id="kpi-sm-yoy-card"><div class="kpi-lbl">전년대비 증감률</div><div class="kpi-val" id="kpi-sm-yoy-val">—<span class="kpi-unit">%</span></div><div class="kpi-chg" id="kpi-sm-yoy-chg">순매출 기준</div></div>
+        <div class="kpi warn"><div class="kpi-lbl">전사 가동율</div><div class="kpi-val">76<span class="kpi-unit">%</span></div><div class="kpi-chg flat">목표 80% 대비 -4%p</div><button class="hist-btn" onclick="openHist('가동율','전사 가동율 5개년 추이')">📊 과거 데이터 보기</button></div>
+        <div class="kpi"><div class="kpi-lbl">전체 인원</div><div class="kpi-val">61<span class="kpi-unit">명</span></div><div class="kpi-chg flat">정규 57 · 계약 4</div><button class="hist-btn" onclick="openHist('인원','전사 인원 5개년 추이')">📊 과거 데이터 보기</button></div>
       </div>
 
-      <!-- ALERTS -->
-      <div class="sh"><span class="sh-title">AI 인사이트</span></div>
-      <div class="insight-grid">
-        <div class="insight ins-danger"><div class="ins-tag">손익 경고</div><div class="ins-title">2025 전사 연간 -16.9억 적자</div><div class="ins-body">2021 +4.2억 → 2022 +2.6억 → 2023 -0.5억 → 2024 -2.4억 → 2025 -16.9억. 2026 흑자 전환이 최우선 과제.</div></div>
-        <div class="insight ins-green"><div class="ins-tag">DX 호조</div><div class="ins-title">DX H1 목표 99.9% 달성 · +20.7% YoY</div><div class="ins-body">DX 실적 31.80억(목표 31.84억). 2025 H1 대비 +5.45억 성장. 전사 H1 합계 51.90억으로 전년 대비 큰 폭 개선.</div></div>
-        <div class="insight ins-warn"><div class="ins-tag">계약 만료</div><div class="ins-title">SKT 계약 D-8 · 연 2.1억</div><div class="ins-body">2026.06.30 만료. AD·DX 양 사업부 직결. 이번 주 내 재계약 확정 필요.</div></div>
+      <!-- AI 인사이트 — 편집가능 탭 -->
+      <div class="sh">
+        <span class="sh-title">AI 인사이트</span>
+        <button id="insightEditBtn" onclick="toggleInsightEdit()" style="font-size:11px;padding:3px 10px;border:1px solid var(--border2);border-radius:5px;background:var(--bg);color:var(--ink2);cursor:pointer">✏ 수정</button>
+      </div>
+      <div class="card" style="margin-bottom:16px">
+        <div style="display:flex;gap:0;border-bottom:1px solid var(--border2);margin-bottom:12px">
+          <button class="ins-tab active" id="ins-tab-risk" onclick="switchInsTab('risk')" style="flex:1;padding:7px;font-size:12px;font-weight:600;border:none;border-bottom:2px solid var(--blue);background:transparent;color:var(--blue);cursor:pointer">리스크</button>
+          <button class="ins-tab" id="ins-tab-q" onclick="switchInsTab('q')" style="flex:1;padding:7px;font-size:12px;font-weight:600;border:none;border-bottom:2px solid transparent;background:transparent;color:var(--ink3);cursor:pointer">분기요약</button>
+        </div>
+        <!-- 리스크 탭 -->
+        <div id="ins-pane-risk">
+          <div id="ins-risk-view" class="insight-grid" style="margin-bottom:0">
+            <div class="insight ins-danger"><div class="ins-tag">손익 경고</div><div class="ins-title">2025 전사 연간 -16.9억 적자</div><div class="ins-body">2021 +4.2억 → 2022 +2.6억 → 2023 -0.5억 → 2024 -2.4억 → 2025 -16.9억. 2026 흑자 전환이 최우선 과제.</div></div>
+            <div class="insight ins-warn"><div class="ins-tag">계약 만료</div><div class="ins-title">SKT 계약 D-8 · 연 2.1억</div><div class="ins-body">2026.06.30 만료. AD·DX 양 사업부 직결. 이번 주 내 재계약 확정 필요.</div></div>
+            <div class="insight ins-green"><div class="ins-tag">DX 호조</div><div class="ins-title">DX H1 목표 99.9% 달성 · +20.7% YoY</div><div class="ins-body">DX 실적 31.80억(목표 31.84억). 2025 H1 대비 +5.45억 성장.</div></div>
+          </div>
+          <textarea id="ins-risk-edit" style="display:none;width:100%;min-height:120px;font-size:13px;padding:10px;border:1px solid var(--border2);border-radius:6px;resize:vertical;font-family:inherit;line-height:1.6;box-sizing:border-box">• [손익 경고] 2025 전사 연간 -16.9억 적자 — 2026 흑자 전환이 최우선 과제
+• [계약 만료] SKT 계약 D-8 · 연 2.1억 — AD·DX 양 사업부 직결, 이번 주 내 재계약 확정 필요
+• [DX 호조] DX H1 목표 99.9% 달성 · +20.7% YoY — 전사 H1 합계 51.90억으로 전년 대비 큰 폭 개선</textarea>
+        </div>
+        <!-- 분기요약 탭 -->
+        <div id="ins-pane-q" style="display:none">
+          <div id="ins-q-view">
+            <div class="insight ins-green"><div class="ins-tag">Q1 요약</div><div class="ins-title">Q1 전사 매출 22.08억 · 전년 대비 +15%</div><div class="ins-body">DX 주도. 삼성자산운용 KODEX 리뉴얼 착수. AD 수주 회복세.</div></div>
+            <div class="insight ins-warn"><div class="ins-tag">Q2 진행</div><div class="ins-title">Q2 누적 29.82억 · 목표 대비 ±0%</div><div class="ins-body">6월 대형 납품 집중. SKT 재계약 여부가 Q3 실적 분기점.</div></div>
+          </div>
+          <textarea id="ins-q-edit" style="display:none;width:100%;min-height:120px;font-size:13px;padding:10px;border:1px solid var(--border2);border-radius:6px;resize:vertical;font-family:inherit;line-height:1.6;box-sizing:border-box">• [Q1 요약] Q1 전사 매출 22.08억 · 전년 대비 +15% — DX 주도, 삼성자산운용 KODEX 리뉴얼 착수, AD 수주 회복세
+• [Q2 진행] Q2 누적 29.82억 · 목표 대비 ±0% — 6월 대형 납품 집중, SKT 재계약 여부가 Q3 실적 분기점</textarea>
+        </div>
+        <div id="ins-save-row" style="display:none;margin-top:10px;text-align:right">
+          <button onclick="saveInsight()" style="font-size:12px;padding:5px 16px;background:var(--blue);color:#fff;border:none;border-radius:5px;cursor:pointer">저장</button>
+          <button onclick="cancelInsightEdit()" style="font-size:12px;padding:5px 12px;background:var(--bg);border:1px solid var(--border2);border-radius:5px;cursor:pointer;margin-left:6px">취소</button>
+        </div>
       </div>
 
       <!-- CHARTS ROW -->
@@ -730,7 +760,7 @@ body.present .notif-panel { display: none !important; }
           <div class="ch" style="height:170px"><canvas id="cSmRev"></canvas></div>
         </div>
         <div class="card">
-          <div class="card-hd"><div class="card-title">BU별 매출 비중</div><span class="bx bx-gray" style="font-size:10px">SM 제외</span></div>
+          <div class="card-hd"><div class="card-title">사업부 매출비중</div><span class="bx bx-gray" style="font-size:10px">DX·AD·FZ·DH</span></div>
           <div class="ch" style="height:170px"><canvas id="cSmPie"></canvas></div>
         </div>
       </div>
@@ -739,58 +769,35 @@ body.present .notif-panel { display: none !important; }
       <div class="row col-3">
         <div class="card">
           <div class="card-hd"><div class="card-title">사업부별 가동율</div><span class="bx bx-gray">목표 80%</span></div>
-          <div class="bar-row"><div class="bar-lbl">SM</div><div class="bar-track"><div class="bar-fill green" style="width:82%"></div></div><div class="bar-val">82%</div></div>
+          <div class="bar-row"><div class="bar-lbl">SM</div><div class="bar-track"><div class="bar-fill green" style="width:82%"></div></div><div class="bar-val" style="color:var(--green)">82%</div></div>
           <div class="bar-row"><div class="bar-lbl">DX</div><div class="bar-track"><div class="bar-fill" style="width:76%"></div></div><div class="bar-val">76%</div></div>
           <div class="bar-row"><div class="bar-lbl">AD</div><div class="bar-track"><div class="bar-fill amber" style="width:71%"></div></div><div class="bar-val" style="color:var(--amber)">71%</div></div>
-          <div class="bar-row"><div class="bar-lbl">페즈</div><div class="bar-track"><div class="bar-fill green" style="width:88%"></div></div><div class="bar-val" style="color:var(--green)">88%</div></div>
-          <div style="border-top:1px solid var(--border2);margin-top:10px;padding-top:10px">
-            <div class="f-label" style="display:flex;align-items:center;justify-content:space-between">외주비 집행 (연 예산 7.86억)<button class="hist-btn" style="width:auto;margin:0;padding:2px 8px;font-size:10px" onclick="openHist('외주비','외주비 5개년 추이')">📊 추이</button></div>
-            <div class="bar-row" style="margin-bottom:0"><div class="bar-track"><div class="bar-fill amber" style="width:44%"></div></div><div class="bar-val">44%</div></div>
-            <div style="margin-top:8px;display:flex;gap:6px">
-              <button class="hist-btn" style="width:auto;flex:1;padding:3px 0;font-size:10px" onclick="openHist('인원','전사 인원 5개년 추이')">👥 인원 추이</button>
-              <button class="hist-btn" style="width:auto;flex:1;padding:3px 0;font-size:10px" onclick="openHist('MM단가','외주 MM단가 추이')">💰 MM단가 추이</button>
-            </div>
+          <div class="bar-row"><div class="bar-lbl">FZ</div><div class="bar-track"><div class="bar-fill green" style="width:88%"></div></div><div class="bar-val" style="color:var(--green)">88%</div></div>
+          <div class="bar-row"><div class="bar-lbl">DH</div><div class="bar-track"><div class="bar-fill" style="width:0%"></div></div><div class="bar-val" style="color:var(--ink4)">—</div></div>
+          <div style="border-top:1px solid var(--border2);margin-top:8px;padding-top:8px;display:flex;gap:6px">
+            <button class="hist-btn" style="width:auto;flex:1;padding:3px 0;font-size:10px" onclick="openHist('인원','전사 인원 5개년 추이')">👥 인원 추이</button>
+            <button class="hist-btn" style="width:auto;flex:1;padding:3px 0;font-size:10px" onclick="openHist('MM단가','외주 MM단가 추이')">💰 MM단가 추이</button>
           </div>
         </div>
         <div class="card">
-          <div class="card-hd"><div class="card-title">프로젝트 현황</div><span class="bx bx-gray">DX · AD</span></div>
-          <!-- DX -->
-          <div class="f-label" style="margin-bottom:8px;color:var(--blue)">DX 사업부</div>
-          <div class="proj-row">
-            <div class="proj-lbl">진행중</div>
-            <div class="proj-chips">
-              <span class="proj-num blue">● 8건</span>
+          <div class="card-hd"><div class="card-title">외주비(리소스) 비율</div><button class="hist-btn" style="width:auto;margin:0;padding:2px 8px;font-size:10px" onclick="openHist('외주비','외주비 5개년 추이')">📊 추이</button></div>
+          <!-- 목표 vs 실행 -->
+          <div style="display:flex;gap:8px;margin-bottom:12px">
+            <div style="flex:1;background:var(--bg2);border-radius:6px;padding:8px;text-align:center">
+              <div style="font-size:10px;color:var(--ink4);margin-bottom:2px">목표</div>
+              <div style="font-size:22px;font-weight:700;color:var(--ink1)">4<span style="font-size:13px">%</span></div>
+            </div>
+            <div style="flex:1;background:var(--bg2);border-radius:6px;padding:8px;text-align:center">
+              <div style="font-size:10px;color:var(--ink4);margin-bottom:2px">실행 (H1)</div>
+              <div style="font-size:22px;font-weight:700;color:var(--amber)" id="outsource-pct">—<span style="font-size:13px">%</span></div>
             </div>
           </div>
-          <div class="proj-row">
-            <div class="proj-lbl">완료</div>
-            <div class="proj-chips"><span class="proj-num green">● 5건</span></div>
-          </div>
-          <div class="proj-row">
-            <div class="proj-lbl">지연</div>
-            <div class="proj-chips"><span class="proj-num red">● 2건</span></div>
-          </div>
-          <div class="proj-row" style="margin-bottom:14px">
-            <div class="proj-lbl">예정</div>
-            <div class="proj-chips"><span class="proj-num gray">● 3건</span></div>
-          </div>
-          <!-- AD -->
-          <div class="f-label" style="margin-bottom:8px">AD 사업부</div>
-          <div class="proj-row">
-            <div class="proj-lbl">진행중</div>
-            <div class="proj-chips"><span class="proj-num blue">● 4건</span></div>
-          </div>
-          <div class="proj-row">
-            <div class="proj-lbl">완료</div>
-            <div class="proj-chips"><span class="proj-num green">● 3건</span></div>
-          </div>
-          <div class="proj-row">
-            <div class="proj-lbl">지연</div>
-            <div class="proj-chips"><span class="proj-num red">● 1건</span></div>
-          </div>
-          <div class="proj-row">
-            <div class="proj-lbl">예정</div>
-            <div class="proj-chips"><span class="proj-num gray">● 2건</span></div>
+          <div class="f-label" style="margin-bottom:6px">년도별 외주비율 추이</div>
+          <div class="ch" style="height:100px"><canvas id="cSmOutsource"></canvas></div>
+          <div style="margin-top:8px">
+            <div class="f-label" style="margin-bottom:4px">외주비 집행 현황</div>
+            <div class="bar-row" style="margin-bottom:0"><div class="bar-track"><div class="bar-fill amber" style="width:44%" id="outsource-bar"></div></div><div class="bar-val" id="outsource-bar-val">44%</div></div>
+            <div style="font-size:10px;color:var(--ink4);margin-top:2px">연 예산 7.86억 기준</div>
           </div>
         </div>
         <div class="card">
@@ -799,40 +806,30 @@ body.present .notif-panel { display: none !important; }
             <div style="font-size:48px;font-weight:900;color:var(--ink1);letter-spacing:-.04em">2.37</div>
             <div style="font-size:12px;color:var(--ink4)">/4.0 · L2 활용 수준 · 57명</div>
           </div>
-          <div class="bar-row"><div class="bar-lbl">SM</div><div class="bar-track"><div class="bar-fill" style="width:55%"></div></div><div class="bar-val">2.2</div></div>
-          <div class="bar-row"><div class="bar-lbl">AD</div><div class="bar-track"><div class="bar-fill" style="width:60%"></div></div><div class="bar-val">2.4</div></div>
-          <div class="bar-row"><div class="bar-lbl">DX</div><div class="bar-track"><div class="bar-fill amber" style="width:53%"></div></div><div class="bar-val" style="color:var(--amber)">2.1</div></div>
+          <div class="bar-row"><div class="bar-lbl" style="min-width:56px">DX</div><div class="bar-track"><div class="bar-fill amber" style="width:53%"></div></div><div class="bar-val" style="color:var(--amber)">2.1</div></div>
+          <div class="bar-row"><div class="bar-lbl" style="min-width:56px">AD</div><div class="bar-track"><div class="bar-fill" style="width:60%"></div></div><div class="bar-val">2.4</div></div>
+          <div class="bar-row"><div class="bar-lbl" style="min-width:56px;font-size:10px">기타<br><span style="font-size:9px;color:var(--ink4)">SM·FZ·DH</span></div><div class="bar-track"><div class="bar-fill" style="width:55%"></div></div><div class="bar-val">2.2</div></div>
         </div>
       </div>
 
       <!-- COST + FORECAST -->
       <div class="row col-2">
         <div class="card">
-          <div class="card-hd"><div class="card-title">원가 구조</div><button class="btn" id="costToggleBtn" onclick="toggleCostView()">사업부별</button></div>
-          <!-- 전사 통계 -->
-          <div id="costTotal">
-            <div class="stat-strip" style="margin-bottom:14px">
-              <div class="stat-item"><div class="stat-lbl">인당 인건비</div><div class="stat-val">820<span class="stat-unit">만</span></div></div>
-              <div class="stat-item"><div class="stat-lbl">월 인건비</div><div class="stat-val">5.0<span class="stat-unit">억</span></div></div>
-              <div class="stat-item"><div class="stat-lbl">6월 외주비</div><div class="stat-val" style="color:var(--amber)">0.87<span class="stat-unit">억</span></div></div>
-            </div>
-            <div class="f-label">외주비 연간 예산 사용률</div>
-            <div class="bar-row"><div class="bar-track"><div class="bar-fill amber" style="width:44%"></div></div><div class="bar-val">44%</div></div>
-          </div>
-          <!-- 사업부별 뷰 -->
-          <div id="costBU" style="display:none">
-            <table class="tbl" style="font-size:13px">
-              <thead><tr><th>사업부</th><th>인원</th><th>인건비</th><th>외주비</th><th>합계</th></tr></thead>
-              <tbody>
-                <tr><td style="color:var(--blue);font-weight:700">DX</td><td>33명</td><td class="td-num">2.71억</td><td class="td-num" style="color:var(--amber)">0.54억</td><td class="td-num" style="font-weight:700">3.25억</td></tr>
-                <tr><td style="font-weight:700">AD</td><td>14명</td><td class="td-num">1.15억</td><td class="td-num" style="color:var(--amber)">0.21억</td><td class="td-num" style="font-weight:700">1.36억</td></tr>
-                <tr><td style="font-weight:700">SM직영</td><td>10명</td><td class="td-num">0.82억</td><td class="td-num" style="color:var(--amber)">0.08억</td><td class="td-num" style="font-weight:700">0.90억</td></tr>
-                <tr><td style="font-weight:700">대관</td><td>4명</td><td class="td-num">0.33억</td><td class="td-num" style="color:var(--amber)">0.04억</td><td class="td-num" style="font-weight:700">0.37억</td></tr>
-                <tr style="background:var(--blue-tint)"><td style="color:var(--blue);font-weight:700">전사</td><td style="color:var(--blue)">61명</td><td class="td-num" style="color:var(--blue)">5.01억</td><td class="td-num" style="color:var(--amber)">0.87억</td><td class="td-num" style="color:var(--blue);font-weight:800">5.88억</td></tr>
-              </tbody>
-            </table>
-            <div class="f-label" style="margin-top:10px">외주비 연간 예산 사용률</div>
-            <div class="bar-row"><div class="bar-track"><div class="bar-fill amber" style="width:44%"></div></div><div class="bar-val">44%</div></div>
+          <div class="card-hd"><div class="card-title">원가 구조</div></div>
+          <table class="tbl" style="font-size:12px">
+            <thead><tr><th>사업부</th><th>인원</th><th>월고정비</th><th>M/M단가</th></tr></thead>
+            <tbody>
+              <tr><td style="color:var(--blue);font-weight:700">DX</td><td>33명</td><td class="td-num">2.71억</td><td class="td-num">788만</td></tr>
+              <tr><td style="font-weight:700">AD</td><td>14명</td><td class="td-num">1.15억</td><td class="td-num">788만</td></tr>
+              <tr><td style="font-weight:700">FZ</td><td>4명</td><td class="td-num">0.33억</td><td class="td-num">788만</td></tr>
+              <tr><td style="font-weight:700">DH</td><td>—</td><td class="td-num">—</td><td class="td-num">—</td></tr>
+              <tr><td style="font-weight:700">SM</td><td>10명</td><td class="td-num">0.82억</td><td class="td-num">—</td></tr>
+              <tr style="background:var(--blue-tint)"><td style="color:var(--blue);font-weight:700">전사</td><td style="color:var(--blue)">61명</td><td class="td-num" style="color:var(--blue)">5.01억</td><td class="td-num" style="color:var(--blue)">788만</td></tr>
+            </tbody>
+          </table>
+          <div style="margin-top:8px;display:flex;gap:6px">
+            <button class="hist-btn" style="width:auto;flex:1;padding:3px 0;font-size:10px" onclick="openHist('인원','전사 인원 5개년 추이')">👥 인원 추이</button>
+            <button class="hist-btn" style="width:auto;flex:1;padding:3px 0;font-size:10px" onclick="openHist('MM단가','외주 MM단가 추이')">💰 MM단가 추이</button>
           </div>
         </div>
         <div class="card">
@@ -883,12 +880,12 @@ body.present .notif-panel { display: none !important; }
     <div class="view-pane" id="view-dx">
       <div class="sh"><span class="sh-title">DX 사업부 — 2026 상반기</span><span class="sh-action" onclick="openHist('DX매출','DX 매출 추이')">5개년 추이</span></div>
       <div class="kpi-grid g6" style="margin-bottom:16px">
-        <div class="kpi accent"><div class="kpi-lbl">6월 매출</div><div class="kpi-val" id="kpi-dx-jun-val">6.05<span class="kpi-unit">억</span></div><div class="kpi-chg up" id="kpi-dx-jun-chg">+64.0% vs 5월</div><button class="hist-btn" onclick="openHist('DX매출','DX 매출 5개년 추이')">📊 과거 데이터 보기</button></div>
-        <div class="kpi accent"><div class="kpi-lbl">상반기 누적</div><div class="kpi-val" id="kpi-dx-h1-val">31.80<span class="kpi-unit">억</span></div><div class="kpi-chg up" id="kpi-dx-h1-chg">목표 31.84억 대비</div><button class="hist-btn" onclick="openHist('DX매출','DX 매출 5개년 추이')">📊 과거 데이터 보기</button></div>
-        <div class="kpi accent"><div class="kpi-lbl">달성률</div><div class="kpi-val" id="kpi-dx-ach-val" style="color:var(--green)">99.9<span class="kpi-unit">%</span></div><div class="kpi-chg up" id="kpi-dx-ach-chg">목표 초과 달성</div></div>
-        <div class="kpi accent"><div class="kpi-lbl">YoY</div><div class="kpi-val" id="kpi-dx-yoy-val" style="color:var(--green)">+20.7<span class="kpi-unit">%</span></div><div class="kpi-chg up" id="kpi-dx-yoy-chg">전년 26.35억 대비</div></div>
-        <div class="kpi"><div class="kpi-lbl">누적 손익</div><div class="kpi-val" style="color:var(--green)">+1.58<span class="kpi-unit">억</span></div><div class="kpi-chg up">흑자 유지</div></div>
-        <div class="kpi"><div class="kpi-lbl">외주비 누적</div><div class="kpi-val">3.43<span class="kpi-unit">억</span></div><div class="kpi-chg flat">연 예산 44%</div><button class="hist-btn" onclick="openHist('외주비','외주비 5개년 추이')">📊 과거 데이터 보기</button></div>
+        <div class="kpi" style="opacity:.6"><div class="kpi-lbl">취급고매출 — 누적</div><div class="kpi-val">—<span class="kpi-unit">억</span></div><div class="kpi-chg flat">데이터 연동 준비중</div></div>
+        <div class="kpi accent"><div class="kpi-lbl">순매출 — 누적</div><div class="kpi-val" id="kpi-dx-h1-val">31.80<span class="kpi-unit">억</span></div><div class="kpi-chg up" id="kpi-dx-h1-chg">목표 31.84억 대비</div><button class="hist-btn" onclick="openHist('DX매출','DX 매출 5개년 추이')">📊 과거 데이터 보기</button></div>
+        <div class="kpi"><div class="kpi-lbl">영업이익 — 누적</div><div class="kpi-val" style="color:var(--green)">+1.58<span class="kpi-unit">억</span></div><div class="kpi-chg up">흑자 유지</div></div>
+        <div class="kpi"><div class="kpi-lbl">전년대비 증감률</div><div class="kpi-val" id="kpi-dx-yoy-val" style="color:var(--green)">+20.7<span class="kpi-unit">%</span></div><div class="kpi-chg up" id="kpi-dx-yoy-chg">전년 26.35억 대비</div></div>
+        <div class="kpi"><div class="kpi-lbl">가동율</div><div class="kpi-val">76<span class="kpi-unit">%</span></div><div class="kpi-chg flat">목표 80% 대비 -4%p</div><button class="hist-btn" onclick="openHist('가동율','전사 가동율 5개년 추이')">📊 과거 데이터 보기</button></div>
+        <div class="kpi"><div class="kpi-lbl">인원</div><div class="kpi-val">33<span class="kpi-unit">명</span></div><div class="kpi-chg flat">정규 30 · 계약 3</div><button class="hist-btn" onclick="openHist('인원','전사 인원 5개년 추이')">📊 과거 데이터 보기</button></div>
       </div>
 
       <div class="insight-grid">
@@ -960,11 +957,12 @@ body.present .notif-panel { display: none !important; }
     <!-- ═══════ AD ═══════ -->
     <div class="view-pane" id="view-ad">
       <div class="sh"><span class="sh-title">AD 사업부 — 2026</span><span class="sh-action" onclick="openHist('AD매출','AD 매출 추이')">5개년 추이</span></div>
-      <div class="kpi-grid g5" style="margin-bottom:16px">
-        <div class="kpi accent"><div class="kpi-lbl">6월 매출</div><div class="kpi-val">1.9<span class="kpi-unit">억</span></div><div class="kpi-chg flat">전월 +0.1억</div><button class="hist-btn" onclick="openHist('AD매출','AD 매출 5개년 추이')">📊 과거 데이터 보기</button></div>
-        <div class="kpi"><div class="kpi-lbl">상반기 달성률</div><div class="kpi-val" style="color:var(--green)">78<span class="kpi-unit">%</span></div><div class="kpi-chg up">목표 대비 양호</div></div>
+      <div class="kpi-grid g6" style="margin-bottom:16px">
+        <div class="kpi" style="opacity:.6"><div class="kpi-lbl">취급고매출 — 누적</div><div class="kpi-val">—<span class="kpi-unit">억</span></div><div class="kpi-chg flat">데이터 연동 준비중</div></div>
+        <div class="kpi accent"><div class="kpi-lbl">순매출 — 누적</div><div class="kpi-val">11.40<span class="kpi-unit">억</span></div><div class="kpi-chg flat">H1 기준</div><button class="hist-btn" onclick="openHist('AD매출','AD 매출 5개년 추이')">📊 과거 데이터 보기</button></div>
+        <div class="kpi danger"><div class="kpi-lbl">영업이익 — 누적</div><div class="kpi-val" style="color:var(--red)">-2.10<span class="kpi-unit">억</span></div><div class="kpi-chg down">적자 — 흑자전환 필요</div></div>
+        <div class="kpi"><div class="kpi-lbl">전년대비 증감률</div><div class="kpi-val">+3.8<span class="kpi-unit">%</span></div><div class="kpi-chg up">전년 10.98억 대비</div></div>
         <div class="kpi warn"><div class="kpi-lbl">가동율</div><div class="kpi-val">71<span class="kpi-unit">%</span></div><div class="kpi-chg down">목표 -9%p</div><button class="hist-btn" onclick="openHist('AD가동율','AD 가동율 5개년 추이')">📊 과거 데이터 보기</button></div>
-        <div class="kpi danger"><div class="kpi-lbl">미수금</div><div class="kpi-val">0.7<span class="kpi-unit">억</span></div><div class="kpi-chg down">SKT 30일 지연</div></div>
         <div class="kpi"><div class="kpi-lbl">인원</div><div class="kpi-val">14<span class="kpi-unit">명</span></div><div class="kpi-chg flat">AE · CD · PD</div></div>
       </div>
 
@@ -1019,12 +1017,14 @@ body.present .notif-panel { display: none !important; }
 
     <!-- ═══════ PEZ ═══════ -->
     <div class="view-pane" id="view-pez">
-      <div class="sh"><span class="sh-title">대관사업부 — 2026</span><span class="sh-action" onclick="openHist('PEZ매출','대관 매출 추이')">5개년 추이</span></div>
-      <div class="kpi-grid g4" style="margin-bottom:16px">
-        <div class="kpi accent"><div class="kpi-lbl">상반기 매출</div><div class="kpi-val">4.8<span class="kpi-unit">억</span></div><div class="kpi-chg up">전년 +22%</div><button class="hist-btn" onclick="openHist('PEZ매출','대관 매출 5개년 추이')">📊 과거 데이터 보기</button></div>
-        <div class="kpi"><div class="kpi-lbl">상반기 달성률</div><div class="kpi-val" style="color:var(--green)">84<span class="kpi-unit">%</span></div><div class="kpi-chg up">4개 부서 최고</div></div>
-        <div class="kpi"><div class="kpi-lbl">진행 프로젝트</div><div class="kpi-val">7<span class="kpi-unit">건</span></div><div class="kpi-chg flat">공공 5 · 정부 2</div></div>
+      <div class="sh"><span class="sh-title">FZ 사업부 — 2026</span><span class="sh-action" onclick="openHist('PEZ매출','대관 매출 추이')">5개년 추이</span></div>
+      <div class="kpi-grid g6" style="margin-bottom:16px">
+        <div class="kpi" style="opacity:.6"><div class="kpi-lbl">취급고매출 — 누적</div><div class="kpi-val">—<span class="kpi-unit">억</span></div><div class="kpi-chg flat">데이터 연동 준비중</div></div>
+        <div class="kpi accent"><div class="kpi-lbl">순매출 — 누적</div><div class="kpi-val">4.80<span class="kpi-unit">억</span></div><div class="kpi-chg up">전년 +22%</div><button class="hist-btn" onclick="openHist('PEZ매출','FZ 매출 5개년 추이')">📊 과거 데이터 보기</button></div>
+        <div class="kpi"><div class="kpi-lbl">영업이익 — 누적</div><div class="kpi-val" style="color:var(--green)">+0.48<span class="kpi-unit">억</span></div><div class="kpi-chg up">흑자 유지</div></div>
+        <div class="kpi"><div class="kpi-lbl">전년대비 증감률</div><div class="kpi-val" style="color:var(--green)">+22<span class="kpi-unit">%</span></div><div class="kpi-chg up">4개 사업부 최고</div></div>
         <div class="kpi"><div class="kpi-lbl">가동율</div><div class="kpi-val" style="color:var(--green)">88<span class="kpi-unit">%</span></div><div class="kpi-chg up">목표 초과 +8%p</div></div>
+        <div class="kpi"><div class="kpi-lbl">인원</div><div class="kpi-val">4<span class="kpi-unit">명</span></div><div class="kpi-chg flat">공공·정부 담당</div></div>
       </div>
 
       <div class="insight-grid" style="grid-template-columns:1fr 1fr">
@@ -1067,6 +1067,24 @@ body.present .notif-panel { display: none !important; }
             </tbody>
           </table>
         </div>
+      </div>
+    </div>
+
+    <!-- ═══════ DH ═══════ -->
+    <div class="view-pane" id="view-dh">
+      <div class="sh"><span class="sh-title">DH 사업부 — 2026</span><span class="sh-action">데이터 연동 준비중</span></div>
+      <div class="kpi-grid g6" style="margin-bottom:16px;opacity:.6">
+        <div class="kpi"><div class="kpi-lbl">취급고매출 — 누적</div><div class="kpi-val">—<span class="kpi-unit">억</span></div><div class="kpi-chg flat">데이터 없음</div></div>
+        <div class="kpi"><div class="kpi-lbl">순매출 — 누적</div><div class="kpi-val">—<span class="kpi-unit">억</span></div><div class="kpi-chg flat">데이터 없음</div></div>
+        <div class="kpi"><div class="kpi-lbl">영업이익 — 누적</div><div class="kpi-val">—<span class="kpi-unit">억</span></div><div class="kpi-chg flat">데이터 없음</div></div>
+        <div class="kpi"><div class="kpi-lbl">전년대비 증감률</div><div class="kpi-val">—<span class="kpi-unit">%</span></div><div class="kpi-chg flat">데이터 없음</div></div>
+        <div class="kpi"><div class="kpi-lbl">가동률</div><div class="kpi-val">—<span class="kpi-unit">%</span></div><div class="kpi-chg flat">데이터 없음</div></div>
+        <div class="kpi"><div class="kpi-lbl">인원</div><div class="kpi-val">—<span class="kpi-unit">명</span></div><div class="kpi-chg flat">데이터 없음</div></div>
+      </div>
+      <div class="card" style="text-align:center;padding:40px 20px">
+        <div style="font-size:32px;margin-bottom:12px">📋</div>
+        <div style="font-size:15px;font-weight:600;color:var(--ink1);margin-bottom:8px">DH 사업부 데이터 연동 준비중</div>
+        <div style="font-size:13px;color:var(--ink3);line-height:1.7">구글 시트에 DH 사업부 데이터를 입력하면<br>자동으로 이 페이지에 반영됩니다.</div>
       </div>
     </div>
 
@@ -1134,7 +1152,7 @@ body.present .notif-panel { display: none !important; }
               <tr><td class="td-hi">강민재</td><td>DX PM</td><td class="td-num">2.7</td><td>일정 관리</td><td><span class="bx bx-gray">L2</span></td></tr>
               <tr><td class="td-hi">황수민</td><td>AD CD</td><td class="td-num">2.6</td><td>브리프 작성</td><td><span class="bx bx-gray">L2</span></td></tr>
               <tr><td class="td-hi">송태양</td><td>DX 기획</td><td class="td-num">2.5</td><td>분석 보조</td><td><span class="bx bx-gray">L2</span></td></tr>
-              <tr><td class="td-hi">유나연</td><td>페즈</td><td class="td-num">2.5</td><td>제안서 보조</td><td><span class="bx bx-gray">L2</span></td></tr>
+              <tr><td class="td-hi">유나연</td><td>FZ</td><td class="td-num">2.5</td><td>제안서 보조</td><td><span class="bx bx-gray">L2</span></td></tr>
             </tbody>
           </table>
         </div>
@@ -1186,7 +1204,7 @@ body.present .notif-panel { display: none !important; }
               <tr><td class="td-hi">월 실적 리포트 자동화</td><td>SM</td><td class="td-num" style="color:var(--green)">12h/월</td><td>월 1회</td><td><span class="bx bx-green">운영</span></td></tr>
               <tr><td class="td-hi">견적서 초안 생성</td><td>DX</td><td class="td-num" style="color:var(--green)">8h/월</td><td>수시</td><td><span class="bx bx-green">운영</span></td></tr>
               <tr><td class="td-hi">회의록 자동 요약</td><td>전사</td><td class="td-num" style="color:var(--green)">20h/월</td><td>주 5회+</td><td><span class="bx bx-green">운영</span></td></tr>
-              <tr><td class="td-hi">입찰 제안서 초안</td><td>페즈</td><td class="td-num" style="color:var(--green)">15h/건</td><td>건당</td><td><span class="bx bx-green">운영</span></td></tr>
+              <tr><td class="td-hi">입찰 제안서 초안</td><td>FZ</td><td class="td-num" style="color:var(--green)">15h/건</td><td>건당</td><td><span class="bx bx-green">운영</span></td></tr>
               <tr><td class="td-hi">캠페인 카피 생성</td><td>AD</td><td class="td-num" style="color:var(--green)">6h/월</td><td>월 3회</td><td><span class="bx bx-green">운영</span></td></tr>
               <tr><td class="td-hi">코드 리뷰 보조</td><td>DX 개발</td><td class="td-num" style="color:var(--green)">10h/월</td><td>수시</td><td><span class="bx bx-blue">파일럿</span></td></tr>
               <tr><td class="td-hi">UI 스토리보드 초안</td><td>DX 기획</td><td class="td-num" style="color:var(--amber)">-</td><td>-</td><td><span class="bx bx-amber">준비중</span></td></tr>
@@ -1207,7 +1225,7 @@ body.present .notif-panel { display: none !important; }
             <div style="font-size:13px;color:var(--ink3)">크리에이티브 AI 활용 · 카피 자동화 · Midjourney 도입 현황 추가 예정</div>
           </div>
           <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:14px;opacity:.5">
-            <div class="f-label" style="margin-bottom:8px">대관사업부 AI 현황</div>
+            <div class="f-label" style="margin-bottom:8px">FZ 사업부 AI 현황</div>
             <div style="font-size:13px;color:var(--ink3)">입찰 제안서 AI 보조 · 공공 데이터 분석 자동화 현황 추가 예정</div>
           </div>
           <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:14px;opacity:.5">
@@ -1308,7 +1326,7 @@ body.present .notif-panel { display: none !important; }
           <div class="card-hd"><div class="card-title">2026 주요 시장 트렌드</div></div>
           <div style="display:flex;flex-direction:column;gap:9px;margin-top:4px">
             <div class="alert info"><div class="alert-tag">기회</div><div class="alert-msg">AI 에이전시 전환 수요 급증 — "AI First" 계약 요구 증가</div><div class="alert-detail">RFP에 AI 활용 계획 필수 기재 사례 증가. 내재화 조직이 절대 우위.</div></div>
-            <div class="alert info"><div class="alert-tag">기회</div><div class="alert-msg">공공·금융 DX 예산 확대 — 대관 사업부 성장 기회</div><div class="alert-detail">2026 공공 IT 예산 전년 대비 +18%. 대관사업부 파이프라인 확대 직결.</div></div>
+            <div class="alert info"><div class="alert-tag">기회</div><div class="alert-msg">공공·금융 DX 예산 확대 — 대관 사업부 성장 기회</div><div class="alert-detail">2026 공공 IT 예산 전년 대비 +18%. FZ 사업부 파이프라인 확대 직결.</div></div>
             <div class="alert warn"><div class="alert-tag">위협</div><div class="alert-msg">생성AI 직접 사용 고객 증가 — 단순 제작 수요 감소</div><div class="alert-detail">고객이 직접 AI로 초안 제작 후 정제만 의뢰하는 패턴. 고부가가치 기획 역량 강화 필요.</div></div>
             <div class="alert warn"><div class="alert-tag">위협</div><div class="alert-msg">글로벌 에이전시 로컬 공략 강화</div><div class="alert-detail">퍼블리시스·AKQA 국내 조직 확대. 대형 브랜드 영역 경쟁 심화.</div></div>
           </div>
@@ -1947,7 +1965,7 @@ const HIST={
   'DX매출':{yrs:[[3.54,3.60,4.75,3.00,4.90,5.52],[3.60,4.60,5.33,4.78,4.84,5.03],[4.15,4.01,4.95,3.13,3.33,7.80],[3.73,4.52,4.89,4.51,3.95,4.75],[3.46,5.07,7.29,6.24,3.69,6.05]],insight:'2026 H1 실적 31.80억. 목표 31.84억 대비 99.9% 달성. 2025 H1 26.35억 대비 +20.7% 성장. 3월 7.29억·6월 6.05억 고점 기록. Q3 목표 15.38억(7월 4.36, 8월 7.79, 9월 3.23). 2024년 6월 7.80억(SKT 착수)이 역대 최고.'},
   'AD매출':{yrs:[[2.90,3.37,2.83,1.60,3.17,4.70],[1.74,2.07,1.55,2.50,2.15,1.91],[2.03,2.51,3.38,2.50,2.55,3.93],[1.47,2.16,2.87,2.42,2.90,2.48],[1.4,1.6,1.8,1.7,1.8,1.9]],insight:'AD 순매출 2022년 이후 구조적 하락. 2022 H1 18.6억 → 2025 H1 14.3억. 2025 연간 33.64억. 취급고 대비 순매출 비중 감소 추세.'},
   'AD가동율':{yrs:[[70,72,73,71,74,75],[73,74,75,73,76,77],[75,76,78,76,79,80],[77,78,79,77,80,80],[71,72,73,71,72,71]],insight:'AD 가동율 2025까지 상승 후 2026 하락. 롯데지주 완료 후 PD팀 유휴 발생. 신규 수주 연결 시급.'},
-  'PEZ매출':{yrs:[[0.5,0.6,0.7,0.6,0.7,0.8],[0.6,0.7,0.8,0.7,0.9,1.0],[0.7,0.8,1.0,0.9,1.0,1.1],[0.8,0.9,1.1,1.0,1.2,1.3],[0.7,0.8,0.9,0.8,1.0,0.6]],insight:'대관사업부 안정적 성장. 낙찰률 62% 유지 시 연간 목표 13억 달성 가능.'},
+  'PEZ매출':{yrs:[[0.5,0.6,0.7,0.6,0.7,0.8],[0.6,0.7,0.8,0.7,0.9,1.0],[0.7,0.8,1.0,0.9,1.0,1.1],[0.8,0.9,1.1,1.0,1.2,1.3],[0.7,0.8,0.9,0.8,1.0,0.6]],insight:'FZ 사업부 안정적 성장. 낙찰률 62% 유지 시 연간 목표 13억 달성 가능.'},
   '외주비':{yrs:[
     [0.42,0.45,0.52,0.38,0.55,0.68], // 2022 실적 H1 3.00억
     [0.48,0.52,0.58,0.44,0.62,0.72], // 2023 실적 H1 3.36억
@@ -1996,11 +2014,11 @@ const BU_HIST_YRS = {
 };
 // KPI 팝업 데이터
 const BU_KPI = {
-  rev:       { title:'6월 매출 — 사업부별', unit:'억', rows:[{n:'DX 사업부',v:'3.0억',s:'44%',c:C_BLUE},{n:'AD 사업부',v:'1.9억',s:'28%',c:'#374151'},{n:'기타/SM직영',v:'1.3억',s:'19%',c:C_GRAY},{n:'대관사업부',v:'0.6억',s:'9%',c:'#111827'}], total:'6.8억' },
-  backlog:   { title:'수주잔고 — 사업부별', unit:'억', rows:[{n:'DX 사업부',v:'18.0억',s:'56%',c:C_BLUE},{n:'AD 사업부',v:'8.8억',s:'27%',c:'#374151'},{n:'대관사업부',v:'5.6억',s:'17%',c:'#111827'}], total:'32.4억' },
-  util:      { title:'가동율 — 사업부별', unit:'%', rows:[{n:'대관사업부',v:'88%',s:'▲ 목표초과',c:C_GREEN},{n:'SM본부',v:'82%',s:'▲ 목표초과',c:C_GREEN},{n:'DX 사업부',v:'76%',s:'△ 목표미달',c:C_BLUE},{n:'AD 사업부',v:'71%',s:'▽ 주의',c:'#D97706'}], total:'76% (전사 평균)' },
-  ar:        { title:'미수금 — 사업부별', unit:'억', rows:[{n:'DX 사업부',v:'1.5억',s:'47%',c:C_BLUE},{n:'AD 사업부',v:'1.1억',s:'34%',c:'#374151'},{n:'대관사업부',v:'0.6억',s:'19%',c:'#111827'}], total:'3.2억' },
-  headcount: { title:'인원 — 사업부별', unit:'명', rows:[{n:'DX 사업부',v:'33명',s:'54%',c:C_BLUE},{n:'AD 사업부',v:'18명',s:'30%',c:'#374151'},{n:'대관사업부',v:'10명',s:'16%',c:'#111827'}], total:'61명 (정규 57 + 계약 4)' },
+  rev:       { title:'6월 매출 — 사업부별', unit:'억', rows:[{n:'DX 사업부',v:'3.0억',s:'44%',c:C_BLUE},{n:'AD 사업부',v:'1.9억',s:'28%',c:'#374151'},{n:'DH',v:'1.3억',s:'19%',c:C_GRAY},{n:'FZ 사업부',v:'0.6억',s:'9%',c:'#111827'}], total:'6.8억' },
+  backlog:   { title:'수주잔고 — 사업부별', unit:'억', rows:[{n:'DX 사업부',v:'18.0억',s:'56%',c:C_BLUE},{n:'AD 사업부',v:'8.8억',s:'27%',c:'#374151'},{n:'FZ 사업부',v:'5.6억',s:'17%',c:'#111827'}], total:'32.4억' },
+  util:      { title:'가동율 — 사업부별', unit:'%', rows:[{n:'FZ 사업부',v:'88%',s:'▲ 목표초과',c:C_GREEN},{n:'SM본부',v:'82%',s:'▲ 목표초과',c:C_GREEN},{n:'DX 사업부',v:'76%',s:'△ 목표미달',c:C_BLUE},{n:'AD 사업부',v:'71%',s:'▽ 주의',c:'#D97706'}], total:'76% (전사 평균)' },
+  ar:        { title:'미수금 — 사업부별', unit:'억', rows:[{n:'DX 사업부',v:'1.5억',s:'47%',c:C_BLUE},{n:'AD 사업부',v:'1.1억',s:'34%',c:'#374151'},{n:'FZ 사업부',v:'0.6억',s:'19%',c:'#111827'}], total:'3.2억' },
+  headcount: { title:'인원 — 사업부별', unit:'명', rows:[{n:'DX 사업부',v:'33명',s:'54%',c:C_BLUE},{n:'AD 사업부',v:'18명',s:'30%',c:'#374151'},{n:'FZ 사업부',v:'10명',s:'16%',c:'#111827'}], total:'61명 (정규 57 + 계약 4)' },
 };
 
 // ─── BU 팝업 함수 ───
@@ -2095,12 +2113,44 @@ MIS_CHARTS.smRev = new Chart(document.getElementById('cSmRev').getContext('2d'),
     scales:{...BASE_OPT.scales,x:{...BASE_OPT.scales.x,stacked:true},y:{...BASE_OPT.scales.y,stacked:true,ticks:{...BASE_OPT.scales.y.ticks,callback:v=>v+'억'}}}
   }
 });
+const smPieLabelPlugin = {
+  id:'smPieLabels',
+  afterDatasetsDraw(chart){
+    const {ctx,data}=chart;
+    const ds=data.datasets[0];
+    const total=ds.data.reduce((s,v)=>s+v,0);
+    if(!total) return;
+    ctx.save();
+    ctx.font='700 11px Inter,sans-serif';
+    ctx.textAlign='center';ctx.textBaseline='middle';
+    chart.getDatasetMeta(0).data.forEach((arc,i)=>{
+      const pct=Math.round(ds.data[i]/total*100);
+      if(pct<5) return;
+      const angle=(arc.startAngle+arc.endAngle)/2;
+      const r=(arc.outerRadius+arc.innerRadius)/2;
+      const x=arc.x+Math.cos(angle)*r;
+      const y=arc.y+Math.sin(angle)*r;
+      ctx.fillStyle='#fff';
+      ctx.fillText(pct+'%',x,y);
+    });
+    ctx.restore();
+  }
+};
 MIS_CHARTS.smPie = new Chart(document.getElementById('cSmPie').getContext('2d'),{
   type:'doughnut',
-  data:{labels:['DX','AD','대관'],datasets:[{data:[65,21,14],backgroundColor:[C_BLUE,'#374151','#111827'],borderWidth:0,hoverOffset:4}]},
+  plugins:[smPieLabelPlugin],
+  data:{labels:['DX','AD','FZ','DH'],datasets:[{data:[65,21,14,0],backgroundColor:[C_BLUE,'#374151','#111827',C_GRAY],borderWidth:0,hoverOffset:4}]},
   options:{responsive:true,maintainAspectRatio:false,cutout:'64%',plugins:{legend:{position:'bottom',labels:{font:{size:12,family:'Inter'},color:'#374151'}}}}
 });
-// cSmProj: replaced with DX/AD text breakdown in HTML
+// 외주비율 년도별 차트
+MIS_CHARTS.smOutsource = new Chart(document.getElementById('cSmOutsource').getContext('2d'),{
+  type:'bar',
+  data:{labels:['2022','2023','2024','2025','2026H1'],datasets:[
+    {label:'외주비율%',data:[3.2,3.8,5.1,4.7,null],backgroundColor:[C_BLUE,C_BLUE,C_BLUE,C_BLUE,C_BLUE],borderRadius:3,borderSkipped:false},
+    {label:'목표',data:[4,4,4,4,4],type:'line',borderColor:'#EF4444',borderDash:[4,3],borderWidth:1.5,pointRadius:0,fill:false}
+  ]},
+  options:{...BASE_OPT,plugins:{legend:{display:false}},scales:{...BASE_OPT.scales,y:{...BASE_OPT.scales.y,ticks:{...BASE_OPT.scales.y.ticks,callback:v=>v+'%'}}}}
+});
 
 // ─── DX CHARTS ───
 MIS_CHARTS.dxRvT = new Chart(document.getElementById('cDxRvT').getContext('2d'),{
@@ -2366,15 +2416,17 @@ function setH(filter,btn){
 }
 
 // ─── NAV ───
-const views={sm:'SM 총괄 — 전사 통합 현황',dx:'DX 사업부 대시보드',ad:'AD 사업부 대시보드',pez:'대관사업부 대시보드',ai:'AI / MCP 현황 — 전사 역량',mkt:'시장 & 경쟁사 현황',proj:'프로젝트 분석 — 전사 프로젝트 성과',sales:'영업관리 — 제안 프로젝트',cfg:'설정'};
-const metas={sm:'2026년 6월 기준 · 전 사업부 통합',dx:'디지털 플랫폼 구축·운영 · 2026 상반기',ad:'광고·캠페인·브랜드 · 2026',pez:'정부·공공기관 대관 사업 · 2026',ai:'AI 역량 진단 + MCP 연동 현황 · 2026.06',mkt:'국내 디지털 에이전시 시장 · 경쟁사 분석',proj:'ERP 연동 준비 중 · 샘플 데이터 기준 · 2026.06',sales:'DX · AD 사업부 · 2026 상반기',cfg:'시스템 연동 · 멤버 · 데이터 관리'};
+const views={sm:'SM 총괄 — 전사 통합 현황',dx:'DX 사업부 대시보드',ad:'AD 사업부 대시보드',pez:'FZ 사업부 대시보드',dh:'DH 사업부 대시보드',ai:'AI / MCP 현황 — 전사 역량',mkt:'시장 & 경쟁사 현황',proj:'프로젝트 분석 — 전사 프로젝트 성과',sales:'영업관리 — 제안 프로젝트',cfg:'설정'};
+const metas={sm:'2026년 6월 기준 · 전 사업부 통합',dx:'디지털 플랫폼 구축·운영 · 2026 상반기',ad:'광고·캠페인·브랜드 · 2026',pez:'정부·공공기관 대관 사업 · 2026',dh:'DH 사업부 · 2026',ai:'AI 역량 진단 + MCP 연동 현황 · 2026.06',mkt:'국내 디지털 에이전시 시장 · 경쟁사 분석',proj:'ERP 연동 준비 중 · 샘플 데이터 기준 · 2026.06',sales:'DX · AD 사업부 · 2026 상반기',cfg:'시스템 연동 · 멤버 · 데이터 관리'};
 function sw(v){
   document.querySelectorAll('.view-pane').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-item[id^="nav-"]').forEach(n=>n.classList.remove('active'));
-  document.getElementById('view-'+v).classList.add('active');
-  document.getElementById('nav-'+v).classList.add('active');
-  document.getElementById('topTitle').textContent=views[v];
-  document.getElementById('topMeta').textContent=metas[v];
+  const pane = document.getElementById('view-'+v);
+  const navEl = document.getElementById('nav-'+v);
+  if(pane) pane.classList.add('active');
+  if(navEl) navEl.classList.add('active');
+  document.getElementById('topTitle').textContent=views[v]||v;
+  document.getElementById('topMeta').textContent=metas[v]||'';
   if(v==='pez')  setTimeout(initPez,50);
   if(v==='ai')   setTimeout(initAi,50);
   if(v==='mkt')  setTimeout(initMkt,50);
@@ -2382,6 +2434,55 @@ function sw(v){
   if(v==='sales') setTimeout(initSales,50);
   if(v==='cfg')  setTimeout(()=>{ renderErpList(); renderGsList(); },50);
 }
+// AI 인사이트 탭 전환
+let insEditMode = false;
+let curInsTab = 'risk';
+function switchInsTab(tab){
+  curInsTab = tab;
+  ['risk','q'].forEach(t=>{
+    document.getElementById('ins-pane-'+t).style.display = t===tab?'':'none';
+    const btn = document.getElementById('ins-tab-'+t);
+    btn.style.borderBottomColor = t===tab?'var(--blue)':'transparent';
+    btn.style.color = t===tab?'var(--blue)':'var(--ink3)';
+  });
+}
+function toggleInsightEdit(){
+  insEditMode = !insEditMode;
+  document.getElementById('insightEditBtn').textContent = insEditMode ? '✕ 닫기' : '✏ 수정';
+  ['risk','q'].forEach(t=>{
+    document.getElementById('ins-'+t+'-view').style.display = insEditMode?'none':'';
+    document.getElementById('ins-'+t+'-edit').style.display = insEditMode?'':'none';
+  });
+  document.getElementById('ins-save-row').style.display = insEditMode?'':'none';
+}
+function cancelInsightEdit(){
+  insEditMode = false;
+  document.getElementById('insightEditBtn').textContent = '✏ 수정';
+  ['risk','q'].forEach(t=>{
+    document.getElementById('ins-'+t+'-view').style.display = '';
+    document.getElementById('ins-'+t+'-edit').style.display = 'none';
+  });
+  document.getElementById('ins-save-row').style.display = 'none';
+}
+function saveInsight(){
+  // 편집 내용을 뷰에 간이 반영 (줄바꿈 → insight 카드)
+  ['risk','q'].forEach(t=>{
+    const txt = document.getElementById('ins-'+t+'-edit').value;
+    const lines = txt.split('\n').filter(l=>l.trim());
+    const view = document.getElementById('ins-'+t+'-view');
+    view.innerHTML = lines.map(l=>{
+      const m = l.match(/^[•\-]\s*\[([^\]]+)\]\s*(.+)/);
+      if(m){
+        const [,tag,body]=m; const title=body.split('—')[0].trim(); const detail=body.includes('—')?body.split('—').slice(1).join('—').trim():'';
+        return `<div class="insight ins-warn"><div class="ins-tag">${tag}</div><div class="ins-title">${title}</div>${detail?`<div class="ins-body">${detail}</div>`:''}</div>`;
+      }
+      return `<div class="insight"><div class="ins-body">${l}</div></div>`;
+    }).join('');
+  });
+  cancelInsightEdit();
+}
+// BU_MON_PROFIT 전역 변수 (syncFromSupabase에서 채움)
+let BU_MON_PROFIT = null;
 
 // ─── 프로젝트 데이터 ───
 const PROJ_DATA = [
@@ -2522,7 +2623,7 @@ function initAi(){
   new Chart(document.getElementById('cAiBar').getContext('2d'),{
     type:'bar',
     data:{
-      labels:['SM 기획','SM 경영','DX 기획','DX 디자인','DX 개발','DX PM','AD AE','AD CD','AD PD','페즈'],
+      labels:['SM 기획','SM 경영','DX 기획','DX 디자인','DX 개발','DX PM','AD AE','AD CD','AD PD','FZ'],
       datasets:[{
         data:[2.6,2.1,1.60,1.33,2.10,2.40,2.35,2.20,1.55,2.42],
         backgroundColor:([2.6,2.1,1.60,1.33,2.10,2.40,2.35,2.20,1.55,2.42]).map(v=>v>=2.5?C_BLUE:v>=2.0?'#93C5FD':C_RED),
@@ -3358,7 +3459,7 @@ async function syncFromSupabase() {
       });
     }
 
-    // ── 3. PROFIT: HIST['수익'] ──
+    // ── 3. PROFIT: HIST['수익'] + BU_MON_PROFIT 채우기 ──
     if (db.profit) {
       YRS_NUM.forEach((yr, i) => {
         if (!db.profit[yr]) return;
@@ -3371,6 +3472,41 @@ async function syncFromSupabase() {
           return buSum || HIST['수익'].yrs[i][mo-1] || 0;
         });
       });
+      // 2026년 월별 영업이익 — KPI 카드용
+      BU_MON_PROFIT = {};
+      ['DX','AD','FZ','DH','합계'].forEach(bu => {
+        BU_MON_PROFIT[bu] = Array.from({length:12}, (_,i) => {
+          const v = getV('profit', 2026, bu, i+1);
+          return v !== null ? v / 100 : 0;
+        });
+      });
+    }
+
+    // ── 3b. GROSS_SALES: 취급고매출 KPI ──
+    if (db.gross_sales) {
+      // 2026년 전사 누적 취급고
+      const curMonth = new Date().getMonth();
+      const gsCum = ['DX','AD','FZ','DH','합계'].reduce((best, bu) => {
+        const arr = Array.from({length:12}, (_,i) => {
+          const v = getV('gross_sales', 2026, bu, i+1);
+          return v !== null ? v / 100 : 0;
+        });
+        if (bu === '합계') return arr.slice(0, curMonth+1).reduce((s,v)=>s+v, 0);
+        return best;
+      }, null);
+      // 합계 없으면 BU 합산
+      const gsTot = gsCum !== null ? gsCum : ['DX','AD','FZ','DH'].reduce((s, bu) => {
+        return s + Array.from({length:curMonth+1}, (_,i) => {
+          const v = getV('gross_sales', 2026, bu, i+1);
+          return v !== null ? v / 100 : 0;
+        }).reduce((a,b)=>a+b, 0);
+      }, 0);
+      if (gsTot > 0) {
+        const setVal = (id, txt) => { const el=document.getElementById(id); if(el) el.innerHTML=txt; };
+        setVal('kpi-sm-gross-val', gsTot.toFixed(2)+'<span class="kpi-unit">억</span>');
+        setVal('kpi-sm-gross-chg', curMonth+'개월 누적 · 취급고');
+        document.querySelector('#kpi-sm-gross-val')?.closest('.kpi')?.style?.removeProperty('opacity');
+      }
     }
 
     // ── 4. HEADCOUNT: HIST['인원'] ──
@@ -3422,13 +3558,14 @@ async function syncFromSupabase() {
     const buTotals = {
       DX:  BU_MON.DX .reduce((s,v)=>s+v,0),
       AD:  BU_MON.AD .reduce((s,v)=>s+v,0),
-      PEZ: BU_MON.PEZ.reduce((s,v)=>s+v,0)
+      PEZ: BU_MON.PEZ.reduce((s,v)=>s+v,0),
+      DH:  BU_MON['기타'].reduce((s,v)=>s+v,0)
     };
     const grand = Object.values(buTotals).reduce((s,v)=>s+v,0);
     if (MIS_CHARTS.smPie && grand > 0) {
       MIS_CHARTS.smPie.data.datasets[0].data = [
         Math.round(buTotals.DX/grand*100), Math.round(buTotals.AD/grand*100),
-        Math.round(buTotals.PEZ/grand*100)
+        Math.round(buTotals.PEZ/grand*100), Math.round(buTotals.DH/grand*100)
       ];
       MIS_CHARTS.smPie.update('none');
     }
@@ -3438,12 +3575,37 @@ async function syncFromSupabase() {
     const dxH1  = dx26.reduce((s,v)=>s+v,0);
     const dxAch = dxH1 / DX_H1_TARGET * 100;
     const dxYoY = (dxH1 - DX_H1_2025) / DX_H1_2025 * 100;
-    const sm6   = Object.values(BU_MON).reduce((s,arr)=>s+arr[5],0);
-    const sm5   = Object.values(BU_MON).reduce((s,arr)=>s+arr[4],0);
+    // SM 총괄 KPI — 누적 순매출
+    const curMonth = new Date().getMonth(); // 0-based, 6월=5
+    const smRevCum = BU_MON.DX.slice(0,curMonth+1).reduce((s,v)=>s+v,0)
+                   + BU_MON.AD.slice(0,curMonth+1).reduce((s,v)=>s+v,0)
+                   + BU_MON.PEZ.slice(0,curMonth+1).reduce((s,v)=>s+v,0)
+                   + BU_MON['기타'].slice(0,curMonth+1).reduce((s,v)=>s+v,0);
+    // 전년 동기 순매출 (하드코딩 참조값 — 2025 H1 전사합)
+    const SM_REV_2025_H1 = 43.20;
+    const smRevYoY = smRevCum > 0 ? (smRevCum - SM_REV_2025_H1) / SM_REV_2025_H1 * 100 : 0;
+    // 영업이익 누적 (profit metric 사용)
+    const profitCum = (BU_MON_PROFIT && BU_MON_PROFIT.합계)
+      ? BU_MON_PROFIT.합계.slice(0,curMonth+1).reduce((s,v)=>s+v,0)
+      : null;
     const setVal = (id, txt) => { const el=document.getElementById(id); if(el) el.innerHTML=txt; };
 
-    setVal('kpi-sm-jun-val', sm6.toFixed(2)+'<span class="kpi-unit">억</span>');
-    setVal('kpi-sm-jun-chg', (sm6>=sm5?'+':'')+(((sm6-sm5)/Math.max(sm5,0.01))*100).toFixed(1)+'% vs 전월');
+    // SM 총괄 누적 KPI
+    if(smRevCum > 0) {
+      setVal('kpi-sm-rev-val', smRevCum.toFixed(2)+'<span class="kpi-unit">억</span>');
+      const yoyColor2 = smRevYoY>=0?'var(--green)':'var(--red)';
+      setVal('kpi-sm-rev-chg','<span style="color:'+yoyColor2+'">'+(smRevYoY>=0?'+':'')+smRevYoY.toFixed(1)+'%</span> vs 전년동기');
+      const yoySign = smRevYoY>=0?'+':'';
+      const yoyC3 = smRevYoY>=0?'var(--green)':'var(--red)';
+      setVal('kpi-sm-yoy-val','<span style="color:'+yoyC3+'">'+yoySign+smRevYoY.toFixed(1)+'<span class="kpi-unit">%</span></span>');
+      setVal('kpi-sm-yoy-chg','순매출 기준 · '+curMonth+'개월 누적');
+    }
+    if(profitCum !== null) {
+      const profColor = profitCum>=0?'var(--green)':'var(--red)';
+      setVal('kpi-sm-profit-val','<span style="color:'+profColor+'">'+(profitCum>=0?'+':'')+profitCum.toFixed(2)+'<span class="kpi-unit">억</span></span>');
+      setVal('kpi-sm-profit-chg', profitCum>=0?'흑자':'적자 — 흑자전환 필요');
+      if(profitCum<0) document.getElementById('kpi-sm-profit-card')?.classList.add('danger');
+    }
     setVal('kpi-dx-jun-val', dx6.toFixed(2)+'<span class="kpi-unit">억</span>');
     setVal('kpi-dx-jun-chg', (dx6>=dx5?'+':'')+(((dx6-dx5)/Math.max(dx5,0.01))*100).toFixed(1)+'% vs 5월');
     setVal('kpi-dx-h1-val',  dxH1.toFixed(2)+'<span class="kpi-unit">억</span>');
