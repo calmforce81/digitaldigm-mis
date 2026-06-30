@@ -1522,7 +1522,12 @@ body.present .notif-panel { display: none !important; }
       <button class="seg-btn active" onclick="filterSalesBu('all',this)">전체 BU</button>
       <button class="seg-btn" onclick="filterSalesBu('DX',this)">DX</button>
       <button class="seg-btn" onclick="filterSalesBu('AD',this)">AD</button>
-      <button class="seg-btn" onclick="filterSalesBu('FZ',this)">FZ</button>
+    </div>
+    <div class="seg-divider"></div>
+    <div class="seg-ctrl" id="salesDealTab">
+      <button class="seg-btn active" onclick="filterSalesDeal('all',this)">전체</button>
+      <button class="seg-btn" onclick="filterSalesDeal('신규',this)">신규</button>
+      <button class="seg-btn" onclick="filterSalesDeal('파생',this)">파생</button>
     </div>
     <div class="seg-divider"></div>
     <div class="stat-pills" id="salesStatTab">
@@ -1560,6 +1565,9 @@ body.present .notif-panel { display: none !important; }
     </div>
   </div>
 
+  <!-- 분기별 요약 (읽기 전용) -->
+  <div id="salesQuarterlySummary" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px"></div>
+
   <!-- 파이프라인 단계 카드 -->
   <div class="pipeline-funnel" id="pipelineFunnel">
     <div class="funnel-card" style="color:var(--ink3)" onclick="filterSalesStat('진행대기',document.querySelector('#salesStatTab .sp-pend'))">
@@ -1594,18 +1602,32 @@ body.present .notif-panel { display: none !important; }
     </div>
   </div>
 
-  <!-- 중단: BU 요약 + 분류별 -->
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+  <!-- 전체 BU 요약 뷰 -->
+  <div id="salesAllBuView" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
     <div class="card">
       <div class="card-hd"><div class="card-title">BU별 요약</div></div>
       <table class="tbl" id="salesBuSummary">
-        <thead><tr><th>BU</th><th>건수</th><th>추정예산</th><th>수주</th><th>탈락</th></tr></thead>
+        <thead><tr><th>BU</th><th>건수</th><th>추정예산</th><th>수주</th><th>드롭</th></tr></thead>
         <tbody></tbody>
       </table>
     </div>
     <div class="card">
       <div class="card-hd"><div class="card-title">상태별 현황</div><span class="bx bx-gray" id="salesStatCount"></span></div>
       <div id="salesStatBars"></div>
+    </div>
+  </div>
+
+  <!-- 사업부별 상세 뷰 (DX/AD 탭 선택 시) -->
+  <div id="salesBuDetailView" style="display:none;margin-bottom:14px">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div class="card">
+        <div class="card-hd"><div class="card-title" id="salesBuDetailTitle">상태별 현황</div><span class="bx bx-gray" id="salesBuDetailCount"></span></div>
+        <div id="salesBuDetailStatBars"></div>
+      </div>
+      <div class="card">
+        <div class="card-hd"><div class="card-title">분류별 비중</div></div>
+        <div id="salesBuDetailCatBars"></div>
+      </div>
     </div>
   </div>
 
@@ -1850,8 +1872,6 @@ body.present .notif-panel { display: none !important; }
       <button class="seg-btn active" onclick="filterErpProj('bu','all',this)">전체 BU</button>
       <button class="seg-btn" onclick="filterErpProj('bu','DX',this)">DX</button>
       <button class="seg-btn" onclick="filterErpProj('bu','AD',this)">AD</button>
-      <button class="seg-btn" onclick="filterErpProj('bu','FZ',this)">FZ</button>
-      <button class="seg-btn" onclick="filterErpProj('bu','DH',this)">DH</button>
     </div>
     <div class="seg-divider"></div>
     <div class="stat-pills" id="projStatTab">
@@ -1886,7 +1906,7 @@ body.present .notif-panel { display: none !important; }
     </div>
   </div>
 
-  <!-- 유형별 현황 카드 -->
+  <!-- 유형별 현황 카드 (전체 BU 탭에서만 표시) -->
   <div class="pipeline-funnel" style="grid-template-columns:repeat(5,1fr);margin-bottom:14px" id="projTypeFunnel">
     <div class="funnel-card" style="color:var(--blue)" onclick="filterErpProj('type','구축',null)">
       <div class="fc-count" id="ft-build">—</div>
@@ -1915,13 +1935,27 @@ body.present .notif-panel { display: none !important; }
     </div>
   </div>
 
-  <!-- BU별 요약 -->
-  <div class="card" style="margin-bottom:14px">
+  <!-- BU별 요약 (전체 BU 탭에서만 표시) -->
+  <div class="card" style="margin-bottom:14px" id="projBuSummaryCard">
     <div class="card-hd"><div class="card-title">BU별 요약</div><span class="bx bx-gray" id="projListCount"></span></div>
     <table class="tbl" id="projBuSummary">
       <thead><tr><th>BU</th><th>건수</th><th>계약금액</th><th>평균수익률(계획)</th><th>진행중</th></tr></thead>
       <tbody></tbody>
     </table>
+  </div>
+
+  <!-- 사업부별 상세 뷰 (DX/AD 탭에서만 표시) -->
+  <div id="projBuDetailView" style="display:none;margin-bottom:14px">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div class="card">
+        <div class="card-hd"><div class="card-title" id="projBuDetailTitle">유형별 현황</div></div>
+        <div id="projBuDetailTypeBars"></div>
+      </div>
+      <div class="card">
+        <div class="card-hd"><div class="card-title">상태별 현황</div><span class="bx bx-gray" id="projBuDetailCount"></span></div>
+        <div id="projBuDetailStatBars"></div>
+      </div>
+    </div>
   </div>
 
   <!-- 프로젝트 목록 -->
@@ -2378,22 +2412,19 @@ async function loadErpProposals(){
       if(badge){ badge.textContent='데이터 없음'; badge.className='bx bx-gray'; }
       return;
     }
-    const STATUS_MAP = {
-      '진행중':'제안중','결과대기':'PT준비','수주':'수주',
-      '진행대기':'검토중','드롭':'탈락','보류':'보류'
-    };
     SALES_DATA.length = 0;
     raw.forEach(r => {
       SALES_DATA.push({
         id: r.id, bu: r.bu, category: r.category||'',
         pm: r.pm_name||'', salesPm: r.pm_name||'',
         name: r.project_name||'', client: r.client_name||'',
-        clientContact: '', status: STATUS_MAP[r.status]||r.status||'검토중',
+        clientContact: '', status: r.status||'진행대기',
         propStart: r.proposal_start||'', propEnd: r.proposal_end||'',
         ptDate: r.pt_date||'',
         budget: r.budget ? parseFloat((r.budget/100000000).toFixed(2)) : 0,
         competitor: r.competitor||'', contact: r.contact_route||'',
         reqDate: r.requested_at ? r.requested_at.slice(0,10) : '',
+        dealType: r.deal_type||'',
         tf:'', memo: r.memo||''
       });
     });
@@ -2439,20 +2470,42 @@ function renderErpProjects(){
     '취소':  'background:#F9FAFB;color:var(--ink3);border:1.5px solid var(--border)',
   };
 
-  // 전체 기준 유형 펀넬 (필터 무관)
+  const isAll = erpProjFilterBu === 'all';
+
+  // 유형 펀넬: 전체 BU 탭에서만 표시 (필터 BU 기준)
   const typeMap={'구축':'ft-build','운영':'ft-ops','컨설팅':'ft-consult','캠페인':'ft-campaign','기타':'ft-etc'};
+  const typeFunnelWrap=document.getElementById('projTypeFunnel');
+  if(typeFunnelWrap) typeFunnelWrap.style.display=isAll?'':'none';
+  const proj2026 = erpProjects.filter(is2026Relevant);
+  const buBaseForType = isAll ? proj2026 : proj2026.filter(r=>r.bu===erpProjFilterBu);
   ['구축','운영','컨설팅','캠페인','기타'].forEach(t=>{
     const el=document.getElementById(typeMap[t]);
-    if(el) el.textContent=erpProjects.filter(r=>r.project_type===t).length;
+    if(el) el.textContent=buBaseForType.filter(r=>r.project_type===t).length;
   });
 
+  // BU별 요약 / 사업부별 뷰 toggle
+  const buSummCard=document.getElementById('projBuSummaryCard');
+  const buDetailView=document.getElementById('projBuDetailView');
+  if(buSummCard) buSummCard.style.display=isAll?'':'none';
+  if(buDetailView) buDetailView.style.display=isAll?'none':'block';
+
+  // 2026년 기준 필터: 계약기간이 2026년에 걸치거나 status=진행인 프로젝트
+  const is2026Relevant = r => {
+    if(r.status === '진행') return true;
+    const s = r.contract_start||'';
+    const e = r.contract_end||'';
+    if(!e) return false;
+    // 계약기간이 2026년과 겹치는지: start<=2026-12-31 AND end>=2026-01-01
+    return (s<=`2026-12-31`) && (e>=`2026-01-01`);
+  };
+
   // 필터 적용
-  let list = erpProjects;
-  if(erpProjFilterBu !== 'all') list = list.filter(r=>r.bu===erpProjFilterBu);
+  let list = erpProjects.filter(is2026Relevant);
+  if(!isAll) list = list.filter(r=>r.bu===erpProjFilterBu);
   if(erpProjFilterStat !== 'all') list = list.filter(r=>r.status===erpProjFilterStat);
   if(erpProjFilterType !== 'all') list = list.filter(r=>r.project_type===erpProjFilterType);
 
-  // 초기계획 수익률 헬퍼 (erp_project_actual record_type='초기계획')
+  // 초기계획 수익률 헬퍼
   const getPlanRate = pid => {
     const a = erpActuals.find(r=>r.project_id===pid && r.record_type==='초기계획' && r.ym==='전체');
     if(a) return a.profit_rate;
@@ -2471,37 +2524,82 @@ function renderErpProjects(){
   setV('projKpiActive', active.length);
   setV('projKpiAmount', (totalAmt/1e8).toFixed(1));
   setV('projKpiMargin', avgRate);
-  setV('projKpiTotalSub', `${erpProjFilterBu==='all'?'전사':erpProjFilterBu} 기준`);
+  setV('projKpiTotalSub', `${isAll?'전사':erpProjFilterBu} · 2026년 기준`);
   setV('projKpiActiveSub', `진행 ${active.length}건`);
   setV('projKpiAmountSub', `진행중 ${active.length}건 합산`);
   setV('projListCount', `총 ${list.length}건`);
 
-  // BU별 요약
-  const buTbody = document.querySelector('#projBuSummary tbody');
-  if(buTbody){
-    const bus=['DX','AD','FZ','DH'];
-    buTbody.innerHTML = bus.map(b=>{
-      const bl=list.filter(r=>r.bu===b);
-      if(!bl.length)return `<tr><td><span style="font-size:11px;font-weight:800;background:${buColor[b]};color:${buText[b]};padding:3px 8px;border-radius:6px">${b}</span></td><td colspan="4" style="color:var(--ink4);font-size:12px">데이터 없음</td></tr>`;
-      const amt=(bl.reduce((s,r)=>s+(r.contract_amount||0),0)/1e8).toFixed(1);
-      const bRates=bl.map(r=>getPlanRate(r.project_id)).filter(v=>v!=null);
-      const bRate=bRates.length?(bRates.reduce((a,v)=>a+parseFloat(v),0)/bRates.length).toFixed(1)+'%':'—';
-      const bActive=bl.filter(r=>r.status==='진행').length;
-      return `<tr>
-        <td><span style="font-size:11px;font-weight:800;background:${buColor[b]};color:${buText[b]};padding:3px 8px;border-radius:6px">${b}</span></td>
-        <td class="td-num">${bl.length}</td>
-        <td class="td-num">${amt}억</td>
-        <td class="td-num" style="color:var(--green)">${bRate}</td>
-        <td class="td-num"><span style="background:#EFF6FF;color:#2563EB;font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px">${bActive}건</span></td>
-      </tr>`;
-    }).join('');
+  if(isAll){
+    // 전체 BU: DX/AD 요약 테이블
+    const buTbody = document.querySelector('#projBuSummary tbody');
+    if(buTbody){
+      const bus=['DX','AD'];
+      buTbody.innerHTML = bus.map(b=>{
+        const bl=proj2026.filter(r=>r.bu===b);
+        if(!bl.length)return `<tr><td><span style="font-size:11px;font-weight:800;background:${buColor[b]};color:${buText[b]};padding:3px 8px;border-radius:6px">${b}</span></td><td colspan="4" style="color:var(--ink4);font-size:12px">데이터 없음</td></tr>`;
+        const amt=(bl.reduce((s,r)=>s+(r.contract_amount||0),0)/1e8).toFixed(1);
+        const bRates=bl.map(r=>getPlanRate(r.project_id)).filter(v=>v!=null);
+        const bRate=bRates.length?(bRates.reduce((a,v)=>a+parseFloat(v),0)/bRates.length).toFixed(1)+'%':'—';
+        const bActive=bl.filter(r=>r.status==='진행').length;
+        return `<tr>
+          <td><span style="font-size:11px;font-weight:800;background:${buColor[b]};color:${buText[b]};padding:3px 8px;border-radius:6px">${b}</span></td>
+          <td class="td-num">${bl.length}</td>
+          <td class="td-num">${amt}억</td>
+          <td class="td-num" style="color:var(--green)">${bRate}</td>
+          <td class="td-num"><span style="background:#EFF6FF;color:#2563EB;font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px">${bActive}건</span></td>
+        </tr>`;
+      }).join('');
+    }
+  } else {
+    // 사업부별: 유형별 + 상태별 현황 바 (2026 기준)
+    const buScope = proj2026.filter(r=>r.bu===erpProjFilterBu);
+    const titleEl=document.getElementById('projBuDetailTitle');
+    const cntEl=document.getElementById('projBuDetailCount');
+    if(titleEl) titleEl.textContent=`${erpProjFilterBu} 유형별 현황`;
+    if(cntEl) cntEl.textContent=`${buScope.length}건`;
+
+    const TYPES=['구축','운영','컨설팅','캠페인','기타'];
+    const typeMax=Math.max(...TYPES.map(t=>buScope.filter(r=>r.project_type===t).length),1);
+    const typeEl=document.getElementById('projBuDetailTypeBars');
+    if(typeEl) typeEl.innerHTML=TYPES.map(t=>{
+      const cnt=buScope.filter(r=>r.project_type===t).length;
+      if(!cnt)return '';
+      const filtCnt=list.filter(r=>r.project_type===t).length;
+      const isAct=erpProjFilterType===t;
+      return `<div class="bar-row" style="cursor:pointer" onclick="filterErpProj('type','${t}',null)">
+        <div class="bar-lbl" style="font-size:12px;${isAct?'font-weight:700':''}">${t}</div>
+        <div class="bar-track"><div class="bar-fill" style="width:${Math.round(cnt/typeMax*100)}%;background:var(--blue)"></div></div>
+        <div class="bar-val">${filtCnt}건</div>
+      </div>`;
+    }).filter(Boolean).join('');
+
+    const STATS=['진행','완료','보류','취소'];
+    const STAT_C={'진행':'var(--blue)','완료':'var(--green)','보류':'var(--amber)','취소':'var(--ink4)'};
+    const statMax=Math.max(...STATS.map(s=>buScope.filter(r=>r.status===s).length),1);
+    const statEl=document.getElementById('projBuDetailStatBars');
+    if(statEl) statEl.innerHTML=STATS.map(s=>{
+      const cnt=buScope.filter(r=>r.status===s).length;
+      if(!cnt)return '';
+      const filtCnt=list.filter(r=>r.status===s).length;
+      const isAct=erpProjFilterStat===s;
+      const spClass={'진행':'sp-prog','완료':'sp-won','보류':'sp-pend','취소':'sp-all'}[s];
+      return `<div class="bar-row" style="cursor:pointer" onclick="filterErpProj('stat','${s}',document.querySelector('#projStatTab .${spClass}'))">
+        <div class="bar-lbl" style="font-size:12px;${isAct?'font-weight:700':''}">${s}</div>
+        <div class="bar-track"><div class="bar-fill" style="width:${Math.round(cnt/statMax*100)}%;background:${STAT_C[s]}"></div></div>
+        <div class="bar-val" style="color:${filtCnt?'var(--ink1)':'var(--ink4)'}">${filtCnt}건</div>
+      </div>`;
+    }).filter(Boolean).join('');
   }
 
-  // 프로젝트 목록
+  // 프로젝트 목록 테이블
+  // BU 컬럼 show/hide
+  const buTh=document.querySelector('#projErpTable thead tr th:first-child');
+  if(buTh) buTh.style.display=isAll?'':'none';
+
   const tbody = document.getElementById('projErpBody');
   if(!tbody)return;
   if(!list.length){
-    tbody.innerHTML='<tr><td colspan="9" style="text-align:center;padding:28px;color:var(--ink4)">해당하는 프로젝트가 없습니다</td></tr>';
+    tbody.innerHTML=`<tr><td colspan="${isAll?9:8}" style="text-align:center;padding:28px;color:var(--ink4)">해당하는 프로젝트가 없습니다</td></tr>`;
     return;
   }
   tbody.innerHTML = list.map(r=>{
@@ -2509,7 +2607,7 @@ function renderErpProjects(){
     const rateColor=rate!=null?(parseFloat(rate)>=20?'var(--green)':parseFloat(rate)>=10?'var(--amber)':'var(--red)'):'var(--ink4)';
     const stSt=stStyle[r.status]||stStyle['취소'];
     return `<tr class="proposal-row" onclick="openProjDetail('${r.project_id}')">
-      <td><span style="font-size:11px;font-weight:800;background:${buColor[r.bu]||'#F3F4F6'};color:${buText[r.bu]||'#6B7280'};padding:3px 8px;border-radius:6px">${r.bu||'—'}</span></td>
+      ${isAll?`<td><span style="font-size:11px;font-weight:800;background:${buColor[r.bu]||'#F3F4F6'};color:${buText[r.bu]||'#6B7280'};padding:3px 8px;border-radius:6px">${r.bu||'—'}</span></td>`:''}
       <td style="font-size:13px;color:var(--ink2)">${r.client_name||'—'}</td>
       <td style="font-weight:600;max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.project_name||''}">${r.project_name||'—'}</td>
       <td><span style="font-size:11px;color:var(--ink3);background:var(--border2);padding:2px 7px;border-radius:6px">${r.project_type||'—'}</span></td>
@@ -4368,83 +4466,191 @@ const SALES_DATA = [
   {bu:'AD', category:'브랜딩', pm:'최○○', name:'OO스타트업 브랜드 아이덴티티', client:'OO스타트업', clientContact:'장○○ 대표', status:'제안중', propStart:'2026.06.15', propEnd:'2026.07.31', ptDate:'2026.07.25', budget:1.5, competitor:'오즈디자인', contact:'네트워킹', reqDate:'2026.06.05', tf:'최○○', salesPm:'윤○○', memo:''},
   {bu:'AD', category:'캠페인', pm:'임○○', name:'OO식품 시즌 캠페인', client:'OO식품', clientContact:'서○○ 팀장', status:'보류', propStart:'2026.07.01', propEnd:'2026.08.15', ptDate:'', budget:3.0, competitor:'대홍기획', contact:'기존 고객', reqDate:'2026.06.20', tf:'임○○, 윤○○', salesPm:'최○○', memo:'고객사 내부 예산 재검토 중. 8월 재개 예상.'},
 ];
-let salesBuFilter='all', salesStatFilter='all', salesDone=false;
+let salesBuFilter='all', salesStatFilter='all', salesDealFilter='all', salesDone=false;
 
 function initSales(){
   if(salesDone) return; salesDone=true;
   renderSalesTable();
 }
-// filterSalesBu / filterSalesStat → ERP 버전으로 통합 (상단 2001~2007 정의)
+function filterSalesDeal(deal, btn){
+  salesDealFilter=deal;
+  document.querySelectorAll('#salesDealTab .seg-btn').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  renderSalesTable();
+}
+function filterSalesBu(bu, btn){
+  salesBuFilter=bu;
+  salesStatFilter='all';
+  document.querySelectorAll('#salesBuTab .seg-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const allPill=document.querySelector('#salesStatTab .sp-all');
+  document.querySelectorAll('#salesStatTab .stat-pill').forEach(b=>b.classList.remove('active'));
+  if(allPill) allPill.classList.add('active');
+  renderSalesTable();
+}
+function filterSalesStat(stat, btn){
+  salesStatFilter=stat;
+  document.querySelectorAll('#salesStatTab .stat-pill').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  renderSalesTable();
+}
+
+function getSaleMonth(s){
+  const d = s.reqDate||s.propStart||'';
+  const m = d.replace(/\./g,'-').match(/\d{4}-(\d{2})/);
+  return m ? parseInt(m[1]) : null;
+}
 function renderSalesTable(){
-  let list=SALES_DATA.filter(s=>(salesBuFilter==='all'||s.bu===salesBuFilter)&&(salesStatFilter==='all'||s.status===salesStatFilter));
+  const STATS=['진행대기','진행중','결과대기','수주','드롭','실주'];
+  const STAT_COLORS={'진행대기':'var(--ink3)','진행중':'var(--blue)','결과대기':'var(--amber)','수주':'var(--green)','드롭':'var(--ink4)','실주':'var(--red)'};
+  const STAT_SP={'진행대기':'pend','진행중':'prog','결과대기':'wait','수주':'won','드롭':'drop','실주':'lost'};
+
+  const buScope = (salesBuFilter==='all' ? SALES_DATA : SALES_DATA.filter(s=>s.bu===salesBuFilter))
+    .filter(s=>salesDealFilter==='all'||s.dealType===salesDealFilter);
+  let list = buScope.filter(s=>salesStatFilter==='all'||s.status===salesStatFilter);
+
   const total=list.length;
-  const ongoing=list.filter(s=>['제안중','PT준비','검토중'].includes(s.status)).length;
+  const ongoing=list.filter(s=>['진행대기','진행중','결과대기'].includes(s.status)).length;
   const won=list.filter(s=>s.status==='수주').length;
-  const decided=SALES_DATA.filter(s=>['수주','탈락'].includes(s.status)).length;
+  const decided=buScope.filter(s=>['수주','드롭'].includes(s.status)).length;
   const winRate=decided?Math.round(won/decided*100):0;
   const totalBudget=list.reduce((a,s)=>a+s.budget,0).toFixed(1);
-  const dxCnt=list.filter(s=>s.bu==='DX').length;
-  const adCnt=list.filter(s=>s.bu==='AD').length;
 
-  // KPI 업데이트
+  // KPI 카드
+  const dxCnt=buScope.filter(s=>s.bu==='DX').length;
+  const adCnt=buScope.filter(s=>s.bu==='AD').length;
   document.querySelector('#sk-total .kpi-val').innerHTML=`${total}<span class="kpi-unit">건</span>`;
-  document.getElementById('sk-total-sub').textContent=`DX ${dxCnt}건 · AD ${adCnt}건`;
+  const newCnt=buScope.filter(s=>s.dealType==='신규').length;
+  const derivedCnt=buScope.filter(s=>s.dealType==='파생').length;
+  const dealSub=salesDealFilter!=='all'?` (${salesDealFilter})`:(newCnt||derivedCnt)?` · 신규 ${newCnt} / 파생 ${derivedCnt}`:'';
+  document.getElementById('sk-total-sub').textContent=salesBuFilter==='all'?`DX ${dxCnt}건 · AD ${adCnt}건${dealSub}`:`${salesBuFilter}${dealSub}`;
   document.querySelector('#sk-ongoing .kpi-val').innerHTML=`${ongoing}<span class="kpi-unit">건</span>`;
   document.querySelector('#sk-won .kpi-val').innerHTML=`${won}<span class="kpi-unit">건</span>`;
   document.getElementById('sk-winrate').textContent=`수주율 ${winRate}%`;
   document.querySelector('#sk-budget .kpi-val').innerHTML=`${totalBudget}<span class="kpi-unit">억</span>`;
 
-  // 상태별 현황 바
-  const STATS=['검토중','제안중','PT준비','수주','탈락','보류'];
-  const STAT_COLORS={'검토중':'var(--blue)','제안중':'var(--amber)','PT준비':'var(--blue)','수주':'var(--green)','탈락':'var(--red)','보류':'var(--ink4)'};
-  const maxStat=Math.max(...STATS.map(st=>SALES_DATA.filter(s=>s.status===st).length),1);
-  document.getElementById('salesStatCount').textContent=`총 ${SALES_DATA.length}건`;
-  document.getElementById('salesStatBars').innerHTML=STATS.map(st=>{
-    const cnt=list.filter(s=>s.status===st).length;
-    const allCnt=SALES_DATA.filter(s=>s.status===st).length;
-    const pct=Math.round(allCnt/maxStat*100);
-    return `<div class="bar-row"><div class="bar-lbl" style="font-size:12px;width:56px">${st}</div><div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${STAT_COLORS[st]}"></div></div><div class="bar-val" style="color:${cnt?'var(--ink1)':'var(--ink4)'}">${cnt}건</div></div>`;
-  }).join('');
+  // 분기별 요약 카드 (buScope 기준, 상태 필터 무관)
+  const QS=[{label:'1분기',mo:[1,2,3]},{label:'2분기',mo:[4,5,6]},{label:'3분기',mo:[7,8,9]},{label:'4분기',mo:[10,11,12]}];
+  const qEl=document.getElementById('salesQuarterlySummary');
+  if(qEl){
+    qEl.innerHTML=QS.map(q=>{
+      const qData=buScope.filter(s=>{const mo=getSaleMonth(s);return mo&&q.mo.includes(mo);});
+      const qWon=qData.filter(s=>s.status==='수주').length;
+      const qAmt=qData.reduce((a,s)=>a+s.budget,0).toFixed(1);
+      const qActive=qData.filter(s=>['진행대기','진행중','결과대기'].includes(s.status)).length;
+      const isEmpty=!qData.length;
+      return `<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 14px">
+        <div style="font-size:11px;font-weight:700;color:var(--ink3);margin-bottom:6px">${q.label}</div>
+        ${isEmpty
+          ? `<div style="font-size:12px;color:var(--ink4)">데이터 없음</div>`
+          : `<div style="font-size:20px;font-weight:800;color:var(--ink1);line-height:1.2">${qData.length}<span style="font-size:12px;font-weight:400;color:var(--ink3)">건</span></div>
+             <div style="margin-top:6px;display:flex;gap:8px;flex-wrap:wrap">
+               <span style="font-size:11px;color:var(--green);font-weight:600">수주 ${qWon}건</span>
+               <span style="font-size:11px;color:var(--blue)">진행 ${qActive}건</span>
+               <span style="font-size:11px;color:var(--ink3)">${qAmt}억</span>
+             </div>`
+        }
+      </div>`;
+    }).join('');
+  }
 
-  // BU 요약 테이블
-  const buRows=['DX','AD'].map(bu=>{
-    const bList=list.filter(s=>s.bu===bu);
-    const bBudget=bList.reduce((a,s)=>a+s.budget,0).toFixed(1);
-    const bWon=bList.filter(s=>s.status==='수주').length;
-    const bLost=bList.filter(s=>s.status==='탈락').length;
-    return `<tr><td style="color:var(--${bu==='DX'?'blue':'amber'});font-weight:700">${bu}</td><td>${bList.length}건</td><td class="td-num">${bBudget}억</td><td class="td-num" style="color:var(--green)">${bWon}건</td><td class="td-num" style="color:var(--red)">${bLost}건</td></tr>`;
-  }).join('');
-  document.querySelector('#salesBuSummary tbody').innerHTML=buRows;
+  // 파이프라인 퍼널 카운트 (전체 BU 기준)
+  const funnelBase = salesBuFilter==='all' ? SALES_DATA : SALES_DATA.filter(s=>s.bu===salesBuFilter);
+  const setFc=(id,stat)=>{const el=document.getElementById(id);if(el)el.textContent=funnelBase.filter(s=>s.status===stat).length;};
+  setFc('fc-pend','진행대기'); setFc('fc-prog','진행중'); setFc('fc-wait','결과대기'); setFc('fc-won','수주'); setFc('fc-drop','드롭'); setFc('fc-lost','실주');
 
-  // 분류별 비중 바
-  const CATS=['신규구축','운영','리뉴얼','캠페인','브랜딩','기타'];
-  const catMax=Math.max(...CATS.map(c=>list.filter(s=>s.category===c).length),1);
-  document.getElementById('salesCatBars').innerHTML='<div class="f-label" style="margin-bottom:6px">분류별 비중</div>'+CATS.map(c=>{
-    const cnt=list.filter(s=>s.category===c).length;
-    if(!cnt) return '';
-    return `<div class="bar-row"><div class="bar-lbl" style="font-size:12px">${c}</div><div class="bar-track"><div class="bar-fill" style="width:${Math.round(cnt/catMax*100)}%"></div></div><div class="bar-val">${cnt}건</div></div>`;
-  }).filter(Boolean).join('');
+  // 뷰 토글: 전체 BU vs 사업부별
+  const isAll = salesBuFilter==='all';
+  const allBuView=document.getElementById('salesAllBuView');
+  const buDetailView=document.getElementById('salesBuDetailView');
+  const pipelineFunnel=document.getElementById('pipelineFunnel');
+  if(allBuView) allBuView.style.display=isAll?'grid':'none';
+  if(buDetailView) buDetailView.style.display=isAll?'none':'block';
+  if(pipelineFunnel) pipelineFunnel.style.display=isAll?'':'none';
 
-  // 목록 테이블
+  if(isAll){
+    // 전체 BU: BU 요약 테이블 + 상태별 현황 바
+    const buRows=['DX','AD'].map(bu=>{
+      const bList=SALES_DATA.filter(s=>s.bu===bu);
+      const bBudget=bList.reduce((a,s)=>a+s.budget,0).toFixed(1);
+      const bWon=bList.filter(s=>s.status==='수주').length;
+      const bDrop=bList.filter(s=>s.status==='드롭').length;
+      const buColor=bu==='DX'?'var(--blue)':'var(--amber)';
+      return `<tr><td style="color:${buColor};font-weight:700">${bu}</td><td>${bList.length}건</td><td class="td-num">${bBudget}억</td><td class="td-num" style="color:var(--green)">${bWon}건</td><td class="td-num" style="color:var(--ink4)">${bDrop}건</td></tr>`;
+    }).join('');
+    const buSummTbody=document.querySelector('#salesBuSummary tbody');
+    if(buSummTbody) buSummTbody.innerHTML=buRows;
+    const maxStat=Math.max(...STATS.map(st=>SALES_DATA.filter(s=>s.status===st).length),1);
+    const statCountEl=document.getElementById('salesStatCount');
+    if(statCountEl) statCountEl.textContent=`총 ${SALES_DATA.length}건`;
+    const statBarsEl=document.getElementById('salesStatBars');
+    if(statBarsEl) statBarsEl.innerHTML=STATS.map(st=>{
+      const allCnt=SALES_DATA.filter(s=>s.status===st).length;
+      const filtCnt=list.filter(s=>s.status===st).length;
+      const pct=Math.round(allCnt/maxStat*100);
+      const active=salesStatFilter===st?'font-weight:700':'';
+      return `<div class="bar-row" style="cursor:pointer" onclick="filterSalesStat('${st}',document.querySelector('#salesStatTab .sp-${STAT_SP[st]||'drop'}'))">
+        <div class="bar-lbl" style="font-size:12px;width:58px;${active}">${st}</div>
+        <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${STAT_COLORS[st]}"></div></div>
+        <div class="bar-val" style="color:${filtCnt?'var(--ink1)':'var(--ink4)'}">${filtCnt}건</div>
+      </div>`;
+    }).join('');
+  } else {
+    // 사업부별: 상태별 현황 + 분류별 비중
+    const titleEl=document.getElementById('salesBuDetailTitle');
+    const cntEl=document.getElementById('salesBuDetailCount');
+    if(titleEl) titleEl.textContent=`${salesBuFilter} 상태별 현황`;
+    if(cntEl) cntEl.textContent=`${buScope.length}건`;
+    const maxStat=Math.max(...STATS.map(st=>buScope.filter(s=>s.status===st).length),1);
+    const detailStatEl=document.getElementById('salesBuDetailStatBars');
+    if(detailStatEl) detailStatEl.innerHTML=STATS.map(st=>{
+      const cnt=buScope.filter(s=>s.status===st).length;
+      const filtCnt=list.filter(s=>s.status===st).length;
+      const pct=Math.round(cnt/maxStat*100);
+      const active=salesStatFilter===st?'font-weight:700':'';
+      return `<div class="bar-row" style="cursor:pointer" onclick="filterSalesStat('${st}',document.querySelector('#salesStatTab .sp-${STAT_SP[st]||'drop'}'))">
+        <div class="bar-lbl" style="font-size:12px;width:58px;${active}">${st}</div>
+        <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${STAT_COLORS[st]}"></div></div>
+        <div class="bar-val" style="color:${filtCnt?'var(--ink1)':'var(--ink4)'}">${filtCnt}건</div>
+      </div>`;
+    }).join('');
+    const CATS=['신규구축','운영','리뉴얼','캠페인','브랜딩','기타'];
+    const catMax=Math.max(...CATS.map(c=>buScope.filter(s=>s.category===c).length),1);
+    const catEl=document.getElementById('salesBuDetailCatBars');
+    if(catEl) catEl.innerHTML=CATS.map(c=>{
+      const cnt=buScope.filter(s=>s.category===c).length;
+      if(!cnt) return '';
+      return `<div class="bar-row"><div class="bar-lbl" style="font-size:12px">${c}</div><div class="bar-track"><div class="bar-fill" style="width:${Math.round(cnt/catMax*100)}%"></div></div><div class="bar-val">${cnt}건</div></div>`;
+    }).filter(Boolean).join('');
+  }
+
+  // 제안 목록 테이블
+  const listCountEl=document.getElementById('salesListCount');
+  if(listCountEl) listCountEl.textContent=`${list.length}건`;
+  // BU 컬럼 헤더 show/hide
+  const buTh=document.querySelector('#salesTable thead tr th:first-child');
+  if(buTh) buTh.style.display=isAll?'':'none';
   document.getElementById('salesTableBody').innerHTML=list.length?list.map((s)=>{
     const gi=SALES_DATA.indexOf(s);
+    const buColor=s.bu==='DX'?'var(--blue)':'var(--amber)';
+    const statColor={'진행대기':'var(--ink3)','진행중':'var(--blue)','결과대기':'var(--amber)','수주':'var(--green)','드롭':'var(--ink4)'}[s.status]||'var(--ink2)';
     return `<tr style="cursor:pointer" onclick="openSalesDrawer(${gi})">
-      <td><span class="bx bx-${s.bu==='DX'?'blue':'amber'}" style="font-size:11px">${s.bu}</span></td>
+      ${isAll?`<td><span class="bx" style="font-size:11px;background:${buColor}20;color:${buColor};padding:2px 6px;border-radius:4px;font-weight:700">${s.bu}</span></td>`:''}
       <td style="font-weight:600">${s.name}</td>
-      <td style="color:var(--ink3)">${s.client}<div style="font-size:11px;color:var(--ink4)">${s.clientContact}</div></td>
+      <td style="color:var(--ink3)">${s.client}${s.clientContact?`<div style="font-size:11px;color:var(--ink4)">${s.clientContact}</div>`:''}</td>
       <td><span style="font-size:12px">${s.category}</span></td>
-      <td><span class="stat-badge sb-${s.status}">${s.status}</span></td>
-      <td style="font-size:12px;white-space:nowrap">${s.propStart}${s.propEnd?' ~ '+s.propEnd:''}</td>
+      <td><span style="font-size:12px;font-weight:600;color:${statColor}">${s.status}</span></td>
+      <td style="font-size:12px;white-space:nowrap;color:var(--ink3)">${s.propStart}${s.propEnd?' ~ '+s.propEnd:''}</td>
       <td style="font-size:12px;color:${s.ptDate?'var(--ink1)':'var(--ink4)'}">${s.ptDate||'-'}</td>
       <td style="font-weight:700;color:var(--blue)">${s.budget}억</td>
       <td style="font-size:12px;color:var(--ink3);max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${s.competitor||'-'}</td>
-      <td style="font-size:12px">${s.salesPm}</td>
+      <td style="font-size:12px">${s.salesPm}${s.dealType?`<div style="font-size:10px;margin-top:2px;color:${s.dealType==='신규'?'var(--blue)':'var(--amber)'};font-weight:600">${s.dealType}</div>`:''}</td>
       <td onclick="event.stopPropagation()">
         <button class="btn" style="padding:3px 9px;font-size:11px;margin-right:3px" onclick="openSalesDrawer(${gi})">편집</button>
         <button class="btn" style="padding:3px 9px;font-size:11px;color:var(--red)" onclick="delSales(${gi})">삭제</button>
       </td>
     </tr>`;
-  }).join(''):'<tr><td colspan="11" style="text-align:center;padding:24px;color:var(--ink4)">해당하는 제안이 없습니다</td></tr>';
+  }).join(''):`<tr><td colspan="${isAll?11:10}" style="text-align:center;padding:24px;color:var(--ink4)">해당하는 제안이 없습니다</td></tr>`;
 }
 async function delSales(i){
   if(!confirm(`"${SALES_DATA[i].name}"을 삭제할까요?`)) return;
@@ -4478,9 +4684,16 @@ function openSalesDrawer(idx){
       <div class="cfg-field"><div class="cfg-label">고객사</div><input class="cfg-input" id="se-client" value="${s.client}"></div>
       <div class="cfg-field"><div class="cfg-label">고객 담당자</div><input class="cfg-input" id="se-contact2" value="${s.clientContact}"></div>
     </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
       <div class="cfg-field"><div class="cfg-label">제안 PM</div><input class="cfg-input" id="se-pm" value="${s.pm}"></div>
       <div class="cfg-field"><div class="cfg-label">영업 PM</div><input class="cfg-input" id="se-salesPm" value="${s.salesPm}"></div>
+      <div class="cfg-field"><div class="cfg-label">신규/파생</div>
+        <select class="cfg-input" id="se-dealType">
+          <option value="">미지정</option>
+          <option value="신규"${s.dealType==='신규'?' selected':''}>신규</option>
+          <option value="파생"${s.dealType==='파생'?' selected':''}>파생</option>
+        </select>
+      </div>
     </div>
     <div class="cfg-field"><div class="cfg-label">제안 상태</div>
       <select class="cfg-input" id="se-stat">
@@ -4516,6 +4729,7 @@ function saveSalesDrawer(){
   s.clientContact=document.getElementById('se-contact2').value;
   s.pm=document.getElementById('se-pm').value;
   s.salesPm=document.getElementById('se-salesPm').value;
+  s.dealType=document.getElementById('se-dealType').value;
   s.status=document.getElementById('se-stat').value;
   s.propStart=document.getElementById('se-propStart').value;
   s.propEnd=document.getElementById('se-propEnd').value;
