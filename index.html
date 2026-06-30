@@ -2964,8 +2964,8 @@ const qData=[
   {id:'Q09',label:'팀 공용 AI 도구',val:2.04},
   {id:'Q10',label:'AI 전파·성과관리',val:1.91},
 ];
-const qC=document.getElementById('qBars');
-qData.forEach(q=>{
+const qC=document.getElementById('aiQBars')||document.getElementById('qBars');
+if(qC) qData.forEach(q=>{
   const pct=(q.val/4*100).toFixed(0);
   const col=q.val>=2.7?C_GREEN:q.val>=2.2?C_BLUE:C_RED;
   const row=document.createElement('div');
