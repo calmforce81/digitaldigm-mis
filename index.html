@@ -2107,9 +2107,11 @@ async function changeMemberRole(userId, newRole){
 async function loadAllData(){
   await Promise.all([loadProjects(), loadSales(), loadClients(), loadIntegrations()]);
   // ERP 연동 데이터 (비동기, 실패해도 기존 화면 유지)
-  loadErpProposals().catch(()=>{});
+  if(typeof loadErpProposals==='function') loadErpProposals().catch(()=>{});
   loadErpProjects().catch(()=>{});
   loadErpMembersUtil().catch(()=>{});
+  loadAiRounds().catch(()=>{});
+  syncFromSupabase().catch(()=>{});
 }
 
 // ═══════════════════════════════════════════
