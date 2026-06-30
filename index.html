@@ -1072,6 +1072,81 @@ body.present .notif-panel { display: none !important; }
           </tbody>
         </table>
       </div>
+
+      <!-- ── AI 분석 (DB 연동) ── -->
+      <div class="sh" style="margin-top:20px;margin-bottom:12px">
+        <span class="sh-title" style="font-size:15px">AI 역량 분석</span>
+        <span id="adAiBadge" class="bx bx-gray" style="font-size:11px">DB 연동 중...</span>
+      </div>
+
+      <!-- AI 역량 KPI 4개 — DB 실데이터 -->
+      <div class="kpi-grid g4" style="margin-bottom:14px">
+        <div class="kpi accent">
+          <div class="kpi-lbl">AD 종합 AI 역량</div>
+          <div class="kpi-val"><span id="adAiTotal">—</span><span class="kpi-unit">/4.0</span></div>
+          <div class="kpi-chg flat" id="adAiTotalChg">전사 평균 대비</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-lbl">개인 AI 역량</div>
+          <div class="kpi-val"><span id="adAiPersonal">—</span><span class="kpi-unit">/4.0</span></div>
+          <div class="kpi-chg flat" id="adAiPersonalChg">전사 평균 대비</div>
+        </div>
+        <div class="kpi warn">
+          <div class="kpi-lbl">부서 운영 역량</div>
+          <div class="kpi-val"><span id="adAiDeptOps">—</span><span class="kpi-unit">/4.0</span></div>
+          <div class="kpi-chg flat" id="adAiDeptOpsChg">개선 필요 영역</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-lbl">응답 인원</div>
+          <div class="kpi-val"><span id="adAiHeadcount">—</span><span class="kpi-unit">명</span></div>
+          <div class="kpi-chg flat" id="adAiStatus">—</div>
+        </div>
+      </div>
+
+      <!-- AI 분석 인사이트 (JS로 동적 렌더) -->
+      <div id="adAiInsights" class="insight-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:14px"></div>
+
+      <!-- 전사 대비 비교 + 로드맵 -->
+      <div class="row col-2" style="margin-bottom:12px">
+        <div class="card">
+          <div class="card-hd"><div class="card-title">전사 부서 대비 AI 역량</div><span class="bx bx-blue" id="adAiRoundLabel">2차 조사</span></div>
+          <div id="adAiCompare" style="margin-top:8px"></div>
+        </div>
+        <div class="card">
+          <div class="card-hd"><div class="card-title">AD AI 전환 로드맵</div><span class="bx bx-gray">2026 하반기 권고</span></div>
+          <table class="fc">
+            <thead><tr><th>단계</th><th>시기</th><th>과제</th><th>기대효과</th></tr></thead>
+            <tbody>
+              <tr><td>1단계</td><td class="num">7~8월</td><td>퍼포먼스 리포트 MCP 자동화</td><td><span class="bx bx-green">공수 -3h/주</span></td></tr>
+              <tr><td>2단계</td><td class="num">8~9월</td><td>카피·소재 AI 초안 생성 표준화</td><td><span class="bx bx-green">외주비 -15%</span></td></tr>
+              <tr><td>3단계</td><td class="num">10~11월</td><td>A/B 테스트 자동 최적화</td><td><span class="bx bx-amber">CTR +20% 목표</span></td></tr>
+              <tr><td>목표</td><td class="num">12월</td><td>AI 기반 캠페인 운영 표준화</td><td><span class="bx bx-blue">마진 +5%p</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 핵심 권고 액션 -->
+      <div class="card">
+        <div class="card-hd"><div class="card-title">AI 전환 핵심 권고 — AD 사업부</div><span class="bx bx-blue">즉시 실행 과제</span></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:6px">
+          <div style="background:var(--red-tint);border:1px solid #FECACA;border-radius:var(--r);padding:14px">
+            <div style="font-size:11px;font-weight:800;color:var(--red);margin-bottom:6px">🔴 즉시 (7월)</div>
+            <div style="font-size:13px;font-weight:700;color:var(--ink1);margin-bottom:4px">부서운영 역량 집중 보강</div>
+            <div style="font-size:12px;color:var(--ink2);line-height:1.5">개인(2.59) vs 부서운영(1.65) 격차 0.94 — AI 사용을 개인 단위에서 팀 공유·성과 추적 체계로 전환. Q07·Q08·Q10 집중 개선 과제.</div>
+          </div>
+          <div style="background:var(--amber-tint);border:1px solid #FCD34D;border-radius:var(--r);padding:14px">
+            <div style="font-size:11px;font-weight:800;color:var(--amber);margin-bottom:6px">🟡 단기 (8~9월)</div>
+            <div style="font-size:13px;font-weight:700;color:var(--ink1);margin-bottom:4px">크리에이티브 AI 파이프라인</div>
+            <div style="font-size:12px;color:var(--ink2);line-height:1.5">AHC·재규어 소재에 AI 카피/이미지 초안 적용. CD 검수 → 클라이언트 제출 플로우 정립. 외주비 15% 절감 목표.</div>
+          </div>
+          <div style="background:#EFF6FF;border:1px solid #BFDBFE;border-radius:var(--r);padding:14px">
+            <div style="font-size:11px;font-weight:800;color:var(--blue);margin-bottom:6px">🔵 중기 (Q4)</div>
+            <div style="font-size:13px;font-weight:700;color:var(--ink1);margin-bottom:4px">SKT 리포팅 MCP 자동화</div>
+            <div style="font-size:12px;color:var(--ink2);line-height:1.5">광고 플랫폼 API + Claude MCP → 주간 캠페인 보고서 자동 생성. AE 공수 3h/주 절감 → 마진 개선 직결.</div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- ═══════ PEZ ═══════ -->
@@ -2002,6 +2077,126 @@ async function loadAllData(){
   loadErpProposals().catch(()=>{});
   loadErpProjects().catch(()=>{});
   loadErpMembersUtil().catch(()=>{});
+  loadAdAiSection().catch(()=>{});
+}
+
+// ═══════════════════════════════════════════
+// AD 사업부 AI 역량 분석 — ai_survey_departments + ai_survey_rounds
+// ═══════════════════════════════════════════
+async function loadAdAiSection(){
+  const badge = document.getElementById('adAiBadge');
+
+  const [rRes, dRes] = await Promise.all([
+    SB.from('ai_survey_rounds').select('*').order('round_no'),
+    SB.from('ai_survey_departments').select('*').order('round_id')
+  ]);
+  if(rRes.error || dRes.error){
+    if(badge){ badge.textContent='연동 실패'; badge.className='bx bx-red'; }
+    return;
+  }
+
+  const rounds = rRes.data || [];
+  const depts  = dRes.data || [];
+
+  // 최신 라운드
+  const latest = rounds[rounds.length - 1];
+  if(!latest) return;
+
+  // AD 데이터 (최신 라운드)
+  const adRow = depts.find(d => d.round_id === latest.id && d.dept_name === 'AD');
+  if(!adRow){
+    if(badge){ badge.textContent='AD 데이터 없음'; badge.className='bx bx-amber'; }
+    return;
+  }
+
+  // 전사 평균 (latest round)
+  const avgTotal    = parseFloat(latest.avg_total)    || 0;
+  const avgPersonal = parseFloat(latest.avg_personal) || 0;
+  const avgDeptOps  = parseFloat(latest.avg_dept_ops) || 0;
+
+  const adTotal    = parseFloat(adRow.avg_total)    || 0;
+  const adPersonal = parseFloat(adRow.avg_personal) || 0;
+  const adDeptOps  = parseFloat(adRow.avg_dept_ops) || 0;
+  const adHc       = adRow.headcount || 0;
+  const adStatus   = adRow.dept_status || '—';
+
+  const set = (id, v) => { const e = document.getElementById(id); if(e) e.textContent = v; };
+  const fmt = v => parseFloat(v).toFixed(2);
+  const diff= (a, b) => { const d=(a-b).toFixed(2); return (d>=0?'+':'')+d; };
+
+  // KPI
+  set('adAiTotal',    fmt(adTotal));
+  set('adAiPersonal', fmt(adPersonal));
+  set('adAiDeptOps',  fmt(adDeptOps));
+  set('adAiHeadcount', adHc);
+  set('adAiTotalChg',    `전사 평균 ${fmt(avgTotal)} 대비 ${diff(adTotal,avgTotal)}`);
+  set('adAiPersonalChg', `전사 평균 ${fmt(avgPersonal)} 대비 ${diff(adPersonal,avgPersonal)}`);
+  set('adAiDeptOpsChg',  `전사 평균 ${fmt(avgDeptOps)} 대비 ${diff(adDeptOps,avgDeptOps)}`);
+  set('adAiStatus',  `역량 등급: ${adStatus} (${latest.round_label} 조사)`);
+  set('adAiRoundLabel', `${latest.round_label} 조사 · N=${latest.participants}`);
+
+  // KPI warn/ok 클래스 동적 조정
+  const totalCard = document.querySelector('#adAiKpiTotal') || document.querySelector('[id^=adAi]')?.closest('.kpi');
+  const deptCard  = document.getElementById('adAiDeptOps')?.closest('.kpi');
+  if(deptCard){
+    deptCard.className = 'kpi' + (adDeptOps < avgDeptOps ? ' warn' : '');
+  }
+
+  // badge
+  if(badge){ badge.textContent=`DB 연동 완료 · ${latest.survey_ym}`; badge.className='bx bx-green'; }
+
+  // ── 인사이트 동적 생성 ──
+  const gap = (adPersonal - adDeptOps).toFixed(2);
+  const rankAll = [...depts.filter(d=>d.round_id===latest.id)].sort((a,b)=>b.avg_total-a.avg_total);
+  const adRank  = rankAll.findIndex(d=>d.dept_name==='AD') + 1;
+
+  const ins = document.getElementById('adAiInsights');
+  if(ins){
+    const insData = [
+      {
+        cls: adDeptOps < avgDeptOps ? 'ins-warn' : 'ins-ok',
+        tag: '역량 격차',
+        title: `개인 ${fmt(adPersonal)} ↔ 부서운영 ${fmt(adDeptOps)} (격차 ${gap})`,
+        body: `개인 AI 역량은 전사 평균(${fmt(avgPersonal)})${adPersonal>=avgPersonal?'을 상회':'에 근접'}하나, 부서 운영 역량(${fmt(adDeptOps)})이 전사 평균(${fmt(avgDeptOps)}) 대비 ${diff(adDeptOps,avgDeptOps)}. AI 성과를 팀 레벨로 올리는 전환이 핵심 과제.`
+      },
+      {
+        cls: adRank <= 2 ? 'ins-ok' : adRank <= 3 ? 'ins-info' : 'ins-warn',
+        tag: `전사 ${adRank}위`,
+        title: `부서별 종합 ${adRank}위 / 총 ${rankAll.length}개 부서`,
+        body: `${rankAll.map((d,i)=>`${i+1}위 ${d.dept_name}(${fmt(d.avg_total)})`).join(' · ')}. AD(${fmt(adTotal)}) — 역량 등급 ${adStatus}.`
+      },
+      {
+        cls: 'ins-danger',
+        tag: '손익 연계',
+        title: 'AI 투입 최적화 시 마진 +5~8%p 여지',
+        body: `현재 H1 평균 마진 28%. 부서운영 역량(${fmt(adDeptOps)}) 개선 시 AI 카피·리포팅 자동화 → 외주비 15~20% 절감 → 마진 33~36%p 수준 개선 가능.`
+      }
+    ];
+    ins.innerHTML = insData.map(i=>`
+      <div class="insight ${i.cls}">
+        <div class="ins-tag">${i.tag}</div>
+        <div class="ins-title">${i.title}</div>
+        <div class="ins-body">${i.body}</div>
+      </div>`).join('');
+  }
+
+  // ── 전사 대비 비교 바 ──
+  const compareEl = document.getElementById('adAiCompare');
+  if(compareEl){
+    const allDeptLatest = depts.filter(d=>d.round_id===latest.id)
+      .sort((a,b)=>b.avg_total-a.avg_total);
+    const maxScore = 4;
+    compareEl.innerHTML = allDeptLatest.map(d=>{
+      const isAd = d.dept_name === 'AD';
+      const pct  = (parseFloat(d.avg_total)/maxScore*100).toFixed(1);
+      const color= isAd ? 'var(--green)' : parseFloat(d.avg_total)>=2.5 ? 'var(--blue)' : parseFloat(d.avg_total)>=2.0 ? '#93C5FD' : '#FCA5A5';
+      return `<div class="bar-row" style="margin-bottom:7px">
+        <div class="bar-lbl" style="font-size:12px;width:80px;font-weight:${isAd?'800':'400'};color:${isAd?'var(--green)':'var(--ink2)'}">${d.dept_name}</div>
+        <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${color};border-radius:4px"></div></div>
+        <div class="bar-val" style="font-weight:${isAd?'800':'400'};color:${color}">${fmt(d.avg_total)}</div>
+      </div>`;
+    }).join('');
+  }
 }
 
 // ═══════════════════════════════════════════
