@@ -998,18 +998,46 @@ body.present .notif-panel { display: none !important; }
         </table>
       </div>
 
-      <!-- AI 역량 -->
-      <div class="card">
-        <div class="card-hd"><div class="card-title">AI 역량 현황</div><span class="bx bx-blue">MCP 연동</span></div>
-        <div class="alert info" style="margin-bottom:12px"><div class="alert-tag">주의</div><div class="alert-msg">DX-기획 참여율 33% (5/15명) — 미응답 10명 독려 필요</div></div>
-        <div class="ai-grid" style="margin-bottom:14px">
-          <div class="ai-sc me"><div class="ai-sc-name">DX 기획</div><div class="ai-sc-val">1.60</div><div class="ai-sc-lv">L2 활용</div></div>
-          <div class="ai-sc lo"><div class="ai-sc-name">DX 디자인</div><div class="ai-sc-val">1.33</div><div class="ai-sc-lv">L1 탐색</div></div>
-          <div class="ai-sc me"><div class="ai-sc-name">DX 개발</div><div class="ai-sc-val">2.10</div><div class="ai-sc-lv">L2 활용</div></div>
-          <div class="ai-sc hi"><div class="ai-sc-name">챔피언</div><div class="ai-sc-val" style="font-size:15px;margin-top:3px">전초롱</div><div class="ai-sc-lv">3.8점</div></div>
-          <div class="ai-sc lo"><div class="ai-sc-name">코칭 대상</div><div class="ai-sc-val" style="font-size:15px;margin-top:3px">정의수</div><div class="ai-sc-lv">1.1점</div></div>
+      <!-- AI 역량 (DB 연동) -->
+      <div class="sh" style="margin-top:20px;margin-bottom:12px">
+        <span class="sh-title" style="font-size:15px">AI 역량 분석</span>
+        <span id="dxAiBadge" class="bx bx-gray" style="font-size:11px">DB 연동 중...</span>
+      </div>
+
+      <div class="kpi-grid g4" style="margin-bottom:14px">
+        <div class="kpi accent">
+          <div class="kpi-lbl">DX-개발 종합</div>
+          <div class="kpi-val"><span id="dxAiDev">—</span><span class="kpi-unit">/4.0</span></div>
+          <div class="kpi-chg flat" id="dxAiDevChg">전사 대비</div>
         </div>
-        <div id="qBars"></div>
+        <div class="kpi">
+          <div class="kpi-lbl">DX-기획 종합</div>
+          <div class="kpi-val"><span id="dxAiPlan">—</span><span class="kpi-unit">/4.0</span></div>
+          <div class="kpi-chg flat" id="dxAiPlanChg">전사 대비</div>
+        </div>
+        <div class="kpi warn">
+          <div class="kpi-lbl">DX-디자인 종합</div>
+          <div class="kpi-val"><span id="dxAiDesign">—</span><span class="kpi-unit">/4.0</span></div>
+          <div class="kpi-chg flat" id="dxAiDesignChg">집중 보강 필요</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-lbl">DX 전체 응답</div>
+          <div class="kpi-val"><span id="dxAiHc">—</span><span class="kpi-unit">명</span></div>
+          <div class="kpi-chg flat" id="dxAiHcChg">—</div>
+        </div>
+      </div>
+
+      <div id="dxAiInsights" class="insight-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:14px"></div>
+
+      <div class="row col-2">
+        <div class="card">
+          <div class="card-hd"><div class="card-title">DX 팀별 역량 상세</div><span class="bx bx-blue" id="dxAiRoundLabel">2차 조사</span></div>
+          <div id="dxAiCompare" style="margin-top:8px"></div>
+        </div>
+        <div class="card">
+          <div class="card-hd"><div class="card-title">개인 vs 부서운영 역량 비교</div></div>
+          <div id="dxAiGapBars" style="margin-top:8px"></div>
+        </div>
       </div>
     </div>
 
@@ -2078,6 +2106,7 @@ async function loadAllData(){
   loadErpProjects().catch(()=>{});
   loadErpMembersUtil().catch(()=>{});
   loadAdAiSection().catch(()=>{});
+  loadDxAiSection().catch(()=>{});
 }
 
 // ═══════════════════════════════════════════
@@ -2331,6 +2360,131 @@ function filterSalesStat(val,btn){
   if(btn) btn.classList.add('active');
   erpPropFilterStat = val;
   renderErpProposals();
+}
+
+// ═══════════════════════════════════════════
+// DX 사업부 AI 역량 분석 — ai_survey_departments (DX-개발/기획/디자인)
+// ═══════════════════════════════════════════
+async function loadDxAiSection(){
+  const badge = document.getElementById('dxAiBadge');
+
+  const [rRes, dRes] = await Promise.all([
+    SB.from('ai_survey_rounds').select('*').order('round_no'),
+    SB.from('ai_survey_departments').select('*').order('round_id')
+  ]);
+  if(rRes.error || dRes.error){
+    if(badge){ badge.textContent='연동 실패'; badge.className='bx bx-red'; }
+    return;
+  }
+
+  const rounds = rRes.data || [];
+  const depts  = dRes.data || [];
+  const latest = rounds[rounds.length - 1];
+  if(!latest) return;
+
+  const latestDepts = depts.filter(d => d.round_id === latest.id);
+  const get = name => latestDepts.find(d => d.dept_name === name);
+
+  const dev    = get('DX-개발');
+  const plan   = get('DX-기획');
+  const design = get('DX-디자인');
+
+  if(!dev && !plan && !design){
+    if(badge){ badge.textContent='DX 데이터 없음'; badge.className='bx bx-amber'; }
+    return;
+  }
+
+  const fmt  = v => v != null ? parseFloat(v).toFixed(2) : '—';
+  const diff = (a, b) => { if(a==null||b==null) return ''; const d=(parseFloat(a)-parseFloat(b)).toFixed(2); return (d>=0?'+':'')+d; };
+  const lvl  = v => { const n=parseFloat(v); return n>=3.0?'L4 내재화':n>=2.5?'L3 자동화':n>=2.0?'L2 활용':'L1 탐색'; };
+
+  const avgTotal = parseFloat(latest.avg_total) || 0;
+  const set = (id, v) => { const e = document.getElementById(id); if(e) e.textContent = v; };
+
+  // KPI
+  set('dxAiDev',    fmt(dev?.avg_total));
+  set('dxAiPlan',   fmt(plan?.avg_total));
+  set('dxAiDesign', fmt(design?.avg_total));
+  const totalHc = (dev?.headcount||0) + (plan?.headcount||0) + (design?.headcount||0);
+  set('dxAiHc', totalHc);
+
+  set('dxAiDevChg',    `전사 평균 ${fmt(avgTotal)} 대비 ${diff(dev?.avg_total, avgTotal)} · ${dev?.dept_status||''}`);
+  set('dxAiPlanChg',   `전사 평균 ${fmt(avgTotal)} 대비 ${diff(plan?.avg_total, avgTotal)} · ${plan?.dept_status||''}`);
+  set('dxAiDesignChg', `전사 평균 ${fmt(avgTotal)} 대비 ${diff(design?.avg_total, avgTotal)} · ${design?.dept_status||''}`);
+  set('dxAiHcChg',     `개발 ${dev?.headcount||0} · 기획 ${plan?.headcount||0} · 디자인 ${design?.headcount||0}명`);
+  set('dxAiRoundLabel', `${latest.round_label} 조사 · N=${latest.participants}`);
+
+  // KPI warn/ok 동적 클래스
+  const designCard = document.getElementById('dxAiDesign')?.closest('.kpi');
+  if(designCard && design) designCard.className = 'kpi' + (parseFloat(design.avg_total) < avgTotal ? ' warn' : '');
+
+  if(badge){ badge.textContent=`DB 연동 완료 · ${latest.survey_ym}`; badge.className='bx bx-green'; }
+
+  // ── 인사이트 동적 생성 ──
+  const ins = document.getElementById('dxAiInsights');
+  if(ins && dev && plan && design){
+    const devT  = parseFloat(dev.avg_total);
+    const planT = parseFloat(plan.avg_total);
+    const desT  = parseFloat(design.avg_total);
+    const gap   = (devT - desT).toFixed(2);
+    ins.innerHTML = `
+      <div class="insight ins-ok">
+        <div class="ins-tag">선도 그룹</div>
+        <div class="ins-title">DX-개발 ${fmt(dev.avg_total)} — 전사 최고</div>
+        <div class="ins-body">개인 역량 ${fmt(dev.avg_personal)} · 부서운영 ${fmt(dev.avg_dept_ops)}. 역량 등급 ${dev.dept_status}. 전사 AI 전파자 역할 권고 — 주 1회 사내 케이스 공유.</div>
+      </div>
+      <div class="insight ins-info">
+        <div class="ins-tag">격차 ${gap}점</div>
+        <div class="ins-title">DX-개발(${fmt(devT)}) vs DX-디자인(${fmt(desT)}) 최대 격차</div>
+        <div class="ins-body">DX-기획 ${fmt(planT)} · DX-디자인 ${fmt(desT)}. 디자인팀 개인(${fmt(design.avg_personal)}) · 부서운영(${fmt(design.avg_dept_ops)}) 모두 최하위 — AI 기초 과정 우선 투입 필요.</div>
+      </div>
+      <div class="insight ${parseFloat(design.avg_dept_ops) < 1.5 ? 'ins-danger' : 'ins-warn'}">
+        <div class="ins-tag">집중 개입</div>
+        <div class="ins-title">DX-디자인 부서운영 ${fmt(design.avg_dept_ops)} — 즉시 보강</div>
+        <div class="ins-body">부서운영 역량(${fmt(design.avg_dept_ops)})이 전사 최하위. 개인 역량(${fmt(design.avg_personal)})과 격차 ${(parseFloat(design.avg_personal)-parseFloat(design.avg_dept_ops)).toFixed(2)}점. 팀 단위 AI 도구 도입·Q08 시스템화 과제 긴급 배정 권고.</div>
+      </div>`;
+  }
+
+  // ── 팀별 종합 비교 바 ──
+  const compare = document.getElementById('dxAiCompare');
+  if(compare){
+    const teams = [
+      { label:'DX-개발',   row: dev,    color:'var(--green)' },
+      { label:'DX-기획',   row: plan,   color:'var(--blue)'  },
+      { label:'DX-디자인', row: design, color:'var(--red)'   },
+    ];
+    compare.innerHTML = teams.map(t => {
+      if(!t.row) return '';
+      const pct = (parseFloat(t.row.avg_total)/4*100).toFixed(1);
+      return `<div class="bar-row" style="margin-bottom:8px">
+        <div class="bar-lbl" style="font-size:12px;width:72px;color:${t.color};font-weight:700">${t.label}</div>
+        <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${t.color};border-radius:4px"></div></div>
+        <div class="bar-val" style="color:${t.color};font-weight:700">${fmt(t.row.avg_total)}</div>
+      </div>`;
+    }).join('');
+  }
+
+  // ── 개인 vs 부서운영 갭 바 ──
+  const gapEl = document.getElementById('dxAiGapBars');
+  if(gapEl){
+    const teams = [
+      { label:'DX-개발',   row: dev    },
+      { label:'DX-기획',   row: plan   },
+      { label:'DX-디자인', row: design },
+    ];
+    gapEl.innerHTML = teams.map(t => {
+      if(!t.row) return '';
+      const p = parseFloat(t.row.avg_personal); const d = parseFloat(t.row.avg_dept_ops);
+      return `<div style="margin-bottom:10px">
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--ink3);margin-bottom:3px">
+          <span style="font-weight:700;color:var(--ink2)">${t.label}</span>
+          <span>개인 <b>${fmt(p)}</b> · 부서운영 <b style="color:${d<2?'var(--red)':'var(--green)'}">${fmt(d)}</b></span>
+        </div>
+        <div class="bar-track" style="height:6px;margin-bottom:2px"><div class="bar-fill" style="width:${p/4*100}%;background:var(--blue);border-radius:3px;height:6px"></div></div>
+        <div class="bar-track" style="height:6px"><div class="bar-fill" style="width:${d/4*100}%;background:${d<2?'var(--red)':'var(--green)'};border-radius:3px;height:6px"></div></div>
+      </div>`;
+    }).join('') + `<div style="font-size:11px;color:var(--ink4);margin-top:6px">■ 파랑=개인 역량 &nbsp; ■ 초록/빨강=부서운영 역량</div>`;
+  }
 }
 
 // ═══════════════════════════════════════════
