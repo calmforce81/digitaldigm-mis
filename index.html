@@ -2010,8 +2010,13 @@ body.present .notif-panel { display: none !important; }
 // ═══════════════════════════════════════════
 // Supabase 연동 — digitalDigm MIS v3
 // ═══════════════════════════════════════════
+// ★ 핵심 상수: 스크립트 최상단 선언 (TDZ 방지)
+const SB_BASE     = 'https://wuqffbtuftuyynntsxrw.supabase.co/rest/v1/bu_metrics';
+const SB_SYNC_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind1cWZmYnR1ZnR1eXlubnRzeHJ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxODUwNTQsImV4cCI6MjA5Nzc2MTA1NH0.ITLhyjKJA6twC3JjPJ8bT-YG10PDOW5DPWsqyblak74';
+const SB_ANON_KEY = SB_SYNC_KEY;
+
 const {createClient} = window.supabase;
-const SB = createClient('https://wuqffbtuftuyynntsxrw.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind1cWZmYnR1ZnR1eXlubnRzeHJ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxODUwNTQsImV4cCI6MjA5Nzc2MTA1NH0.ITLhyjKJA6twC3JjPJ8bT-YG10PDOW5DPWsqyblak74');
+const SB = createClient('https://wuqffbtuftuyynntsxrw.supabase.co', SB_ANON_KEY);
 let currentUser = null, currentProfile = null;
 
 async function initApp(){
@@ -2281,13 +2286,15 @@ function renderBuAiSection(prefix, deptNames, round, prevRound){
 // 가동율 · 인원 DB 연동 — erp_members + erp_utilization
 // ═══════════════════════════════════════════
 async function loadErpMembersUtil(){
-  const [mRes, uRes] = await Promise.all([
-    SB.from('erp_members').select('*').eq('status','재직'),
-    SB.from('erp_utilization').select('*').order('ym',{ascending:false})
+  const _BASE = SB_BASE.replace('/bu_metrics','');
+  const _H = {'apikey': SB_SYNC_KEY, 'Authorization': 'Bearer ' + SB_SYNC_KEY};
+  const [mRaw, uRaw] = await Promise.all([
+    fetch(`${_BASE}/erp_members?status=eq.재직&select=*`, {headers: _H}).then(r=>r.json()),
+    fetch(`${_BASE}/erp_utilization?select=*&order=ym.desc`, {headers: _H}).then(r=>r.json())
   ]);
-  if(mRes.error || uRes.error) return;
-  const members = mRes.data || [];
-  const utils   = uRes.data || [];
+  if(!Array.isArray(mRaw) || !Array.isArray(uRaw)) return;
+  const members = mRaw;
+  const utils   = uRaw;
 
   // 최신 ym 기준
   const latestYm = utils.length ? utils[0].ym : null;
@@ -2365,13 +2372,15 @@ let activeProjId = null;
 async function loadErpProjects(){
   const badge = document.getElementById('projDbBadge');
   if(badge){ badge.textContent='로딩 중...'; badge.className='bx bx-amber'; }
-  const [pr, ac] = await Promise.all([
-    SB.from('erp_projects').select('*').order('bu'),
-    SB.from('erp_project_actual').select('*').order('ym')
+  const _BASE = SB_BASE.replace('/bu_metrics','');
+  const _H = {'apikey': SB_SYNC_KEY, 'Authorization': 'Bearer ' + SB_SYNC_KEY};
+  const [prRaw, acRaw] = await Promise.all([
+    fetch(`${_BASE}/erp_projects?select=*&order=bu`, {headers: _H}).then(r=>r.json()),
+    fetch(`${_BASE}/erp_project_actual?select=*&order=ym`, {headers: _H}).then(r=>r.json())
   ]);
-  if(pr.error || !pr.data){ if(badge){ badge.textContent='연동 실패'; badge.className='bx bx-red'; } return; }
-  erpProjects = pr.data;
-  erpActuals  = ac.data || [];
+  if(!Array.isArray(prRaw) || !prRaw.length){ if(badge){ badge.textContent='연동 실패'; badge.className='bx bx-red'; } return; }
+  erpProjects = prRaw;
+  erpActuals  = Array.isArray(acRaw) ? acRaw : [];
   erpInvest   = erpActuals.filter(r=>r.record_type==='ACT_투입');
   if(badge){ badge.textContent=pr.data.length+'건 연동'; badge.className='bx bx-green'; }
   renderErpProjects();
@@ -3660,16 +3669,18 @@ let aiDeptsCache  = [];   // ai_survey_departments 전체 캐시
 async function loadAiRounds(){
   const sel = document.getElementById('aiRoundSel');
   try {
-    const [rRes, dRes] = await Promise.all([
-      SB.from('ai_survey_rounds').select('*').order('round_no'),
-      SB.from('ai_survey_departments').select('*').order('round_id')
+    const _BASE = SB_BASE.replace('/bu_metrics','');
+    const _H = {'apikey': SB_SYNC_KEY, 'Authorization': 'Bearer ' + SB_SYNC_KEY};
+    const [rRaw, dRaw] = await Promise.all([
+      fetch(`${_BASE}/ai_survey_rounds?select=*&order=round_no`, {headers: _H}).then(r=>r.json()),
+      fetch(`${_BASE}/ai_survey_departments?select=*&order=round_id`, {headers: _H}).then(r=>r.json())
     ]);
-    if(rRes.error || !rRes.data || !rRes.data.length){
+    if(!Array.isArray(rRaw) || !rRaw.length){
       if(sel) sel.innerHTML = '<option value="2">2026.06 · 2차 (현재)</option>';
       return;
     }
-    aiRoundsCache = rRes.data;
-    aiDeptsCache  = dRes.data || [];
+    aiRoundsCache = rRaw;
+    aiDeptsCache  = Array.isArray(dRaw) ? dRaw : [];
 
     if(sel){
       sel.innerHTML = rRes.data.map(r =>
@@ -4539,8 +4550,7 @@ function togglePresent(){const on=document.body.classList.toggle('present');docu
 // ─── SUPABASE 자동 동기화 ─────────────────────────────────────────
 // Google Sheets → Supabase → MIS 실시간 반영
 // ══════════════════════════════════════════════════════════════════
-const SB_BASE     = 'https://wuqffbtuftuyynntsxrw.supabase.co/rest/v1/bu_metrics';
-const SB_SYNC_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind1cWZmYnR1ZnR1eXlubnRzeHJ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxODUwNTQsImV4cCI6MjA5Nzc2MTA1NH0.ITLhyjKJA6twC3JjPJ8bT-YG10PDOW5DPWsqyblak74';
+// SB_BASE, SB_SYNC_KEY는 스크립트 최상단에서 이미 선언됨 (TDZ 방지)
 
 // Apps Script Web App URL (배포 후 여기에 붙여넣기)
 // 배포 방법: script.google.com -> 배포 -> 새 배포 -> 웹 앱 -> URL 복사
