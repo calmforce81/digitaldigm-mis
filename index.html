@@ -2107,7 +2107,7 @@ async function changeMemberRole(userId, newRole){
 async function loadAllData(){
   await Promise.all([loadProjects(), loadSales(), loadClients(), loadIntegrations()]);
   // ERP 연동 데이터 (비동기, 실패해도 기존 화면 유지)
-  if(typeof loadErpProposals==='function') loadErpProposals().catch(()=>{});
+  loadErpProposals().catch(()=>{});
   loadErpProjects().catch(()=>{});
   loadErpMembersUtil().catch(()=>{});
   loadAiRounds().catch(()=>{});
@@ -2362,6 +2362,47 @@ async function loadErpMembersUtil(){
     set(prefix+'-member-chg', `ERP 기준 ${latestYm?latestYm.slice(0,4)+'.'+latestYm.slice(4):''}월`);
   };
   setBu('dx','DX'); setBu('ad','AD'); setBu('fz','FZ'); setBu('dh','DH');
+}
+
+// ═══════════════════════════════════════════
+// ERP 영업관리 — erp_proposals (Google Sheets → Supabase)
+// ═══════════════════════════════════════════
+async function loadErpProposals(){
+  const badge = document.getElementById('salesDbBadge');
+  if(badge){ badge.textContent='로딩 중...'; badge.className='bx bx-amber'; }
+  const _BASE = SB_BASE.replace('/bu_metrics','');
+  const _H = {'apikey': SB_SYNC_KEY, 'Authorization': 'Bearer ' + SB_SYNC_KEY};
+  try{
+    const raw = await fetch(`${_BASE}/erp_proposals?select=*&order=requested_at.desc`, {headers: _H}).then(r=>r.json());
+    if(!Array.isArray(raw) || !raw.length){
+      if(badge){ badge.textContent='데이터 없음'; badge.className='bx bx-gray'; }
+      return;
+    }
+    const STATUS_MAP = {
+      '진행중':'제안중','결과대기':'PT준비','수주':'수주',
+      '진행대기':'검토중','드롭':'탈락','보류':'보류'
+    };
+    SALES_DATA.length = 0;
+    raw.forEach(r => {
+      SALES_DATA.push({
+        id: r.id, bu: r.bu, category: r.category||'',
+        pm: r.pm_name||'', salesPm: r.pm_name||'',
+        name: r.project_name||'', client: r.client_name||'',
+        clientContact: '', status: STATUS_MAP[r.status]||r.status||'검토중',
+        propStart: r.proposal_start||'', propEnd: r.proposal_end||'',
+        ptDate: r.pt_date||'',
+        budget: r.budget ? parseFloat((r.budget/100000000).toFixed(2)) : 0,
+        competitor: r.competitor||'', contact: r.contact_route||'',
+        reqDate: r.requested_at ? r.requested_at.slice(0,10) : '',
+        tf:'', memo: r.memo||''
+      });
+    });
+    if(badge){ badge.textContent=raw.length+'건 연동'; badge.className='bx bx-green'; }
+    if(typeof renderSalesTable==='function') renderSalesTable();
+  } catch(e){
+    if(badge){ badge.textContent='연동 실패'; badge.className='bx bx-red'; }
+    console.warn('[loadErpProposals]', e);
+  }
 }
 
 // ═══════════════════════════════════════════
