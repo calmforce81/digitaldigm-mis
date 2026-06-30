@@ -2105,387 +2105,177 @@ async function loadAllData(){
   loadErpProposals().catch(()=>{});
   loadErpProjects().catch(()=>{});
   loadErpMembersUtil().catch(()=>{});
-  loadAdAiSection().catch(()=>{});
-  loadDxAiSection().catch(()=>{});
 }
 
 // ═══════════════════════════════════════════
-// AD 사업부 AI 역량 분석 — ai_survey_departments + ai_survey_rounds
+// BU별 AI 역량 렌더 — ai_survey_departments 캐시 사용
+// prefix: 'dx' or 'ad' / deptNames: DB dept_name 배열
 // ═══════════════════════════════════════════
-async function loadAdAiSection(){
-  const badge = document.getElementById('adAiBadge');
+function renderBuAiSection(prefix, deptNames, round, prevRound){
+  const badge   = document.getElementById(prefix+'AiBadge');
+  const fmt     = v => v!=null ? parseFloat(v).toFixed(2) : '—';
+  const sign    = v => parseFloat(v)>=0 ? '+' : '';
+  const lvl     = v => { const n=parseFloat(v); return n>=3.0?'L4 내재화':n>=2.5?'L3 자동화':n>=2.0?'L2 활용':'L1 탐색'; };
+  const lvlCls  = v => { const n=parseFloat(v); return n>=2.5?'ins-ok':n>=2.0?'ins-info':'ins-warn'; };
+  const set     = (id,v) => { const e=document.getElementById(id); if(e) e.textContent=v; };
 
-  const [rRes, dRes] = await Promise.all([
-    SB.from('ai_survey_rounds').select('*').order('round_no'),
-    SB.from('ai_survey_departments').select('*').order('round_id')
-  ]);
-  if(rRes.error || dRes.error){
-    if(badge){ badge.textContent='연동 실패'; badge.className='bx bx-red'; }
+  const latestDepts = aiDeptsCache.filter(d => d.round_id === round.id);
+  const rows = deptNames.map(n => latestDepts.find(d => d.dept_name === n)).filter(Boolean);
+
+  if(!rows.length){
+    if(badge){ badge.textContent='데이터 없음'; badge.className='bx bx-amber'; }
     return;
   }
 
-  const rounds = rRes.data || [];
-  const depts  = dRes.data || [];
+  const avgTotal    = parseFloat(round.avg_total)    || 0;
+  const avgPersonal = parseFloat(round.avg_personal) || 0;
+  const avgDeptOps  = parseFloat(round.avg_dept_ops) || 0;
+  const roundLabel  = round.round_label + ' 조사 · N=' + round.participants;
 
-  // 최신 라운드
-  const latest = rounds[rounds.length - 1];
-  if(!latest) return;
+  if(badge){ badge.textContent='DB 연동 완료 · '+round.survey_ym; badge.className='bx bx-green'; }
+  set(prefix+'AiRoundLabel', roundLabel);
 
-  // AD 데이터 (최신 라운드)
-  const adRow = depts.find(d => d.round_id === latest.id && d.dept_name === 'AD');
-  if(!adRow){
-    if(badge){ badge.textContent='AD 데이터 없음'; badge.className='bx bx-amber'; }
-    return;
-  }
+  // ── DX: 팀별 KPI 3개 + 합산인원 ──────────────
+  if(prefix === 'dx'){
+    const dev    = rows.find(r=>r.dept_name==='DX-개발');
+    const plan   = rows.find(r=>r.dept_name==='DX-기획');
+    const design = rows.find(r=>r.dept_name==='DX-디자인');
+    const totalHc = rows.reduce((s,r)=>s+(r.headcount||0),0);
 
-  // 전사 평균 (latest round)
-  const avgTotal    = parseFloat(latest.avg_total)    || 0;
-  const avgPersonal = parseFloat(latest.avg_personal) || 0;
-  const avgDeptOps  = parseFloat(latest.avg_dept_ops) || 0;
+    set('dxAiDev',    fmt(dev?.avg_total));
+    set('dxAiPlan',   fmt(plan?.avg_total));
+    set('dxAiDesign', fmt(design?.avg_total));
+    set('dxAiHc',     totalHc);
+    set('dxAiDevChg',    `개인 ${fmt(dev?.avg_personal)} · 부서운영 ${fmt(dev?.avg_dept_ops)} · ${dev?.dept_status||''}`);
+    set('dxAiPlanChg',   `개인 ${fmt(plan?.avg_personal)} · 부서운영 ${fmt(plan?.avg_dept_ops)} · ${plan?.dept_status||''}`);
+    set('dxAiDesignChg', `개인 ${fmt(design?.avg_personal)} · 부서운영 ${fmt(design?.avg_dept_ops)} · ${design?.dept_status||''}`);
+    set('dxAiHcChg',     `개발 ${dev?.headcount||0} · 기획 ${plan?.headcount||0} · 디자인 ${design?.headcount||0}명`);
 
-  const adTotal    = parseFloat(adRow.avg_total)    || 0;
-  const adPersonal = parseFloat(adRow.avg_personal) || 0;
-  const adDeptOps  = parseFloat(adRow.avg_dept_ops) || 0;
-  const adHc       = adRow.headcount || 0;
-  const adStatus   = adRow.dept_status || '—';
+    // 디자인 KPI warn
+    const dc = document.getElementById('dxAiDesign')?.closest('.kpi');
+    if(dc && design) dc.className='kpi'+(parseFloat(design.avg_total)<avgTotal?' warn':'');
 
-  const set = (id, v) => { const e = document.getElementById(id); if(e) e.textContent = v; };
-  const fmt = v => parseFloat(v).toFixed(2);
-  const diff= (a, b) => { const d=(a-b).toFixed(2); return (d>=0?'+':'')+d; };
-
-  // KPI
-  set('adAiTotal',    fmt(adTotal));
-  set('adAiPersonal', fmt(adPersonal));
-  set('adAiDeptOps',  fmt(adDeptOps));
-  set('adAiHeadcount', adHc);
-  set('adAiTotalChg',    `전사 평균 ${fmt(avgTotal)} 대비 ${diff(adTotal,avgTotal)}`);
-  set('adAiPersonalChg', `전사 평균 ${fmt(avgPersonal)} 대비 ${diff(adPersonal,avgPersonal)}`);
-  set('adAiDeptOpsChg',  `전사 평균 ${fmt(avgDeptOps)} 대비 ${diff(adDeptOps,avgDeptOps)}`);
-  set('adAiStatus',  `역량 등급: ${adStatus} (${latest.round_label} 조사)`);
-  set('adAiRoundLabel', `${latest.round_label} 조사 · N=${latest.participants}`);
-
-  // KPI warn/ok 클래스 동적 조정
-  const totalCard = document.querySelector('#adAiKpiTotal') || document.querySelector('[id^=adAi]')?.closest('.kpi');
-  const deptCard  = document.getElementById('adAiDeptOps')?.closest('.kpi');
-  if(deptCard){
-    deptCard.className = 'kpi' + (adDeptOps < avgDeptOps ? ' warn' : '');
-  }
-
-  // badge
-  if(badge){ badge.textContent=`DB 연동 완료 · ${latest.survey_ym}`; badge.className='bx bx-green'; }
-
-  // ── 인사이트 동적 생성 ──
-  const gap = (adPersonal - adDeptOps).toFixed(2);
-  const rankAll = [...depts.filter(d=>d.round_id===latest.id)].sort((a,b)=>b.avg_total-a.avg_total);
-  const adRank  = rankAll.findIndex(d=>d.dept_name==='AD') + 1;
-
-  const ins = document.getElementById('adAiInsights');
-  if(ins){
-    const insData = [
-      {
-        cls: adDeptOps < avgDeptOps ? 'ins-warn' : 'ins-ok',
-        tag: '역량 격차',
-        title: `개인 ${fmt(adPersonal)} ↔ 부서운영 ${fmt(adDeptOps)} (격차 ${gap})`,
-        body: `개인 AI 역량은 전사 평균(${fmt(avgPersonal)})${adPersonal>=avgPersonal?'을 상회':'에 근접'}하나, 부서 운영 역량(${fmt(adDeptOps)})이 전사 평균(${fmt(avgDeptOps)}) 대비 ${diff(adDeptOps,avgDeptOps)}. AI 성과를 팀 레벨로 올리는 전환이 핵심 과제.`
-      },
-      {
-        cls: adRank <= 2 ? 'ins-ok' : adRank <= 3 ? 'ins-info' : 'ins-warn',
-        tag: `전사 ${adRank}위`,
-        title: `부서별 종합 ${adRank}위 / 총 ${rankAll.length}개 부서`,
-        body: `${rankAll.map((d,i)=>`${i+1}위 ${d.dept_name}(${fmt(d.avg_total)})`).join(' · ')}. AD(${fmt(adTotal)}) — 역량 등급 ${adStatus}.`
-      },
-      {
-        cls: 'ins-danger',
-        tag: '손익 연계',
-        title: 'AI 투입 최적화 시 마진 +5~8%p 여지',
-        body: `현재 H1 평균 마진 28%. 부서운영 역량(${fmt(adDeptOps)}) 개선 시 AI 카피·리포팅 자동화 → 외주비 15~20% 절감 → 마진 33~36%p 수준 개선 가능.`
-      }
-    ];
-    ins.innerHTML = insData.map(i=>`
-      <div class="insight ${i.cls}">
-        <div class="ins-tag">${i.tag}</div>
-        <div class="ins-title">${i.title}</div>
-        <div class="ins-body">${i.body}</div>
-      </div>`).join('');
-  }
-
-  // ── 전사 대비 비교 바 ──
-  const compareEl = document.getElementById('adAiCompare');
-  if(compareEl){
-    const allDeptLatest = depts.filter(d=>d.round_id===latest.id)
-      .sort((a,b)=>b.avg_total-a.avg_total);
-    const maxScore = 4;
-    compareEl.innerHTML = allDeptLatest.map(d=>{
-      const isAd = d.dept_name === 'AD';
-      const pct  = (parseFloat(d.avg_total)/maxScore*100).toFixed(1);
-      const color= isAd ? 'var(--green)' : parseFloat(d.avg_total)>=2.5 ? 'var(--blue)' : parseFloat(d.avg_total)>=2.0 ? '#93C5FD' : '#FCA5A5';
-      return `<div class="bar-row" style="margin-bottom:7px">
-        <div class="bar-lbl" style="font-size:12px;width:80px;font-weight:${isAd?'800':'400'};color:${isAd?'var(--green)':'var(--ink2)'}">${d.dept_name}</div>
-        <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${color};border-radius:4px"></div></div>
-        <div class="bar-val" style="font-weight:${isAd?'800':'400'};color:${color}">${fmt(d.avg_total)}</div>
-      </div>`;
-    }).join('');
-  }
-}
-
-// ═══════════════════════════════════════════
-// ERP 영업관리 — erp_proposals
-// ═══════════════════════════════════════════
-let erpProposals = [];
-let erpPropFilterBu = 'all', erpPropFilterStat = 'all';
-
-async function loadErpProposals(){
-  const badge = document.getElementById('salesDbBadge');
-  if(badge) { badge.textContent='로딩 중...'; badge.className='bx bx-amber'; }
-  const { data, error } = await SB.from('erp_proposals').select('*').order('erp_created_at', {ascending:false});
-  if(error || !data){
-    if(badge){ badge.textContent='연동 실패'; badge.className='bx bx-red'; }
-    return;
-  }
-  erpProposals = data;
-  if(badge){ badge.textContent=data.length+'건 연동'; badge.className='bx bx-green'; }
-  renderErpProposals();
-}
-
-function renderErpProposals(){
-  let list = erpProposals;
-  if(erpPropFilterBu !== 'all') list = list.filter(r=>r.bu===erpPropFilterBu);
-  if(erpPropFilterStat !== 'all') list = list.filter(r=>r.status===erpPropFilterStat);
-
-  // KPI
-  // 전체 데이터 기준 파이프라인 카드 카운트 (필터 상관없이 전체)
-  const allData = erpProposals.filter(r => erpPropFilterBu==='all' || r.bu===erpPropFilterBu);
-  const fcMap = {'진행대기':'fc-pend','진행중':'fc-prog','결과대기':'fc-wait','수주':'fc-won','드롭':'fc-drop','실주':'fc-lost'};
-  Object.entries(fcMap).forEach(([s,id])=>{
-    const el=document.getElementById(id);
-    if(el) el.textContent = allData.filter(r=>r.status===s).length;
-  });
-
-  const ongoingStats = ['진행대기','진행중','결과대기'];
-  const wonList = list.filter(r=>r.status==='수주');
-  const closedList = list.filter(r=>['수주','드롭','실주','취소'].includes(r.status));
-  const totalBudget = list.reduce((s,r)=>s+(r.budget||0),0);
-  const winRate = closedList.length ? (wonList.length/closedList.length*100).toFixed(1) : '—';
-
-  const setV=(id,v)=>{const el=document.querySelector(`#${id} .kpi-val`);if(el)el.innerHTML=v;};
-  const setC=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};
-  const setT=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};
-  setV('sk-total',`${list.length}<span class="kpi-unit">건</span>`);
-  setV('sk-ongoing',`<span style="color:var(--blue)">${list.filter(r=>ongoingStats.includes(r.status)).length}</span><span class="kpi-unit">건</span>`);
-  setV('sk-won',`<span style="color:var(--green)">${wonList.length}</span><span class="kpi-unit">건</span>`);
-  setC('sk-winrate', winRate !== '—' ? `수주율 ${winRate}%` : '수주율 집계 중');
-  setV('sk-budget',`${(totalBudget/1e8).toFixed(1)}<span class="kpi-unit">억</span>`);
-
-  // 상태별 바
-  const statOrder=['진행대기','진행중','결과대기','수주','드롭','실주'];
-  const statColor={'진행대기':'var(--ink4)','진행중':'var(--blue)','결과대기':'var(--amber)','수주':'var(--green)','드롭':'var(--ink4)','실주':'var(--red)'};
-  const statBars = document.getElementById('salesStatBars');
-  if(statBars){
-    const counts = {};
-    statOrder.forEach(s=>counts[s]=list.filter(r=>r.status===s).length);
-    const max = Math.max(...Object.values(counts),1);
-    statBars.innerHTML = statOrder.map(s=>`
-      <div class="bar-row" style="margin-bottom:6px">
-        <div class="bar-lbl" style="font-size:11px;width:58px;color:var(--ink3)">${s}</div>
-        <div class="bar-track"><div class="bar-fill" style="width:${counts[s]/max*100}%;background:${statColor[s]}"></div></div>
-        <div class="bar-val" style="font-size:11px;min-width:22px">${counts[s]}</div>
-      </div>`).join('');
-    setT('salesStatCount', `총 ${list.length}건`);
-    setT('salesListCount', `${list.length}건`);
-  }
-
-  // BU별 요약
-  const buSummTbody = document.querySelector('#salesBuSummary tbody');
-  if(buSummTbody){
-    const bus = ['DX','AD','FZ','DH'];
-    buSummTbody.innerHTML = bus.map(b=>{
-      const bl=list.filter(r=>r.bu===b);
-      if(!bl.length) return '';
-      const bgt=(bl.reduce((s,r)=>s+(r.budget||0),0)/1e8).toFixed(1);
-      const won=bl.filter(r=>r.status==='수주').length;
-      const lost=bl.filter(r=>['드롭','실주'].includes(r.status)).length;
-      const winR = (won+lost)>0 ? Math.round(won/(won+lost)*100)+'%' : '—';
-      return `<tr>
-        <td><span class="bx bx-blue">${b}</span></td>
-        <td class="td-num">${bl.length}건</td>
-        <td class="td-num">${bgt}억</td>
-        <td class="td-num" style="color:var(--green);font-weight:700">${won}</td>
-        <td class="td-num" style="color:var(--red)">${lost}</td>
-      </tr>`;
-    }).join('');
-  }
-
-  // 제안 목록 테이블
-  const tbody = document.getElementById('salesTableBody');
-  if(!tbody) return;
-  if(!list.length){ tbody.innerHTML='<tr><td colspan="10" style="text-align:center;padding:28px;color:var(--ink4)">해당하는 제안이 없습니다</td></tr>'; return; }
-  const stBadge=s=>{
-    const map={
-      '수주':   ['#DCFCE7','#16A34A'],
-      '진행중': ['#EFF6FF','#2563EB'],
-      '결과대기':['#FFFBEB','#D97706'],
-      '진행대기':['#F3F4F6','#6B7280'],
-      '드롭':   ['#F3F4F6','#9CA3AF'],
-      '실주':   ['#FEF2F2','#DC2626'],
-      '취소':   ['#F3F4F6','#9CA3AF'],
-    };
-    const [bg,c]=map[s]||['#F3F4F6','#6B7280'];
-    return `<span style="background:${bg};color:${c};font-size:11px;font-weight:700;padding:3px 9px;border-radius:10px;white-space:nowrap">${s}</span>`;
-  };
-  const buColor={'DX':'#EFF6FF','AD':'#F0FDF4','FZ':'#FFFBEB','DH':'#FDF4FF'};
-  const buText={'DX':'#2563EB','AD':'#16A34A','FZ':'#D97706','DH':'#7C3AED'};
-  tbody.innerHTML = list.map(r=>`
-    <tr class="proposal-row">
-      <td><span style="background:${buColor[r.bu]||'#F3F4F6'};color:${buText[r.bu]||'#6B7280'};font-size:11px;font-weight:800;padding:3px 8px;border-radius:6px">${r.bu||'—'}</span></td>
-      <td style="font-weight:600;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.project_name||''}">${r.project_name||'—'}</td>
-      <td style="font-size:13px;color:var(--ink2)">${r.client_name||'—'}</td>
-      <td><span style="font-size:11px;color:var(--ink3);background:var(--border2);padding:2px 7px;border-radius:6px">${r.category||'—'}</span></td>
-      <td>${stBadge(r.status||'—')}</td>
-      <td style="font-size:11px;color:var(--ink3);white-space:nowrap">${(r.proposal_start||'').slice(5)||'—'} ~ ${(r.proposal_end||'').slice(5)||'—'}</td>
-      <td style="font-size:11px;color:var(--ink3);white-space:nowrap">${r.pt_date?(r.pt_date.slice(5)):'—'}</td>
-      <td><span class="budget-pill">${r.budget?(r.budget/1e8).toFixed(1)+'억':'—'}</span></td>
-      <td style="font-size:11px;color:var(--ink4)">${r.competitor||'—'}</td>
-      <td><span class="pm-chip">${r.pm_name||'—'}</span></td>
-    </tr>`).join('');
-}
-
-function filterSalesBu(val,btn){
-  document.querySelectorAll('#salesBuTab .seg-btn').forEach(b=>b.classList.remove('active'));
-  if(btn) btn.classList.add('active');
-  erpPropFilterBu = val;
-  renderErpProposals();
-}
-function filterSalesStat(val,btn){
-  document.querySelectorAll('#salesStatTab .stat-pill').forEach(b=>b.classList.remove('active'));
-  if(btn) btn.classList.add('active');
-  erpPropFilterStat = val;
-  renderErpProposals();
-}
-
-// ═══════════════════════════════════════════
-// DX 사업부 AI 역량 분석 — ai_survey_departments (DX-개발/기획/디자인)
-// ═══════════════════════════════════════════
-async function loadDxAiSection(){
-  const badge = document.getElementById('dxAiBadge');
-
-  const [rRes, dRes] = await Promise.all([
-    SB.from('ai_survey_rounds').select('*').order('round_no'),
-    SB.from('ai_survey_departments').select('*').order('round_id')
-  ]);
-  if(rRes.error || dRes.error){
-    if(badge){ badge.textContent='연동 실패'; badge.className='bx bx-red'; }
-    return;
-  }
-
-  const rounds = rRes.data || [];
-  const depts  = dRes.data || [];
-  const latest = rounds[rounds.length - 1];
-  if(!latest) return;
-
-  const latestDepts = depts.filter(d => d.round_id === latest.id);
-  const get = name => latestDepts.find(d => d.dept_name === name);
-
-  const dev    = get('DX-개발');
-  const plan   = get('DX-기획');
-  const design = get('DX-디자인');
-
-  if(!dev && !plan && !design){
-    if(badge){ badge.textContent='DX 데이터 없음'; badge.className='bx bx-amber'; }
-    return;
-  }
-
-  const fmt  = v => v != null ? parseFloat(v).toFixed(2) : '—';
-  const diff = (a, b) => { if(a==null||b==null) return ''; const d=(parseFloat(a)-parseFloat(b)).toFixed(2); return (d>=0?'+':'')+d; };
-  const lvl  = v => { const n=parseFloat(v); return n>=3.0?'L4 내재화':n>=2.5?'L3 자동화':n>=2.0?'L2 활용':'L1 탐색'; };
-
-  const avgTotal = parseFloat(latest.avg_total) || 0;
-  const set = (id, v) => { const e = document.getElementById(id); if(e) e.textContent = v; };
-
-  // KPI
-  set('dxAiDev',    fmt(dev?.avg_total));
-  set('dxAiPlan',   fmt(plan?.avg_total));
-  set('dxAiDesign', fmt(design?.avg_total));
-  const totalHc = (dev?.headcount||0) + (plan?.headcount||0) + (design?.headcount||0);
-  set('dxAiHc', totalHc);
-
-  set('dxAiDevChg',    `전사 평균 ${fmt(avgTotal)} 대비 ${diff(dev?.avg_total, avgTotal)} · ${dev?.dept_status||''}`);
-  set('dxAiPlanChg',   `전사 평균 ${fmt(avgTotal)} 대비 ${diff(plan?.avg_total, avgTotal)} · ${plan?.dept_status||''}`);
-  set('dxAiDesignChg', `전사 평균 ${fmt(avgTotal)} 대비 ${diff(design?.avg_total, avgTotal)} · ${design?.dept_status||''}`);
-  set('dxAiHcChg',     `개발 ${dev?.headcount||0} · 기획 ${plan?.headcount||0} · 디자인 ${design?.headcount||0}명`);
-  set('dxAiRoundLabel', `${latest.round_label} 조사 · N=${latest.participants}`);
-
-  // KPI warn/ok 동적 클래스
-  const designCard = document.getElementById('dxAiDesign')?.closest('.kpi');
-  if(designCard && design) designCard.className = 'kpi' + (parseFloat(design.avg_total) < avgTotal ? ' warn' : '');
-
-  if(badge){ badge.textContent=`DB 연동 완료 · ${latest.survey_ym}`; badge.className='bx bx-green'; }
-
-  // ── 인사이트 동적 생성 ──
-  const ins = document.getElementById('dxAiInsights');
-  if(ins && dev && plan && design){
-    const devT  = parseFloat(dev.avg_total);
-    const planT = parseFloat(plan.avg_total);
-    const desT  = parseFloat(design.avg_total);
-    const gap   = (devT - desT).toFixed(2);
-    ins.innerHTML = `
-      <div class="insight ins-ok">
-        <div class="ins-tag">선도 그룹</div>
-        <div class="ins-title">DX-개발 ${fmt(dev.avg_total)} — 전사 최고</div>
-        <div class="ins-body">개인 역량 ${fmt(dev.avg_personal)} · 부서운영 ${fmt(dev.avg_dept_ops)}. 역량 등급 ${dev.dept_status}. 전사 AI 전파자 역할 권고 — 주 1회 사내 케이스 공유.</div>
-      </div>
-      <div class="insight ins-info">
-        <div class="ins-tag">격차 ${gap}점</div>
-        <div class="ins-title">DX-개발(${fmt(devT)}) vs DX-디자인(${fmt(desT)}) 최대 격차</div>
-        <div class="ins-body">DX-기획 ${fmt(planT)} · DX-디자인 ${fmt(desT)}. 디자인팀 개인(${fmt(design.avg_personal)}) · 부서운영(${fmt(design.avg_dept_ops)}) 모두 최하위 — AI 기초 과정 우선 투입 필요.</div>
-      </div>
-      <div class="insight ${parseFloat(design.avg_dept_ops) < 1.5 ? 'ins-danger' : 'ins-warn'}">
-        <div class="ins-tag">집중 개입</div>
-        <div class="ins-title">DX-디자인 부서운영 ${fmt(design.avg_dept_ops)} — 즉시 보강</div>
-        <div class="ins-body">부서운영 역량(${fmt(design.avg_dept_ops)})이 전사 최하위. 개인 역량(${fmt(design.avg_personal)})과 격차 ${(parseFloat(design.avg_personal)-parseFloat(design.avg_dept_ops)).toFixed(2)}점. 팀 단위 AI 도구 도입·Q08 시스템화 과제 긴급 배정 권고.</div>
-      </div>`;
-  }
-
-  // ── 팀별 종합 비교 바 ──
-  const compare = document.getElementById('dxAiCompare');
-  if(compare){
-    const teams = [
-      { label:'DX-개발',   row: dev,    color:'var(--green)' },
-      { label:'DX-기획',   row: plan,   color:'var(--blue)'  },
-      { label:'DX-디자인', row: design, color:'var(--red)'   },
-    ];
-    compare.innerHTML = teams.map(t => {
-      if(!t.row) return '';
-      const pct = (parseFloat(t.row.avg_total)/4*100).toFixed(1);
-      return `<div class="bar-row" style="margin-bottom:8px">
-        <div class="bar-lbl" style="font-size:12px;width:72px;color:${t.color};font-weight:700">${t.label}</div>
-        <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${t.color};border-radius:4px"></div></div>
-        <div class="bar-val" style="color:${t.color};font-weight:700">${fmt(t.row.avg_total)}</div>
-      </div>`;
-    }).join('');
-  }
-
-  // ── 개인 vs 부서운영 갭 바 ──
-  const gapEl = document.getElementById('dxAiGapBars');
-  if(gapEl){
-    const teams = [
-      { label:'DX-개발',   row: dev    },
-      { label:'DX-기획',   row: plan   },
-      { label:'DX-디자인', row: design },
-    ];
-    gapEl.innerHTML = teams.map(t => {
-      if(!t.row) return '';
-      const p = parseFloat(t.row.avg_personal); const d = parseFloat(t.row.avg_dept_ops);
-      return `<div style="margin-bottom:10px">
-        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--ink3);margin-bottom:3px">
-          <span style="font-weight:700;color:var(--ink2)">${t.label}</span>
-          <span>개인 <b>${fmt(p)}</b> · 부서운영 <b style="color:${d<2?'var(--red)':'var(--green)'}">${fmt(d)}</b></span>
+    // 인사이트
+    const ins = document.getElementById('dxAiInsights');
+    if(ins && dev && plan && design){
+      const gap = (parseFloat(dev.avg_total)-parseFloat(design.avg_total)).toFixed(2);
+      ins.innerHTML=`
+        <div class="insight ins-ok">
+          <div class="ins-tag">선도 · ${dev.dept_status}</div>
+          <div class="ins-title">DX-개발 ${fmt(dev.avg_total)}점 — 전사 최고</div>
+          <div class="ins-body">개인 ${fmt(dev.avg_personal)} / 부서운영 ${fmt(dev.avg_dept_ops)}. 전사 평균(${fmt(avgTotal)}) 대비 ${sign(dev.avg_total-avgTotal)}${(dev.avg_total-avgTotal).toFixed(2)}. 전사 AI 전파자 역할 권고.</div>
         </div>
-        <div class="bar-track" style="height:6px;margin-bottom:2px"><div class="bar-fill" style="width:${p/4*100}%;background:var(--blue);border-radius:3px;height:6px"></div></div>
-        <div class="bar-track" style="height:6px"><div class="bar-fill" style="width:${d/4*100}%;background:${d<2?'var(--red)':'var(--green)'};border-radius:3px;height:6px"></div></div>
-      </div>`;
-    }).join('') + `<div style="font-size:11px;color:var(--ink4);margin-top:6px">■ 파랑=개인 역량 &nbsp; ■ 초록/빨강=부서운영 역량</div>`;
+        <div class="insight ins-warn">
+          <div class="ins-tag">격차 ${gap}점</div>
+          <div class="ins-title">DX-개발(${fmt(dev.avg_total)}) vs DX-디자인(${fmt(design.avg_total)})</div>
+          <div class="ins-body">DX-기획 ${fmt(plan.avg_total)} · DX-디자인 ${fmt(design.avg_total)}. 디자인 개인(${fmt(design.avg_personal)}) · 부서운영(${fmt(design.avg_dept_ops)}) 모두 최하위 — AI 기초과정 우선 투입.</div>
+        </div>
+        <div class="insight ${parseFloat(design.avg_dept_ops)<1.5?'ins-danger':'ins-warn'}">
+          <div class="ins-tag">집중 개입 · ${design.dept_status}</div>
+          <div class="ins-title">DX-디자인 부서운영 ${fmt(design.avg_dept_ops)} — 즉시 보강</div>
+          <div class="ins-body">부서운영(${fmt(design.avg_dept_ops)})이 전사 최하위. 개인(${fmt(design.avg_personal)})과 ${(parseFloat(design.avg_personal)-parseFloat(design.avg_dept_ops)).toFixed(2)}점 격차. Q08 시스템화 과제 긴급 배정 권고.</div>
+        </div>`;
+    }
+
+    // 팀별 비교 바
+    const cmp = document.getElementById('dxAiCompare');
+    if(cmp){
+      const cols={'DX-개발':'var(--green)','DX-기획':'var(--blue)','DX-디자인':'var(--red)'};
+      cmp.innerHTML = rows.map(r=>`
+        <div class="bar-row" style="margin-bottom:10px">
+          <div class="bar-lbl" style="width:76px;font-size:12px;font-weight:700;color:${cols[r.dept_name]||'var(--ink2)'}">${r.dept_name}</div>
+          <div class="bar-track"><div class="bar-fill" style="width:${parseFloat(r.avg_total)/4*100}%;background:${cols[r.dept_name]||'var(--blue)'};border-radius:4px"></div></div>
+          <div class="bar-val" style="font-weight:700;color:${cols[r.dept_name]||'var(--ink2)'}">${fmt(r.avg_total)}</div>
+        </div>
+        <div style="display:grid;grid-template-columns:76px 1fr auto;gap:4px;align-items:center;margin-bottom:6px;padding-left:0">
+          <div style="font-size:10px;color:var(--ink4);text-align:right;padding-right:8px">개인</div>
+          <div class="bar-track" style="height:5px"><div class="bar-fill" style="width:${parseFloat(r.avg_personal)/4*100}%;background:#93C5FD;border-radius:3px;height:5px"></div></div>
+          <div style="font-size:11px;color:var(--ink3);width:30px;text-align:right">${fmt(r.avg_personal)}</div>
+        </div>
+        <div style="display:grid;grid-template-columns:76px 1fr auto;gap:4px;align-items:center;margin-bottom:14px">
+          <div style="font-size:10px;color:var(--ink4);text-align:right;padding-right:8px">부서운영</div>
+          <div class="bar-track" style="height:5px"><div class="bar-fill" style="width:${parseFloat(r.avg_dept_ops)/4*100}%;background:${parseFloat(r.avg_dept_ops)<2?'#FCA5A5':'#34D399'};border-radius:3px;height:5px"></div></div>
+          <div style="font-size:11px;color:${parseFloat(r.avg_dept_ops)<2?'var(--red)':'var(--green)'};width:30px;text-align:right;font-weight:700">${fmt(r.avg_dept_ops)}</div>
+        </div>`).join('');
+      cmp.innerHTML += `<div class="card-ai-note" style="margin-top:4px">💡 <strong>분석:</strong> DX-개발(${fmt(rows.find(r=>r.dept_name==='DX-개발')?.avg_total)})이 전사 선도 — 개발 방식 사내 전파 모델 권고. DX-디자인(${fmt(rows.find(r=>r.dept_name==='DX-디자인')?.avg_total)}) 집중 보강 대상.</div>`;
+    }
+
+    // 갭 바 (개인 vs 부서운영)
+    const gap = document.getElementById('dxAiGapBars');
+    if(gap){
+      gap.innerHTML = rows.map(r=>`
+        <div style="margin-bottom:12px">
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+            <span style="font-size:12px;font-weight:700;color:var(--ink2)">${r.dept_name}</span>
+            <span style="font-size:11px;color:var(--ink3)">개인 <b>${fmt(r.avg_personal)}</b> · 부서운영 <b style="color:${parseFloat(r.avg_dept_ops)<2?'var(--red)':'var(--green)'}">${fmt(r.avg_dept_ops)}</b> · 격차 <b>${(parseFloat(r.avg_personal)-parseFloat(r.avg_dept_ops)).toFixed(2)}</b></span>
+          </div>
+          <div class="bar-track" style="height:7px;margin-bottom:3px"><div class="bar-fill" style="width:${parseFloat(r.avg_personal)/4*100}%;background:var(--blue);border-radius:3px;height:7px"></div></div>
+          <div class="bar-track" style="height:7px"><div class="bar-fill" style="width:${parseFloat(r.avg_dept_ops)/4*100}%;background:${parseFloat(r.avg_dept_ops)<2?'var(--red)':'var(--green)'};border-radius:3px;height:7px"></div></div>
+        </div>`).join('')
+        + `<div style="font-size:11px;color:var(--ink4);margin-top:4px">▬ 파랑=개인 역량　▬ 초록/빨강=부서운영 역량</div>`;
+    }
+
+  // ── AD: 단일 부서 KPI ─────────────────────────
+  } else if(prefix === 'ad'){
+    const r = rows[0];
+    const adTotal    = parseFloat(r.avg_total)    || 0;
+    const adPersonal = parseFloat(r.avg_personal) || 0;
+    const adDeptOps  = parseFloat(r.avg_dept_ops) || 0;
+
+    set('adAiTotal',       fmt(adTotal));
+    set('adAiPersonal',    fmt(adPersonal));
+    set('adAiDeptOps',     fmt(adDeptOps));
+    set('adAiHeadcount',   r.headcount || '—');
+    set('adAiTotalChg',    `전사 평균 ${fmt(avgTotal)} 대비 ${sign(adTotal-avgTotal)}${(adTotal-avgTotal).toFixed(2)}`);
+    set('adAiPersonalChg', `전사 평균 ${fmt(avgPersonal)} 대비 ${sign(adPersonal-avgPersonal)}${(adPersonal-avgPersonal).toFixed(2)}`);
+    set('adAiDeptOpsChg',  `전사 평균 ${fmt(avgDeptOps)} 대비 ${sign(adDeptOps-avgDeptOps)}${(adDeptOps-avgDeptOps).toFixed(2)}`);
+    set('adAiStatus',      `역량 등급: ${r.dept_status||'—'} (${round.round_label} 조사)`);
+
+    // warn 클래스
+    const deptCard = document.getElementById('adAiDeptOps')?.closest('.kpi');
+    if(deptCard) deptCard.className='kpi'+(adDeptOps<avgDeptOps?' warn':'');
+
+    // 인사이트 동적 생성
+    const allLatest = aiDeptsCache.filter(d=>d.round_id===round.id).sort((a,b)=>b.avg_total-a.avg_total);
+    const adRank    = allLatest.findIndex(d=>d.dept_name==='AD') + 1;
+    const ins = document.getElementById('adAiInsights');
+    if(ins){
+      ins.innerHTML=`
+        <div class="insight ${adDeptOps<avgDeptOps?'ins-warn':'ins-ok'}">
+          <div class="ins-tag">역량 격차</div>
+          <div class="ins-title">개인 ${fmt(adPersonal)} ↔ 부서운영 ${fmt(adDeptOps)} (격차 ${(adPersonal-adDeptOps).toFixed(2)})</div>
+          <div class="ins-body">개인 AI 역량은 전사 평균(${fmt(avgPersonal)}) 대비 ${sign(adPersonal-avgPersonal)}${(adPersonal-avgPersonal).toFixed(2)}. 부서 운영 역량(${fmt(adDeptOps)})은 전사 평균(${fmt(avgDeptOps)}) 대비 ${sign(adDeptOps-avgDeptOps)}${(adDeptOps-avgDeptOps).toFixed(2)}. AI 성과를 팀 레벨로 올리는 전환이 핵심 과제.</div>
+        </div>
+        <div class="insight ${adRank<=2?'ins-ok':adRank<=3?'ins-info':'ins-warn'}">
+          <div class="ins-tag">전사 ${adRank}위 / ${allLatest.length}개 부서</div>
+          <div class="ins-title">AD 종합 ${fmt(adTotal)} · 등급 ${r.dept_status||'—'}</div>
+          <div class="ins-body">${allLatest.map((d,i)=>`${i+1}위 ${d.dept_name}(${fmt(d.avg_total)})`).join(' · ')}</div>
+        </div>
+        <div class="insight ins-danger">
+          <div class="ins-tag">손익 연계</div>
+          <div class="ins-title">AI 최적화 시 마진 +5~8%p 여지</div>
+          <div class="ins-body">부서운영(${fmt(adDeptOps)}) 개선 → AI 카피·리포팅 자동화 → 외주비 15~20% 절감 → 마진 개선. Q07·Q08·Q10 집중 보강 과제.</div>
+        </div>`;
+    }
+
+    // 전사 대비 비교 바
+    const cmp = document.getElementById('adAiCompare');
+    if(cmp){
+      const all = aiDeptsCache.filter(d=>d.round_id===round.id).sort((a,b)=>b.avg_total-a.avg_total);
+      cmp.innerHTML = all.map(d=>{
+        const isAd = d.dept_name==='AD';
+        const col  = isAd?'var(--green)':parseFloat(d.avg_total)>=2.5?'var(--blue)':parseFloat(d.avg_total)>=2.0?'#93C5FD':'#FCA5A5';
+        return `<div class="bar-row" style="margin-bottom:8px">
+          <div class="bar-lbl" style="width:80px;font-size:12px;font-weight:${isAd?800:400};color:${isAd?'var(--green)':'var(--ink2)'}">${d.dept_name}</div>
+          <div class="bar-track"><div class="bar-fill" style="width:${parseFloat(d.avg_total)/4*100}%;background:${col};border-radius:4px"></div></div>
+          <div class="bar-val" style="font-weight:${isAd?700:400};color:${col}">${fmt(d.avg_total)}</div>
+        </div>`;
+      }).join('')
+      + `<div class="card-ai-note" style="margin-top:8px">💡 AD(${fmt(adTotal)}) — 개인(${fmt(adPersonal)}) 강점이나 부서 운영(${fmt(adDeptOps)}) 격차 ${(adPersonal-adDeptOps).toFixed(2)}점 해소가 다음 과제.</div>`;
+    }
   }
 }
+
 
 // ═══════════════════════════════════════════
 // 가동율 · 인원 DB 연동 — erp_members + erp_utilization
@@ -3865,27 +3655,36 @@ function onStChange(sel,tbl){
 
 // ─── AI 진단 Supabase 연동 ───
 let aiRoundsCache = [];
+let aiDeptsCache  = [];   // ai_survey_departments 전체 캐시
 
 async function loadAiRounds(){
   const sel = document.getElementById('aiRoundSel');
   try {
-    const { data, error } = await SB.from('ai_survey_rounds').select('*').order('round_no');
-    if(error || !data || !data.length){
+    const [rRes, dRes] = await Promise.all([
+      SB.from('ai_survey_rounds').select('*').order('round_no'),
+      SB.from('ai_survey_departments').select('*').order('round_id')
+    ]);
+    if(rRes.error || !rRes.data || !rRes.data.length){
       if(sel) sel.innerHTML = '<option value="2">2026.06 · 2차 (현재)</option>';
       return;
     }
-    aiRoundsCache = data;
+    aiRoundsCache = rRes.data;
+    aiDeptsCache  = dRes.data || [];
+
     if(sel){
-      sel.innerHTML = data.map(r =>
+      sel.innerHTML = rRes.data.map(r =>
         `<option value="${r.id}" ${r.round_no===2?'selected':''}>
           ${r.survey_ym} · ${r.round_label} (N=${r.participants||'?'})
         </option>`
       ).join('');
     }
-    // 최신 차수 KPI 업데이트
-    const latest = data[data.length - 1];
-    const prev   = data.length >= 2 ? data[data.length - 2] : null;
+    const latest = rRes.data[rRes.data.length - 1];
+    const prev   = rRes.data.length >= 2 ? rRes.data[rRes.data.length - 2] : null;
     updateAiKpis(latest, prev);
+
+    // DX · AD 사업부 AI 섹션 렌더
+    renderBuAiSection('dx', ['DX-개발','DX-기획','DX-디자인'], latest, prev);
+    renderBuAiSection('ad', ['AD'], latest, prev);
   } catch(e){
     console.warn('[AI rounds]', e);
     if(sel) sel.innerHTML = '<option value="2">2026.06 · 2차 (현재)</option>';
