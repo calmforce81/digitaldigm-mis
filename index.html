@@ -545,8 +545,8 @@ body.present .notif-panel { display: none !important; }
 }
 .hist-bg.open { opacity:1;pointer-events:auto; }
 .hist-modal {
-  background:#fff;border-radius:14px;width:760px;max-width:96vw;
-  max-height:90vh;display:flex;flex-direction:column;overflow:hidden;
+  background:#fff;border-radius:14px;width:912px;max-width:96vw;
+  max-height:92vh;display:flex;flex-direction:column;overflow:hidden;
   box-shadow:0 24px 64px rgba(0,0,0,.3);
   transform:translateY(16px) scale(.96);transition:transform .22s cubic-bezier(.4,0,.2,1);
 }
@@ -573,7 +573,7 @@ body.present .notif-panel { display: none !important; }
   color:var(--ink3);font-family:inherit;transition:all .12s;white-space:nowrap;
 }
 .hist-tab-pill.active { background:var(--ink1);color:#fff;border-color:var(--ink1); }
-.hist-canvas-wrap { padding:16px 22px 6px;flex-shrink:0;height:220px;position:relative; }
+.hist-canvas-wrap { padding:16px 22px 6px;flex-shrink:0;height:264px;position:relative; }
 .hist-canvas-wrap canvas { position:absolute;inset:16px 22px 6px; }
 /* 수치 테이블 */
 .hist-num-tbl { padding:0 22px 6px;overflow-x:auto;flex-shrink:0; }
@@ -712,7 +712,7 @@ body.present .notif-panel { display: none !important; }
         <div class="kpi" style="opacity:.55"><div class="kpi-lbl">취급고매출 — 누적</div><div class="kpi-val" id="kpi-sm-gross-val">—<span class="kpi-unit">억</span></div><div class="kpi-chg flat" id="kpi-sm-gross-chg">데이터 연동 준비중</div><button class="hist-btn" onclick="openHist('매출','취급고 5개년 추이')">📊 과거 데이터 보기</button></div>
         <div class="kpi accent"><div class="kpi-lbl">순매출 — 누적</div><div class="kpi-val" id="kpi-sm-rev-val">—<span class="kpi-unit">억</span></div><div class="kpi-chg up" id="kpi-sm-rev-chg">전년동기 대비</div><button class="hist-btn" onclick="openHist('매출','전사 월별 매출 5개년 추이')">📊 과거 데이터 보기</button></div>
         <div class="kpi" id="kpi-sm-profit-card"><div class="kpi-lbl">영업이익 — 누적</div><div class="kpi-val" id="kpi-sm-profit-val">—<span class="kpi-unit">억</span></div><div class="kpi-chg" id="kpi-sm-profit-chg">전년동기 대비</div><button class="hist-btn" onclick="openHist('수익','전사 손익 5개년 추이')">📊 과거 데이터 보기</button></div>
-        <div class="kpi" id="kpi-sm-yoy-card"><div class="kpi-lbl">전년대비 증감률</div><div class="kpi-val" id="kpi-sm-yoy-val">—<span class="kpi-unit">%</span></div><div class="kpi-chg" id="kpi-sm-yoy-chg">순매출 기준</div><button class="hist-btn" onclick="openHist('매출','전사 월별 매출 5개년 추이')">📊 과거 데이터 보기</button></div>
+        <div class="kpi" id="kpi-sm-yoy-card"><div class="kpi-lbl">전년대비 증감률</div><div class="kpi-val" id="kpi-sm-yoy-val">—<span class="kpi-unit">%</span></div><div class="kpi-chg" id="kpi-sm-yoy-chg">순매출 기준</div><button class="hist-btn" onclick="openHistDual('매출','수익','전사 매출·손익 추이')">📊 매출·손익 보기</button></div>
         <div class="kpi warn"><div class="kpi-lbl">전사 가동율</div><div class="kpi-val">76<span class="kpi-unit">%</span></div><div class="kpi-chg flat">목표 80% 대비 -4%p</div><button class="hist-btn" onclick="openHist('가동율','전사 가동율 5개년 추이')">📊 과거 데이터 보기</button></div>
         <div class="kpi"><div class="kpi-lbl">전체 인원</div><div class="kpi-val">61<span class="kpi-unit">명</span></div><div class="kpi-chg flat">정규 57 · 계약 4</div><button class="hist-btn" onclick="openHist('인원','전사 인원 5개년 추이')">📊 과거 데이터 보기</button></div>
       </div>
@@ -882,8 +882,8 @@ body.present .notif-panel { display: none !important; }
       <div class="kpi-grid g6" style="margin-bottom:16px">
         <div class="kpi" id="kpi-dx-gross-card" style="opacity:.6"><div class="kpi-lbl">취급고매출 — 누적</div><div class="kpi-val" id="kpi-dx-gross-val">—<span class="kpi-unit">억</span></div><div class="kpi-chg flat" id="kpi-dx-gross-chg">데이터 연동 준비중</div><button class="hist-btn" onclick="openHist('DX매출','DX 매출 5개년 추이')">📊 과거 데이터 보기</button></div>
         <div class="kpi accent"><div class="kpi-lbl">순매출 — 누적</div><div class="kpi-val" id="kpi-dx-h1-val">31.80<span class="kpi-unit">억</span></div><div class="kpi-chg up" id="kpi-dx-h1-chg">목표 31.84억 대비</div><button class="hist-btn" onclick="openHist('DX매출','DX 매출 5개년 추이')">📊 과거 데이터 보기</button></div>
-        <div class="kpi" id="kpi-dx-profit-card"><div class="kpi-lbl">영업이익 — 누적</div><div class="kpi-val" id="kpi-dx-profit-val" style="color:var(--green)">+1.58<span class="kpi-unit">억</span></div><div class="kpi-chg up" id="kpi-dx-profit-chg">흑자 유지</div><button class="hist-btn" onclick="openHist('수익','DX 손익 5개년 추이')">📊 과거 데이터 보기</button></div>
-        <div class="kpi"><div class="kpi-lbl">전년대비 증감률</div><div class="kpi-val" id="kpi-dx-yoy-val" style="color:var(--green)">+20.7<span class="kpi-unit">%</span></div><div class="kpi-chg up" id="kpi-dx-yoy-chg">전년 26.35억 대비</div><button class="hist-btn" onclick="openHist('DX매출','DX 매출 5개년 추이')">📊 과거 데이터 보기</button></div>
+        <div class="kpi" id="kpi-dx-profit-card"><div class="kpi-lbl">영업이익 — 누적</div><div class="kpi-val" id="kpi-dx-profit-val" style="color:var(--green)">+1.58<span class="kpi-unit">억</span></div><div class="kpi-chg up" id="kpi-dx-profit-chg">흑자 유지</div><button class="hist-btn" onclick="openHist('DX수익','DX 손익 5개년 추이')">📊 과거 데이터 보기</button></div>
+        <div class="kpi"><div class="kpi-lbl">전년대비 증감률</div><div class="kpi-val" id="kpi-dx-yoy-val" style="color:var(--green)">+20.7<span class="kpi-unit">%</span></div><div class="kpi-chg up" id="kpi-dx-yoy-chg">전년 26.35억 대비</div><button class="hist-btn" onclick="openHistDual('DX매출','DX수익','DX 매출·손익 추이')">📊 매출·손익 보기</button></div>
         <div class="kpi"><div class="kpi-lbl">가동율</div><div class="kpi-val">76<span class="kpi-unit">%</span></div><div class="kpi-chg flat">목표 80% 대비 -4%p</div><button class="hist-btn" onclick="openHist('가동율','전사 가동율 5개년 추이')">📊 과거 데이터 보기</button></div>
         <div class="kpi"><div class="kpi-lbl">인원</div><div class="kpi-val">33<span class="kpi-unit">명</span></div><div class="kpi-chg flat">정규 30 · 계약 3</div><button class="hist-btn" onclick="openHist('인원','전사 인원 5개년 추이')">📊 과거 데이터 보기</button></div>
       </div>
@@ -976,8 +976,8 @@ body.present .notif-panel { display: none !important; }
       <div class="kpi-grid g6" style="margin-bottom:16px">
         <div class="kpi" id="kpi-ad-gross-card" style="opacity:.6"><div class="kpi-lbl">취급고매출 — 누적</div><div class="kpi-val" id="kpi-ad-gross-val">—<span class="kpi-unit">억</span></div><div class="kpi-chg flat" id="kpi-ad-gross-chg">데이터 연동 준비중</div><button class="hist-btn" onclick="openHist('AD매출','AD 매출 5개년 추이')">📊 과거 데이터 보기</button></div>
         <div class="kpi accent"><div class="kpi-lbl">순매출 — 누적</div><div class="kpi-val" id="kpi-ad-h1-val">11.40<span class="kpi-unit">억</span></div><div class="kpi-chg flat" id="kpi-ad-h1-chg">H1 기준</div><button class="hist-btn" onclick="openHist('AD매출','AD 매출 5개년 추이')">📊 과거 데이터 보기</button></div>
-        <div class="kpi danger" id="kpi-ad-profit-card"><div class="kpi-lbl">영업이익 — 누적</div><div class="kpi-val" id="kpi-ad-profit-val" style="color:var(--red)">-2.10<span class="kpi-unit">억</span></div><div class="kpi-chg down" id="kpi-ad-profit-chg">적자 — 흑자전환 필요</div><button class="hist-btn" onclick="openHist('수익','AD 손익 5개년 추이')">📊 과거 데이터 보기</button></div>
-        <div class="kpi"><div class="kpi-lbl">전년대비 증감률</div><div class="kpi-val">+3.8<span class="kpi-unit">%</span></div><div class="kpi-chg up">전년 10.98억 대비</div><button class="hist-btn" onclick="openHist('AD매출','AD 매출 5개년 추이')">📊 과거 데이터 보기</button></div>
+        <div class="kpi danger" id="kpi-ad-profit-card"><div class="kpi-lbl">영업이익 — 누적</div><div class="kpi-val" id="kpi-ad-profit-val" style="color:var(--red)">-2.10<span class="kpi-unit">억</span></div><div class="kpi-chg down" id="kpi-ad-profit-chg">적자 — 흑자전환 필요</div><button class="hist-btn" onclick="openHist('AD수익','AD 손익 5개년 추이')">📊 과거 데이터 보기</button></div>
+        <div class="kpi"><div class="kpi-lbl">전년대비 증감률</div><div class="kpi-val">+3.8<span class="kpi-unit">%</span></div><div class="kpi-chg up">전년 10.98억 대비</div><button class="hist-btn" onclick="openHistDual('AD매출','AD수익','AD 매출·손익 추이')">📊 매출·손익 보기</button></div>
         <div class="kpi warn"><div class="kpi-lbl">가동율</div><div class="kpi-val">71<span class="kpi-unit">%</span></div><div class="kpi-chg down">목표 -9%p</div><button class="hist-btn" onclick="openHist('AD가동율','AD 가동율 5개년 추이')">📊 과거 데이터 보기</button></div>
         <div class="kpi"><div class="kpi-lbl">인원</div><div class="kpi-val">14<span class="kpi-unit">명</span></div><div class="kpi-chg flat">AE · CD · PD</div><button class="hist-btn" onclick="openHist('인원','전사 인원 5개년 추이')">📊 과거 데이터 보기</button></div>
       </div>
@@ -1037,8 +1037,8 @@ body.present .notif-panel { display: none !important; }
       <div class="kpi-grid g6" style="margin-bottom:16px">
         <div class="kpi" id="kpi-fz-gross-card" style="opacity:.6"><div class="kpi-lbl">취급고매출 — 누적</div><div class="kpi-val" id="kpi-fz-gross-val">—<span class="kpi-unit">억</span></div><div class="kpi-chg flat" id="kpi-fz-gross-chg">데이터 연동 준비중</div><button class="hist-btn" onclick="openHist('PEZ매출','FZ 매출 5개년 추이')">📊 과거 데이터 보기</button></div>
         <div class="kpi accent"><div class="kpi-lbl">순매출 — 누적</div><div class="kpi-val" id="kpi-fz-h1-val">4.80<span class="kpi-unit">억</span></div><div class="kpi-chg up" id="kpi-fz-h1-chg">전년 +22%</div><button class="hist-btn" onclick="openHist('PEZ매출','FZ 매출 5개년 추이')">📊 과거 데이터 보기</button></div>
-        <div class="kpi" id="kpi-fz-profit-card"><div class="kpi-lbl">영업이익 — 누적</div><div class="kpi-val" id="kpi-fz-profit-val" style="color:var(--green)">+0.48<span class="kpi-unit">억</span></div><div class="kpi-chg up" id="kpi-fz-profit-chg">흑자 유지</div><button class="hist-btn" onclick="openHist('수익','FZ 손익 5개년 추이')">📊 과거 데이터 보기</button></div>
-        <div class="kpi"><div class="kpi-lbl">전년대비 증감률</div><div class="kpi-val" style="color:var(--green)">+22<span class="kpi-unit">%</span></div><div class="kpi-chg up">4개 사업부 최고</div><button class="hist-btn" onclick="openHist('PEZ매출','FZ 매출 5개년 추이')">📊 과거 데이터 보기</button></div>
+        <div class="kpi" id="kpi-fz-profit-card"><div class="kpi-lbl">영업이익 — 누적</div><div class="kpi-val" id="kpi-fz-profit-val" style="color:var(--green)">+0.48<span class="kpi-unit">억</span></div><div class="kpi-chg up" id="kpi-fz-profit-chg">흑자 유지</div><button class="hist-btn" onclick="openHist('FZ수익','FZ 손익 5개년 추이')">📊 과거 데이터 보기</button></div>
+        <div class="kpi"><div class="kpi-lbl">전년대비 증감률</div><div class="kpi-val" style="color:var(--green)">+22<span class="kpi-unit">%</span></div><div class="kpi-chg up">4개 사업부 최고</div><button class="hist-btn" onclick="openHistDual('PEZ매출','FZ수익','FZ 매출·손익 추이')">📊 매출·손익 보기</button></div>
         <div class="kpi"><div class="kpi-lbl">가동율</div><div class="kpi-val" style="color:var(--green)">88<span class="kpi-unit">%</span></div><div class="kpi-chg up">목표 초과 +8%p</div><button class="hist-btn" onclick="openHist('가동율','전사 가동율 5개년 추이')">📊 과거 데이터 보기</button></div>
         <div class="kpi"><div class="kpi-lbl">인원</div><div class="kpi-val">4<span class="kpi-unit">명</span></div><div class="kpi-chg flat">공공·정부 담당</div><button class="hist-btn" onclick="openHist('인원','전사 인원 5개년 추이')">📊 과거 데이터 보기</button></div>
       </div>
@@ -1092,8 +1092,8 @@ body.present .notif-panel { display: none !important; }
       <div class="kpi-grid g6" style="margin-bottom:16px;opacity:.6">
         <div class="kpi" id="kpi-dh-gross-card"><div class="kpi-lbl">취급고매출 — 누적</div><div class="kpi-val" id="kpi-dh-gross-val">—<span class="kpi-unit">억</span></div><div class="kpi-chg flat" id="kpi-dh-gross-chg">데이터 없음</div><button class="hist-btn" onclick="openHist('매출','전사 월별 매출 5개년 추이')">📊 과거 데이터 보기</button></div>
         <div class="kpi" id="kpi-dh-h1-card"><div class="kpi-lbl">순매출 — 누적</div><div class="kpi-val" id="kpi-dh-h1-val">—<span class="kpi-unit">억</span></div><div class="kpi-chg flat" id="kpi-dh-h1-chg">데이터 없음</div><button class="hist-btn" onclick="openHist('매출','전사 월별 매출 5개년 추이')">📊 과거 데이터 보기</button></div>
-        <div class="kpi" id="kpi-dh-profit-card"><div class="kpi-lbl">영업이익 — 누적</div><div class="kpi-val" id="kpi-dh-profit-val">—<span class="kpi-unit">억</span></div><div class="kpi-chg flat" id="kpi-dh-profit-chg">데이터 없음</div><button class="hist-btn" onclick="openHist('수익','DH 손익 5개년 추이')">📊 과거 데이터 보기</button></div>
-        <div class="kpi"><div class="kpi-lbl">전년대비 증감률</div><div class="kpi-val">—<span class="kpi-unit">%</span></div><div class="kpi-chg flat">데이터 없음</div><button class="hist-btn" onclick="openHist('매출','전사 월별 매출 5개년 추이')">📊 과거 데이터 보기</button></div>
+        <div class="kpi" id="kpi-dh-profit-card"><div class="kpi-lbl">영업이익 — 누적</div><div class="kpi-val" id="kpi-dh-profit-val">—<span class="kpi-unit">억</span></div><div class="kpi-chg flat" id="kpi-dh-profit-chg">데이터 없음</div><button class="hist-btn" onclick="openHist('DH수익','DH 손익 5개년 추이')">📊 과거 데이터 보기</button></div>
+        <div class="kpi"><div class="kpi-lbl">전년대비 증감률</div><div class="kpi-val">—<span class="kpi-unit">%</span></div><div class="kpi-chg flat">데이터 없음</div><button class="hist-btn" onclick="openHistDual('매출','DH수익','DH 매출·손익 추이')">📊 매출·손익 보기</button></div>
         <div class="kpi"><div class="kpi-lbl">가동률</div><div class="kpi-val">—<span class="kpi-unit">%</span></div><div class="kpi-chg flat">데이터 없음</div><button class="hist-btn" onclick="openHist('가동율','전사 가동율 5개년 추이')">📊 과거 데이터 보기</button></div>
         <div class="kpi"><div class="kpi-lbl">인원</div><div class="kpi-val">—<span class="kpi-unit">명</span></div><div class="kpi-chg flat">데이터 없음</div><button class="hist-btn" onclick="openHist('인원','전사 인원 5개년 추이')">📊 과거 데이터 보기</button></div>
       </div>
@@ -1996,6 +1996,11 @@ const HIST={
     [748,752,758,750,762,770], // 2025 평균 757만원/MM
     [778,783,790,785,792,800]  // 2026 추정 평균 788만원/MM
   ],insight:'외주 인력 MM단가(만원). 매년 3~5% 상승 추세. 2026년 평균 788만원/MM으로 2022 대비 +15.2% 상승. 전문 프리랜서 수요 증가 및 물가 상승 반영. 내재화로 단가 상승분 흡수 검토 필요.'},
+  // ── 사업부별 영업이익 누적 (2022-2025 공란, 2026 Supabase 동기화) ──
+  'DX수익':{yrs:[[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0]],insight:'DX 사업부 영업이익 누적(억원). 매월 해당연도 누적 기준. 2026 목표 H1 누적 +3.87억.'},
+  'AD수익':{yrs:[[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0]],insight:'AD 사업부 영업이익 누적(억원). 구조적 적자 해소가 전사 흑자 전환의 핵심 과제.'},
+  'FZ수익':{yrs:[[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0]],insight:'FZ 사업부 영업이익 누적(억원). 2026 H1 목표 +0.56억.'},
+  'DH수익':{yrs:[[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0]],insight:'DH 사업부 영업이익 누적(억원). 2026 H1 목표 +0.30억.'},
 };
 
 // ─── COLOR PALETTE (minimal) ───
@@ -2262,8 +2267,8 @@ qData.forEach(q=>{
 });
 
 // ─── HIST MODAL ───
-let hChart=null, curHistKey='매출';
-const HIST_UNITS={'매출':'억원','DX매출':'억원','AD매출':'억원','PEZ매출':'억원','수익':'억원','미수금':'억원','외주비':'억원','가동율':'%','AD가동율':'%','인원':'명','MM단가':'만원'};
+let hChart=null, curHistKey='매출', curHistKey2=null; // key2: dual(매출+수익) 뷰용
+const HIST_UNITS={'매출':'억원','DX매출':'억원','AD매출':'억원','PEZ매출':'억원','수익':'억원','DX수익':'억원','AD수익':'억원','FZ수익':'억원','DH수익':'억원','미수금':'억원','외주비':'억원','가동율':'%','AD가동율':'%','인원':'명','MM단가':'만원'};
 
 function openHist(key,title){
   curHistKey=key; buViewOn=false;
@@ -2278,9 +2283,19 @@ function openHist(key,title){
   curFilter='2yr'; curBtn=btn;
   setH('2yr',btn);
 }
+function openHistDual(salesKey, profitKey, title){
+  curHistKey=salesKey; curHistKey2=profitKey; buViewOn=false;
+  document.getElementById('buToggleBtn').style.display='none';
+  document.getElementById('histTitle').textContent=title;
+  document.getElementById('histBg').classList.add('open');
+  const btn=document.querySelectorAll('#tabRow .hist-tab-pill')[1];
+  curFilter='2yr'; curBtn=btn;
+  setH('2yr',btn);
+}
 function closeHist(){
   document.getElementById('histBg').classList.remove('open');
   if(hChart){hChart.destroy();hChart=null;}
+  curHistKey2=null;
 }
 function renderNumTable(filter){
   const d=HIST[curHistKey]; if(!d) return;
@@ -2290,14 +2305,20 @@ function renderNumTable(filter){
   const fmt=v=>isAmt?Number(v).toFixed(2):isNum?Number(v).toFixed(0):Number(v).toFixed(2);
   // 포인트-인-타임 지표: 월 합산이 의미 없어 H1합계 열 생략
   const isPoint=['인원','가동율','AD가동율','MM단가'].includes(curHistKey);
+  // 누적 지표: 월합산 대신 마지막 값 사용 (영업이익은 매월 해당연도 누적값)
+  const isCumulative=['DX수익','AD수익','FZ수익','DH수익'].includes(curHistKey);
+  // 누적 지표: 배열에서 마지막 non-zero 값 추출
+  const lastVal=arr=>{const f=arr.filter(v=>v!==0&&v!==null&&v!==undefined);return f.length?f[f.length-1]:0;};
   const tbl=document.getElementById('histNumTable');
   if(filter==='5yr'){
-    let h=`<table><thead><tr><th>연도</th>${MONTHS.map(m=>`<th>${m}</th>`).join('')}${isPoint?'':'<th style="color:var(--ink1)">H1합계</th><th>YoY</th>'}</tr></thead><tbody>`;
+    const h1Hdr5=isCumulative?'H1 누적':'H1합계';
+    let h=`<table><thead><tr><th>연도</th>${MONTHS.map(m=>`<th>${m}</th>`).join('')}${isPoint?'':(`<th style="color:var(--ink1)">${h1Hdr5}</th><th>YoY</th>`)}</tr></thead><tbody>`;
     YRS.forEach((yr,i)=>{
       const data=d.yrs[i]||[];
-      const h1=data.reduce((s,v)=>s+(v||0),0);
-      const prev=i>0?(d.yrs[i-1]||[]).reduce((s,v)=>s+(v||0),0):null;
-      const yoy=prev!=null?((h1-prev)/Math.max(Math.abs(prev),0.01)*100).toFixed(2):null;
+      const h1=isCumulative?lastVal(data):data.reduce((s,v)=>s+(v||0),0);
+      const prevData=i>0?(d.yrs[i-1]||[]):[];
+      const prev=isCumulative?lastVal(prevData):prevData.reduce((s,v)=>s+(v||0),0);
+      const yoy=i>0?((h1-prev)/Math.max(Math.abs(prev),0.01)*100).toFixed(2):null;
       const yoyHtml=yoy!=null?`<span class="${h1>=prev?'hn-up':'hn-dn'}">${h1>=prev?'+':''}${yoy}%</span>`:'-';
       const isCur=i===4;
       h+=`<tr${isCur?' class="hn-cur"':''}>
@@ -2320,9 +2341,12 @@ function renderNumTable(filter){
       </tr>`;
     });
     if(!isPoint){
-      const s25=d25.reduce((s,v)=>s+(v||0),0), s26=d26.reduce((s,v)=>s+(v||0),0), dt=s26-s25;
+      const s25=isCumulative?lastVal(d25):d25.reduce((s,v)=>s+(v||0),0);
+      const s26=isCumulative?lastVal(d26):d26.reduce((s,v)=>s+(v||0),0);
+      const dt=s26-s25;
+      const lbl=isCumulative?'H1 누적':'H1 합계';
       h+=`<tr style="border-top:2px solid var(--border)">
-        <td><strong>H1 합계</strong></td>
+        <td><strong>${lbl}</strong></td>
         <td><strong>${fmt(s25)}${unit}</strong></td>
         <td style="color:var(--blue);font-weight:800">${fmt(s26)}${unit}</td>
         <td><strong><span class="${dt>=0?'hn-up':'hn-dn'}">${dt>=0?'+':''}${fmt(dt)}${unit}</span></strong></td>
@@ -2332,15 +2356,92 @@ function renderNumTable(filter){
     tbl.innerHTML=h;
   } else {
     const data=d.yrs[4]||[];
-    let cum=0;
-    let h=`<table><thead><tr><th>2026</th>${MONTHS.map(m=>`<th>${m}</th>`).join('')}${isPoint?'':'<th>H1 누계</th>'}</tr></thead><tbody><tr><td>실적/추정</td>`;
-    data.forEach(v=>{cum+=(v||0); h+=`<td style="color:var(--blue);font-weight:600">${fmt(v)}${unit}</td>`;});
-    if(!isPoint) h+=`<td class="hn-total" style="color:var(--blue)">${fmt(cum)}${unit}</td>`;
+    const total=isCumulative?lastVal(data):data.reduce((s,v)=>s+(v||0),0);
+    const totalLbl=isCumulative?'H1 누적':'H1 누계';
+    let h=`<table><thead><tr><th>2026</th>${MONTHS.map(m=>`<th>${m}</th>`).join('')}${isPoint?'':`<th>${totalLbl}</th>`}</tr></thead><tbody><tr><td>실적/추정</td>`;
+    data.forEach(v=>{h+=`<td style="color:var(--blue);font-weight:600">${fmt(v)}${unit}</td>`;});
+    if(!isPoint) h+=`<td class="hn-total" style="color:var(--blue)">${fmt(total)}${unit}</td>`;
     h+=`</tr></tbody></table>`;
     tbl.innerHTML=h;
   }
   tbl.style.display='block';
 }
+
+// ── Dual 차트: 매출(bar) + 수익누적(line) 동시 표시 ──
+function renderDualChart(filter, ctx, LEG){
+  const d1=HIST[curHistKey]||{yrs:[]};
+  const d2=HIST[curHistKey2]||{yrs:[]};
+  const lastVal=arr=>{const f=(arr||[]).filter(v=>v!==0&&v!==null);return f.length?f[f.length-1]:0;};
+  const scOpt={...BASE_OPT.scales,y:{...BASE_OPT.scales.y,ticks:{...BASE_OPT.scales.y.ticks,callback:v=>v+'억'}}};
+  if(filter==='2yr'){
+    hChart=new Chart(ctx,{type:'bar',data:{labels:MONTHS,datasets:[
+      {type:'bar', label:'2025 매출', data:d1.yrs[3]||[], backgroundColor:'#E2E8F0', borderRadius:3, order:2},
+      {type:'bar', label:'2026 매출', data:d1.yrs[4]||[], backgroundColor:'#BFDBFE', borderColor:C_BLUE, borderWidth:1, borderRadius:3, order:2},
+      {type:'line',label:'2025 수익누적', data:d2.yrs[3]||[], borderColor:'#94A3B8', borderDash:[5,3], borderWidth:2, pointRadius:3, pointBackgroundColor:'#94A3B8', fill:false, order:1},
+      {type:'line',label:'2026 수익누적', data:d2.yrs[4]||[], borderColor:C_GREEN, backgroundColor:'rgba(22,163,74,.08)', borderWidth:2.5, pointRadius:5, pointBackgroundColor:C_GREEN, fill:true, order:1}
+    ]},options:{...BASE_OPT,plugins:{legend:LEG},scales:scOpt}});
+  } else if(filter==='5yr'){
+    const palette=['#CBD5E1','#94A3B8','#64748B','#334155','#BFDBFE'];
+    const ds=YRS.map((y,i)=>({type:'bar',label:y+(i===4?' 매출(추정)':' 매출'),data:d1.yrs[i]||[],backgroundColor:palette[i],borderRadius:2,order:2}));
+    ds.push({type:'line',label:'2025 수익누적',data:d2.yrs[3]||[],borderColor:'#94A3B8',borderDash:[5,3],borderWidth:2,pointRadius:2,fill:false,order:1});
+    ds.push({type:'line',label:'2026 수익누적',data:d2.yrs[4]||[],borderColor:C_GREEN,borderWidth:2.5,pointRadius:4,pointBackgroundColor:C_GREEN,fill:false,order:1});
+    hChart=new Chart(ctx,{type:'bar',data:{labels:MONTHS,datasets:ds},options:{...BASE_OPT,plugins:{legend:LEG},scales:scOpt}});
+  } else {
+    hChart=new Chart(ctx,{type:'bar',data:{labels:MONTHS,datasets:[
+      {type:'bar', label:'2026 매출', data:d1.yrs[4]||[], backgroundColor:'#BFDBFE', borderColor:C_BLUE, borderWidth:1, borderRadius:5, order:2},
+      {type:'line',label:'영업이익 누적', data:d2.yrs[4]||[], borderColor:C_GREEN, backgroundColor:'rgba(22,163,74,.1)', borderWidth:2.5, pointRadius:5, pointBackgroundColor:C_GREEN, fill:true, order:1}
+    ]},options:{...BASE_OPT,plugins:{legend:LEG},scales:scOpt}});
+  }
+}
+function renderDualTable(filter){
+  const d1=HIST[curHistKey]||{yrs:[]};
+  const d2=HIST[curHistKey2]||{yrs:[]};
+  const lastVal=arr=>{const f=(arr||[]).filter(v=>v!==0&&v!==null);return f.length?f[f.length-1]:0;};
+  const f2=v=>Number(v||0).toFixed(2);
+  const tbl=document.getElementById('histNumTable');
+  if(filter==='2yr'){
+    const s25=d1.yrs[3]||[],s26=d1.yrs[4]||[],p25=d2.yrs[3]||[],p26=d2.yrs[4]||[];
+    let h=`<table><thead><tr><th>월</th><th>2025 매출</th><th>2026 매출</th><th>2025 수익누적</th><th>2026 수익누적</th></tr></thead><tbody>`;
+    MONTHS.forEach((m,i)=>{
+      const pc=p26[i]>=0?'var(--green)':'var(--red)';
+      h+=`<tr><td>${m}</td><td>${f2(s25[i])}억</td><td style="color:var(--blue);font-weight:700">${f2(s26[i])}억</td><td>${f2(p25[i])}억</td><td style="color:${pc};font-weight:700">${f2(p26[i])}억</td></tr>`;
+    });
+    const sH25=s25.reduce((s,v)=>s+(v||0),0),sH26=s26.reduce((s,v)=>s+(v||0),0);
+    const pL25=lastVal(p25),pL26=lastVal(p26);
+    h+=`<tr style="border-top:2px solid var(--border)">
+      <td><strong>H1</strong></td>
+      <td><strong>${f2(sH25)}억</strong></td>
+      <td style="color:var(--blue);font-weight:800">${f2(sH26)}억</td>
+      <td><strong>${f2(pL25)}억 <span style="font-size:10px;color:var(--ink4)">(누적)</span></strong></td>
+      <td style="color:${pL26>=0?'var(--green)':'var(--red)'};font-weight:800">${f2(pL26)}억 <span style="font-size:10px">(누적)</span></td>
+    </tr></tbody></table>`;
+    tbl.innerHTML=h;
+  } else if(filter==='5yr'){
+    let h=`<table><thead><tr><th>연도</th>${MONTHS.map(m=>`<th>${m}</th>`).join('')}<th>H1 매출</th><th>H1 수익누적</th></tr></thead><tbody>`;
+    YRS.forEach((yr,i)=>{
+      const sd=d1.yrs[i]||[],pd=d2.yrs[i]||[];
+      const sH=sd.reduce((s,v)=>s+(v||0),0),pL=lastVal(pd);
+      h+=`<tr${i===4?' class="hn-cur"':''}>
+        <td>${yr}${i===4?'<span style="font-size:9px;color:var(--ink4);margin-left:3px">추정</span>':''}</td>
+        ${sd.map(v=>`<td>${f2(v)}</td>`).join('')}
+        <td class="hn-total">${f2(sH)}억</td>
+        <td style="color:${pL>=0?'var(--green)':'var(--red)'};font-weight:700">${f2(pL)}억</td>
+      </tr>`;
+    });
+    h+=`</tbody></table>`;
+    tbl.innerHTML=h;
+  } else {
+    const sd=d1.yrs[4]||[],pd=d2.yrs[4]||[];
+    const sH=sd.reduce((s,v)=>s+(v||0),0),pL=lastVal(pd);
+    let h=`<table><thead><tr><th>2026</th>${MONTHS.map(m=>`<th>${m}</th>`).join('')}<th>합계/누적</th></tr></thead><tbody>`;
+    h+=`<tr><td>매출</td>${sd.map(v=>`<td style="color:var(--blue);font-weight:600">${f2(v)}억</td>`).join('')}<td class="hn-total" style="color:var(--blue)">${f2(sH)}억</td></tr>`;
+    h+=`<tr><td>수익누적</td>${pd.map(v=>`<td style="color:${v>=0?'var(--green)':'var(--red)'};font-weight:600">${f2(v)}억</td>`).join('')}<td style="color:${pL>=0?'var(--green)':'var(--red)'};font-weight:700">${f2(pL)}억</td></tr>`;
+    h+=`</tbody></table>`;
+    tbl.innerHTML=h;
+  }
+  tbl.style.display='block';
+}
+
 function setH(filter,btn){
   document.querySelectorAll('#tabRow .hist-tab-pill').forEach(t=>t.classList.remove('active'));
   btn.classList.add('active');
@@ -2349,6 +2450,15 @@ function setH(filter,btn){
   if(hChart){hChart.destroy();hChart=null;}
   const ctx=document.getElementById('cHist').getContext('2d');
   const LEG={display:true,position:'bottom',labels:{font:{size:11,family:'Inter'},color:'#374151',boxWidth:8}};
+
+  // ── Dual 모드 (매출 + 수익 동시) ──
+  if(curHistKey2){
+    document.getElementById('buTable').style.display='none';
+    renderDualChart(filter,ctx,LEG);
+    renderDualTable(filter);
+    document.getElementById('histInsight').textContent=(HIST[curHistKey]?.insight||'')+' | '+(HIST[curHistKey2]?.insight||'');
+    return;
+  }
 
   // ── 사업부별 뷰 ──
   if(buViewOn && curHistKey==='매출'){
@@ -3475,7 +3585,7 @@ async function syncFromSupabase() {
       });
     }
 
-    // ── 3. PROFIT: HIST['수익'] + BU_MON_PROFIT 채우기 ──
+    // ── 3. PROFIT: HIST['수익'] + BU별 수익 + BU_MON_PROFIT 채우기 ──
     if (db.profit) {
       YRS_NUM.forEach((yr, i) => {
         if (!db.profit[yr]) return;
@@ -3486,6 +3596,14 @@ async function syncFromSupabase() {
             const v = getV('profit', yr, sBu, mo); return s + (v !== null ? v / 100 : 0);
           }, 0);
           return buSum || HIST['수익'].yrs[i][mo-1] || 0;
+        });
+        // 사업부별 영업이익 누적 hist (2026 데이터 우선)
+        [['DX','DX수익'],['AD','AD수익'],['FZ','FZ수익'],['DH','DH수익']].forEach(([bu, hKey]) => {
+          if (!db.profit[yr]?.[bu]) return;
+          HIST[hKey].yrs[i] = H1.map(mo => {
+            const v = getV('profit', yr, bu, mo);
+            return v !== null ? v / 100 : 0;
+          });
         });
       });
       // 2026년 월별 영업이익 — KPI 카드용 (null = 데이터 없음, 0 ≠ null 구분)
