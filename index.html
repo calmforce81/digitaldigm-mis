@@ -524,6 +524,14 @@ body {
 .ai-sc.hi   { border-color: var(--green); } .ai-sc.hi .ai-sc-val { color: var(--green); }
 .ai-sc.lo   { border-color: var(--red); }   .ai-sc.lo .ai-sc-val { color: var(--red); }
 .ai-sc.me   { border-color: var(--blue); }  .ai-sc.me .ai-sc-val { color: var(--blue); }
+/* AI 진단 편집 기능 */
+.card-ai-note { font-size:12px; color:var(--ink3); line-height:1.5; border-top:1px solid var(--border2); padding-top:8px; margin-top:8px; }
+.tbl-edit-ce[contenteditable="true"] { outline:1px dashed var(--border2); border-radius:3px; padding:3px 5px !important; }
+.tbl-st-sel { font-size:12px; padding:2px 5px; border:1px solid var(--border); border-radius:4px; background:var(--surface); color:var(--ink2); }
+.tbl-del-btn { font-size:11px; padding:2px 6px; border-radius:4px; cursor:pointer; background:none; border:1px solid var(--red); color:var(--red); }
+.tbl-add-row-btn { width:100%; margin-top:6px; padding:7px; font-size:13px; color:var(--blue); border:1px dashed var(--border); border-radius:var(--r1); cursor:pointer; background:none; display:none; }
+.ai-note-view { font-size:13px; color:var(--ink2); line-height:1.7; white-space:pre-wrap; min-height:36px; }
+.ai-note-view:empty::before { content:'추가 의견이 없습니다. 편집 버튼을 눌러 작성하세요.'; color:var(--ink4); font-style:italic; }
 
 /* ─────────── Q bars ─────────── */
 .q-row { display: flex; align-items: center; gap: 10px; padding: 5px 0; border-bottom: 1px solid var(--border2); }
@@ -642,12 +650,10 @@ body.present .notif-panel { display: none !important; }
     <div class="nav-item active" id="nav-sm" onclick="sw('sm')"><div class="nav-dot"></div>SM 총괄</div>
     <div class="nav-item" id="nav-dx" onclick="sw('dx')"><div class="nav-dot"></div>DX 사업부</div>
     <div class="nav-item" id="nav-ad" onclick="sw('ad')"><div class="nav-dot"></div>AD 사업부</div>
-    <div class="nav-item" id="nav-pez" onclick="sw('pez')"><div class="nav-dot"></div>FZ 사업부</div>
-    <div class="nav-item" id="nav-dh" onclick="sw('dh')"><div class="nav-dot"></div>DH 사업부</div>
   </div>
   <div class="nav-group">
     <div class="nav-label">인텔리전스</div>
-    <div class="nav-item" id="nav-ai" onclick="sw('ai')"><div class="nav-dot"></div>AI / MCP 현황</div>
+    <div class="nav-item" id="nav-ai" onclick="sw('ai')"><div class="nav-dot"></div>D2 AI 진단결과</div>
     <div class="nav-item" id="nav-mkt" onclick="sw('mkt')"><div class="nav-dot"></div>시장 & 경쟁사</div>
   </div>
   <div class="nav-group">
@@ -656,8 +662,6 @@ body.present .notif-panel { display: none !important; }
   </div>
   <div class="nav-group">
     <div class="nav-label">관리</div>
-    <div class="nav-item" onclick="openEdit('수정 요청')">수정 요청 <span class="nav-badge" style="margin-left:auto">3</span></div>
-    <div class="nav-item" onclick="openHist('매출','전사 5개년 매출')">5개년 추이</div>
     <div class="nav-item" id="nav-cfg" onclick="sw('cfg')"><div class="nav-dot"></div>설정</div>
   </div>
 
@@ -882,7 +886,7 @@ body.present .notif-panel { display: none !important; }
       <div class="kpi-grid g6" style="margin-bottom:16px">
         <div class="kpi" id="kpi-dx-gross-card" style="opacity:.6"><div class="kpi-lbl">취급고매출 — 누적</div><div class="kpi-val" id="kpi-dx-gross-val">—<span class="kpi-unit">억</span></div><div class="kpi-chg flat" id="kpi-dx-gross-chg">데이터 연동 준비중</div><button class="hist-btn" onclick="openHist('DX매출','DX 매출 5개년 추이')">📊 과거 데이터 보기</button></div>
         <div class="kpi accent"><div class="kpi-lbl">순매출 — 누적</div><div class="kpi-val" id="kpi-dx-h1-val">31.80<span class="kpi-unit">억</span></div><div class="kpi-chg up" id="kpi-dx-h1-chg">목표 31.84억 대비</div><button class="hist-btn" onclick="openHist('DX매출','DX 매출 5개년 추이')">📊 과거 데이터 보기</button></div>
-        <div class="kpi" id="kpi-dx-profit-card"><div class="kpi-lbl">영업이익 — 누적</div><div class="kpi-val" id="kpi-dx-profit-val" style="color:var(--green)">+1.58<span class="kpi-unit">억</span></div><div class="kpi-chg up" id="kpi-dx-profit-chg">흑자 유지</div><button class="hist-btn" onclick="openHist('DX수익','DX 손익 5개년 추이')">📊 과거 데이터 보기</button></div>
+        <div class="kpi" id="kpi-dx-profit-card"><div class="kpi-lbl">영업이익 — 누적</div><div class="kpi-val" id="kpi-dx-profit-val" style="color:var(--green)">+3.86<span class="kpi-unit">억</span></div><div class="kpi-chg up" id="kpi-dx-profit-chg">흑자 유지</div><button class="hist-btn" onclick="openHist('DX수익','DX 손익 5개년 추이')">📊 과거 데이터 보기</button></div>
         <div class="kpi"><div class="kpi-lbl">전년대비 증감률</div><div class="kpi-val" id="kpi-dx-yoy-val" style="color:var(--green)">+20.7<span class="kpi-unit">%</span></div><div class="kpi-chg up" id="kpi-dx-yoy-chg">전년 26.35억 대비</div><button class="hist-btn" onclick="openHistDual('DX매출','DX수익','DX 매출·손익 추이')">📊 매출·손익 보기</button></div>
         <div class="kpi"><div class="kpi-lbl">가동율</div><div class="kpi-val">76<span class="kpi-unit">%</span></div><div class="kpi-chg flat">목표 80% 대비 -4%p</div><button class="hist-btn" onclick="openHist('가동율','전사 가동율 5개년 추이')">📊 과거 데이터 보기</button></div>
         <div class="kpi"><div class="kpi-lbl">인원</div><div class="kpi-val">33<span class="kpi-unit">명</span></div><div class="kpi-chg flat">정규 30 · 계약 3</div><button class="hist-btn" onclick="openHist('인원','전사 인원 5개년 추이')">📊 과거 데이터 보기</button></div>
@@ -1106,148 +1110,153 @@ body.present .notif-panel { display: none !important; }
 
     <!-- ═══════ AI / MCP ═══════ -->
     <div class="view-pane" id="view-ai">
-      <div class="sh"><span class="sh-title">AI / MCP 현황 — 전사 종합</span><span class="sh-action">데이터 기준: 2026.06.01</span></div>
+      <div class="sh">
+        <span class="sh-title">D2 AI 진단결과 — 전사 종합</span>
+        <span class="sh-action" style="display:flex;align-items:center;gap:8px">
+          📡 DB 연동
+          <select id="aiRoundSel" onchange="onAiRoundChange()" style="font-size:11px;padding:2px 6px;border:1px solid var(--border2);border-radius:4px;background:var(--surface);color:var(--ink2);cursor:pointer;max-width:180px">
+            <option value="">불러오는 중...</option>
+          </select>
+        </span>
+      </div>
 
       <!-- KPI -->
       <div class="kpi-grid g4" style="margin-bottom:16px">
-        <div class="kpi accent"><div class="kpi-lbl">전사 AI 역량 평균</div><div class="kpi-val">2.37<span class="kpi-unit">/4.0</span></div><div class="kpi-chg up">+0.41 vs 작년</div></div>
-        <div class="kpi"><div class="kpi-lbl">연동 MCP 수</div><div class="kpi-val">7<span class="kpi-unit">개</span></div><div class="kpi-chg up">ERP·Sheets·Notion 등</div></div>
-        <div class="kpi"><div class="kpi-lbl">AI 자동화 업무 수</div><div class="kpi-val">23<span class="kpi-unit">건</span></div><div class="kpi-chg up">+8 vs 전분기</div></div>
-        <div class="kpi"><div class="kpi-lbl">월 AI 절감 추정 시간</div><div class="kpi-val">186<span class="kpi-unit">h</span></div><div class="kpi-chg flat">인당 평균 3.1h</div></div>
+        <div class="kpi accent">
+          <div class="kpi-lbl">전사 AI 역량 평균</div>
+          <div class="kpi-val"><span id="aiKpiTotal">2.32</span><span class="kpi-unit">/4.0</span></div>
+          <div class="kpi-chg up" id="aiKpiTotalChg">+0.31 vs 1차 조사</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-lbl">개인 AI 역량</div>
+          <div class="kpi-val"><span id="aiKpiPersonal">2.64</span><span class="kpi-unit">/4.0</span></div>
+          <div class="kpi-chg up" id="aiKpiPersonalChg">+0.30 vs 1차 조사</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-lbl">부서 운영 역량</div>
+          <div class="kpi-val"><span id="aiKpiDept">1.99</span><span class="kpi-unit">/4.0</span></div>
+          <div class="kpi-chg up" id="aiKpiDeptChg">+0.31 vs 1차 조사</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-lbl">응답 인원 / 응답률</div>
+          <div class="kpi-val"><span id="aiKpiPartic">72</span><span class="kpi-unit">명</span></div>
+          <div class="kpi-chg up" id="aiKpiParticChg">100% 전원 응답</div>
+        </div>
       </div>
 
       <div class="insight-grid">
-        <div class="insight ins-ok"><div class="ins-tag">종합 평가</div><div class="ins-title">전사 L2 진입 확인</div><div class="ins-body">전사 평균 2.37로 L2(활용) 수준 진입. 단, DX 디자인팀 1.33으로 편차 심화. 집중 육성 필요.</div></div>
-        <div class="insight ins-warn"><div class="ins-tag">참여율 부족</div><div class="ins-title">DX 기획 33% 응답</div><div class="ins-body">15명 중 5명만 응답. 미응답 10명 독려 완료 후 재집계 예정 (6월 말).</div></div>
-        <div class="insight ins-info"><div class="ins-tag">다음 단계</div><div class="ins-title">L3 파일럿 2팀 선발</div><div class="ins-body">챔피언(전초롱 3.8 · DX개발) 중심으로 L3 자동화 파일럿 2팀 구성. 7월 킥오프 예정.</div></div>
+        <div class="insight ins-warn"><div class="ins-tag">핵심 병목</div><div class="ins-title">Q10 최하위 1.81 — 지금 결정해야 할 과제</div><div class="ins-body">AI 활용을 팀 안에 퍼뜨리고 성과로 관리하기 1.81점, 하위(L1·L2) 81%. Q10을 7월 운영 과제로 즉시 지정 필요.</div></div>
+        <div class="insight ins-ok"><div class="ins-tag">전 부서 100%</div><div class="ins-title">72명 전원 응답 완료</div><div class="ins-body">DX-개발 2.85 · AD 2.12 · DX-기획 2.03. DX-개발의 방식이 내부 전파 모델 후보. DX-디자인 1.68 집중 보강 필요.</div></div>
+        <div class="insight ins-info"><div class="ins-tag">양극화</div><div class="ins-title">Q05 DX-개발 3.11 vs DX-디자인 1.40 — 격차 1.71</div><div class="ins-body">Q02·Q05·Q09 선도자·미활용층 공존. 선도자를 사내 전파자로 지정, 하위 그룹 기초 과정 분리 보강 권고.</div></div>
       </div>
 
-      <!-- 부서별 AI 역량 + MCP 현황 -->
+      <!-- 부서별 AI 역량 + 조사 회차 추이 -->
       <div class="row col-2">
         <div class="card">
-          <div class="card-hd"><div class="card-title">부서 · 직군별 AI 역량 점수</div><span class="bx bx-gray">N=57명 · 6월 기준</span></div>
-          <div class="ch" style="height:175px"><canvas id="cAiBar"></canvas></div>
+          <div class="card-hd"><div class="card-title">부서별 AI 역량 점수</div><span class="bx bx-gray">N=72명 · 2차 조사</span></div>
+          <div class="ch" style="height:160px"><canvas id="cAiBar"></canvas></div>
+          <div class="card-ai-note">💡 <strong>분석:</strong> DX-개발(2.85)이 전사 최고 — 특히 개인 역량 3.07·부서 운영 2.64 모두 압도적. DX-디자인(1.68)은 개인(1.96)·부서(1.40) 모두 최하위로 즉시 개입 필요. AD는 개인(2.59) 강점이나 부서 운영(1.65) 격차 해소가 다음 과제.</div>
         </div>
         <div class="card">
-          <div class="card-hd"><div class="card-title">MCP 도구별 활용률</div><span class="bx bx-blue">연동 완료</span></div>
-          <div class="ch" style="height:175px"><canvas id="cMcpBar"></canvas></div>
+          <div class="card-hd"><div class="card-title">조사 회차별 역량 변화</div><span class="bx bx-blue">1차 → 2차</span></div>
+          <div class="ch" style="height:160px"><canvas id="cMcpBar"></canvas></div>
+          <div class="card-ai-note">💡 <strong>분석:</strong> 전 영역에서 +0.28~+0.31 균형 성장. Q08-Q10(핵심 병목) 1.62→1.90으로 +0.28 개선됐으나 여전히 최하위권. 개인 역량(2.64) 대비 부서 운영(1.99) 격차 0.65가 관리 핵심 포인트.</div>
         </div>
       </div>
 
-      <!-- 월별 AI 활용 추이 + 질문별 세부 -->
+      <!-- 문항별 하위비율 + 레벨 분포 -->
       <div class="row col-21">
         <div class="card">
-          <div class="card-hd"><div class="card-title">월별 AI 활용 건수 추이</div><div class="card-sub">프롬프트 제출 + 자동화 실행 합계</div></div>
-          <div class="ch" style="height:155px"><canvas id="cAiTrend"></canvas></div>
+          <div class="card-hd"><div class="card-title">문항별 하위(L1·L2) 비율</div><div class="card-sub">높을수록 집중 개입 필요</div></div>
+          <div class="ch" style="height:145px"><canvas id="cAiTrend"></canvas></div>
+          <div class="card-ai-note">💡 Q10(81%)·Q08(79%)·Q07(75%) — 부서 운영 3개 문항이 집단 공백. Q01(17%)은 전사 강점.</div>
         </div>
         <div class="card">
-          <div class="card-hd"><div class="card-title">레벨 분포</div></div>
-          <div class="ch" style="height:155px"><canvas id="cAiLevel"></canvas></div>
+          <div class="card-hd"><div class="card-title">Q별 분포 (레벨)</div><span class="bx bx-gray">N=72</span></div>
+          <div class="ch" style="height:128px"><canvas id="cAiLevel"></canvas></div>
+          <div class="card-ai-note">💡 <strong>레벨 분포:</strong> L1 탐색(19명·26%) + L2 활용(24명·33%) = 하위 59%가 집중 개입 대상. L3 자동화(18명·25%) · L4 내재화(11명·15%)는 선도 그룹 — 사내 전파자 역할 부여 권고.</div>
         </div>
       </div>
 
       <!-- 10문항 상세 -->
       <div class="card" style="margin-bottom:12px">
-        <div class="card-hd"><div class="card-title">AI 역량 진단 10문항 — 전사 평균</div><span class="bx bx-gray">4점 만점</span></div>
+        <div class="card-hd"><div class="card-title">AI 역량 진단 10문항 — 전사 평균 (2차 조사)</div><span class="bx bx-gray">4점 만점 · MCP 실데이터</span></div>
         <div id="aiQBars" style="margin-top:4px"></div>
+        <div class="card-ai-note" style="margin-top:10px">💡 <strong>패턴 분석:</strong> Q01(3.26 · AI에게 맡기기)에서 Q10(1.81 · 전파·성과관리)으로 갈수록 급격히 하락. 개인 역량(Q01-Q05 평균 2.64)은 L2 수준이나, 조직 운영 역량(Q06-Q10 평균 1.99)이 여전히 L1에 근접. 개인→팀 전환이 핵심 과제.</div>
       </div>
 
-      <!-- 개인 Top/Bottom -->
+      <!-- 부서별 세부 + 핵심 실행과제 -->
       <div class="row col-2" style="margin-bottom:12px">
         <div class="card">
-          <div class="card-hd"><div class="card-title">개인 역량 상위 10</div><span class="bx bx-green">챔피언 후보</span></div>
+          <div class="card-hd"><div class="card-title">부서별 Q01~Q10 상세</div><span class="bx bx-gray">2차 조사 기준</span></div>
           <table class="tbl">
-            <thead><tr><th>이름</th><th>부서</th><th>점수</th><th>강점</th><th>레벨</th></tr></thead>
+            <thead><tr><th>부서</th><th>인원</th><th>개인AI</th><th>부서운영</th><th>종합</th><th>상태</th></tr></thead>
             <tbody>
-              <tr><td class="td-hi">전초롱</td><td>DX 개발</td><td class="td-num" style="color:var(--blue)">3.8</td><td>자동화 · MCP 연결</td><td><span class="bx bx-blue">L3</span></td></tr>
-              <tr><td class="td-hi">김수현</td><td>SM 기획</td><td class="td-num">3.5</td><td>프롬프트 설계</td><td><span class="bx bx-blue">L3</span></td></tr>
-              <tr><td class="td-hi">박준혁</td><td>DX 기획</td><td class="td-num">3.2</td><td>업무 적용</td><td><span class="bx bx-blue">L3</span></td></tr>
-              <tr><td class="td-hi">이혜진</td><td>AD AE</td><td class="td-num">3.1</td><td>콘텐츠 생성</td><td><span class="bx bx-blue">L2+</span></td></tr>
-              <tr><td class="td-hi">최동현</td><td>DX 개발</td><td class="td-num">2.9</td><td>코드 보조</td><td><span class="bx bx-gray">L2</span></td></tr>
-              <tr><td class="td-hi">오지영</td><td>SM 경영</td><td class="td-num">2.8</td><td>리포트 자동화</td><td><span class="bx bx-gray">L2</span></td></tr>
-              <tr><td class="td-hi">강민재</td><td>DX PM</td><td class="td-num">2.7</td><td>일정 관리</td><td><span class="bx bx-gray">L2</span></td></tr>
-              <tr><td class="td-hi">황수민</td><td>AD CD</td><td class="td-num">2.6</td><td>브리프 작성</td><td><span class="bx bx-gray">L2</span></td></tr>
-              <tr><td class="td-hi">송태양</td><td>DX 기획</td><td class="td-num">2.5</td><td>분석 보조</td><td><span class="bx bx-gray">L2</span></td></tr>
-              <tr><td class="td-hi">유나연</td><td>FZ</td><td class="td-num">2.5</td><td>제안서 보조</td><td><span class="bx bx-gray">L2</span></td></tr>
+              <tr><td class="td-hi">DX-개발</td><td>27명</td><td class="td-num" style="color:var(--green)">3.07</td><td class="td-num" style="color:var(--green)">2.64</td><td class="td-num" style="color:var(--green)">2.85</td><td><span class="bx bx-green">선도</span></td></tr>
+              <tr><td class="td-hi">AD</td><td>16명</td><td class="td-num" style="color:var(--blue)">2.59</td><td class="td-num">1.65</td><td class="td-num" style="color:var(--blue)">2.12</td><td><span class="bx bx-blue">성장</span></td></tr>
+              <tr><td class="td-hi">DX-기획</td><td>15명</td><td class="td-num" style="color:var(--blue)">2.37</td><td class="td-num">1.68</td><td class="td-num" style="color:var(--blue)">2.03</td><td><span class="bx bx-blue">성장</span></td></tr>
+              <tr><td class="td-hi">SM·D2H·FZ</td><td>9명</td><td class="td-num">2.27</td><td class="td-num">1.53</td><td class="td-num">1.90</td><td><span class="bx bx-amber">보강</span></td></tr>
+              <tr><td class="td-hi">DX-디자인</td><td>5명</td><td class="td-num" style="color:var(--red)">1.96</td><td class="td-num" style="color:var(--red)">1.40</td><td class="td-num" style="color:var(--red)">1.68</td><td><span class="bx bx-red">집중</span></td></tr>
             </tbody>
           </table>
         </div>
         <div class="card">
-          <div class="card-hd"><div class="card-title">개인 역량 하위 · 코칭 우선 대상</div><span class="bx bx-red">집중 지원</span></div>
-          <table class="tbl">
-            <thead><tr><th>이름</th><th>부서</th><th>점수</th><th>주요 이슈</th><th>조치</th></tr></thead>
-            <tbody>
-              <tr><td class="td-hi">정의수</td><td>DX 디자인</td><td class="td-num" style="color:var(--red)">1.1</td><td>도구 비사용</td><td><span class="bx bx-red">1:1 코칭</span></td></tr>
-              <tr><td class="td-hi">안현서</td><td>DX 디자인</td><td class="td-num" style="color:var(--red)">1.2</td><td>인식 부족</td><td><span class="bx bx-red">1:1 코칭</span></td></tr>
-              <tr><td class="td-hi">배유리</td><td>AD PD</td><td class="td-num" style="color:var(--red)">1.3</td><td>활용 기회 없음</td><td><span class="bx bx-amber">워크샵</span></td></tr>
-              <tr><td class="td-hi">임도윤</td><td>DX 기획</td><td class="td-num" style="color:var(--red)">1.4</td><td>미응답</td><td><span class="bx bx-amber">독려 중</span></td></tr>
-              <tr><td class="td-hi">권수아</td><td>AD PD</td><td class="td-num" style="color:var(--amber)">1.5</td><td>Figma AI 미사용</td><td><span class="bx bx-amber">툴 교육</span></td></tr>
-            </tbody>
-          </table>
-          <div style="margin-top:14px;border-top:1px solid var(--border2);padding-top:12px">
-            <div class="f-label">Q3 교육 일정</div>
-            <div style="margin-top:8px;display:flex;flex-direction:column;gap:6px">
-              <div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:var(--ink2)">전사 AI 기초 워크샵</span><span style="font-weight:700;color:var(--blue)">7월 2주</span></div>
-              <div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:var(--ink2)">DX 디자인 도구 집중 교육</span><span style="font-weight:700;color:var(--blue)">7월 3주</span></div>
-              <div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:var(--ink2)">L3 파일럿팀 킥오프</span><span style="font-weight:700;color:var(--blue)">8월 1주</span></div>
+          <div class="card-hd">
+            <div><div class="card-title">개선 포인트 & 실행 방안</div><div class="card-sub">MCP 분석 기준</div></div>
+            <button class="btn" id="improveEditBtn" onclick="toggleImproveEdit()" style="padding:3px 10px;font-size:12px">✏ 편집</button>
+          </div>
+          <div id="improveView" style="display:flex;flex-direction:column;gap:10px;margin-top:4px"></div>
+          <div id="improveEditArea" style="display:none;flex-direction:column;gap:10px;margin-top:4px"></div>
+          <div id="improveActions" style="display:none;margin-top:10px;gap:8px">
+            <button class="btn btn-primary" onclick="saveImprove()" style="font-size:12px">저장</button>
+            <button class="btn" onclick="cancelImprove()" style="font-size:12px">취소</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- MCP 연동 현황 + AI 자동화 (편집 가능) -->
+      <div class="row col-2" style="margin-bottom:12px">
+        <div class="card">
+          <div class="card-hd">
+            <div><div class="card-title">MCP 연동 현황</div></div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span id="mcpBadge" class="bx bx-blue">11개 연동 완료</span>
+              <button class="btn" id="mcpEditBtn" onclick="toggleMcpEdit()" style="padding:3px 10px;font-size:12px">✏ 편집</button>
             </div>
           </div>
+          <table class="tbl">
+            <thead id="mcpThead"><tr><th>MCP / 커넥터</th><th>용도</th><th>대상</th><th>상태</th></tr></thead>
+            <tbody id="mcpTbody"></tbody>
+          </table>
+          <button class="tbl-add-row-btn" id="mcpAddBtn" onclick="mcpAddRow()">+ 항목 추가</button>
+        </div>
+        <div class="card">
+          <div class="card-hd">
+            <div><div class="card-title">MCP 기반 자동화 업무 현황</div></div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span id="autoBadge" class="bx bx-gray">실 운영 중</span>
+              <button class="btn" id="autoEditBtn" onclick="toggleAutoEdit()" style="padding:3px 10px;font-size:12px">✏ 편집</button>
+            </div>
+          </div>
+          <table class="tbl">
+            <thead><tr><th>업무</th><th>연동 MCP</th><th>빈도</th><th>상태</th></tr></thead>
+            <tbody id="autoTbody"></tbody>
+          </table>
+          <button class="tbl-add-row-btn" id="autoAddBtn" onclick="autoAddRow()">+ 항목 추가</button>
         </div>
       </div>
 
-      <!-- 자동화 현황 -->
-      <div class="row col-2" style="margin-bottom:12px">
-        <div class="card">
-          <div class="card-hd"><div class="card-title">MCP 연동 현황</div><span class="bx bx-blue">7개 연동 완료</span></div>
-          <table class="tbl">
-            <thead><tr><th>MCP / 도구</th><th>연동 대상</th><th>활용율</th><th>월 호출</th><th>상태</th></tr></thead>
-            <tbody>
-              <tr><td class="td-hi">ERP API</td><td>SM · 전사</td><td class="td-num">91%</td><td>2,840회</td><td><span class="bx bx-green">정상</span></td></tr>
-              <tr><td class="td-hi">Google Sheets MCP</td><td>DX · AD</td><td class="td-num">78%</td><td>1,620회</td><td><span class="bx bx-green">정상</span></td></tr>
-              <tr><td class="td-hi">Notion MCP</td><td>전사</td><td class="td-num">65%</td><td>940회</td><td><span class="bx bx-green">정상</span></td></tr>
-              <tr><td class="td-hi">Gmail MCP</td><td>SM · AD</td><td class="td-num">54%</td><td>620회</td><td><span class="bx bx-green">정상</span></td></tr>
-              <tr><td class="td-hi">Google Calendar</td><td>전사</td><td class="td-num">48%</td><td>480회</td><td><span class="bx bx-green">정상</span></td></tr>
-              <tr><td class="td-hi">Supabase MCP</td><td>DX 개발</td><td class="td-num">31%</td><td>210회</td><td><span class="bx bx-amber">확장 중</span></td></tr>
-              <tr><td class="td-hi">Claude API</td><td>SM · MIS</td><td class="td-num">22%</td><td>140회</td><td><span class="bx bx-blue">파일럿</span></td></tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="card">
-          <div class="card-hd"><div class="card-title">AI 자동화 업무 현황</div><span class="bx bx-gray">23건 운영중</span></div>
-          <table class="tbl">
-            <thead><tr><th>업무</th><th>부서</th><th>절감 시간</th><th>빈도</th><th>상태</th></tr></thead>
-            <tbody>
-              <tr><td class="td-hi">월 실적 리포트 자동화</td><td>SM</td><td class="td-num" style="color:var(--green)">12h/월</td><td>월 1회</td><td><span class="bx bx-green">운영</span></td></tr>
-              <tr><td class="td-hi">견적서 초안 생성</td><td>DX</td><td class="td-num" style="color:var(--green)">8h/월</td><td>수시</td><td><span class="bx bx-green">운영</span></td></tr>
-              <tr><td class="td-hi">회의록 자동 요약</td><td>전사</td><td class="td-num" style="color:var(--green)">20h/월</td><td>주 5회+</td><td><span class="bx bx-green">운영</span></td></tr>
-              <tr><td class="td-hi">입찰 제안서 초안</td><td>FZ</td><td class="td-num" style="color:var(--green)">15h/건</td><td>건당</td><td><span class="bx bx-green">운영</span></td></tr>
-              <tr><td class="td-hi">캠페인 카피 생성</td><td>AD</td><td class="td-num" style="color:var(--green)">6h/월</td><td>월 3회</td><td><span class="bx bx-green">운영</span></td></tr>
-              <tr><td class="td-hi">코드 리뷰 보조</td><td>DX 개발</td><td class="td-num" style="color:var(--green)">10h/월</td><td>수시</td><td><span class="bx bx-blue">파일럿</span></td></tr>
-              <tr><td class="td-hi">UI 스토리보드 초안</td><td>DX 기획</td><td class="td-num" style="color:var(--amber)">-</td><td>-</td><td><span class="bx bx-amber">준비중</span></td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- 확장 예정 -->
-      <div class="card" style="border: 1.5px dashed var(--border); background: var(--bg);">
+      <!-- 전사 종합 추가 의견 -->
+      <div class="card" style="margin-bottom:12px">
         <div class="card-hd">
-          <div><div class="card-title" style="color:var(--ink3)">추가 예정 — 사업부 AI 현황 확장</div><div class="card-sub">데이터 수집 후 순차 오픈</div></div>
-          <span class="bx bx-gray">준비중</span>
+          <div><div class="card-title">📝 전사 AI 진단 — 추가 의견</div><div class="card-sub">사업부장 / 담당자 의견 기록</div></div>
+          <button class="btn" id="aiNoteEditBtn" onclick="toggleAiNote()" style="padding:3px 10px;font-size:12px">✏ 편집</button>
         </div>
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:4px">
-          <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:14px;opacity:.5">
-            <div class="f-label" style="margin-bottom:8px">AD 사업부 AI 현황</div>
-            <div style="font-size:13px;color:var(--ink3)">크리에이티브 AI 활용 · 카피 자동화 · Midjourney 도입 현황 추가 예정</div>
-          </div>
-          <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:14px;opacity:.5">
-            <div class="f-label" style="margin-bottom:8px">FZ 사업부 AI 현황</div>
-            <div style="font-size:13px;color:var(--ink3)">입찰 제안서 AI 보조 · 공공 데이터 분석 자동화 현황 추가 예정</div>
-          </div>
-          <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:14px;opacity:.5">
-            <div class="f-label" style="margin-bottom:8px">ROI 분석</div>
-            <div style="font-size:13px;color:var(--ink3)">AI 도입 비용 대비 효과 · 시간 절감 금액 환산 · 산출물 품질 지표 추가 예정</div>
-          </div>
+        <div id="aiNoteView" class="ai-note-view"></div>
+        <textarea id="aiNoteEdit" style="display:none;width:100%;min-height:100px;font-size:13px;padding:10px;border:1px solid var(--border2);border-radius:6px;resize:vertical;font-family:inherit;line-height:1.6;box-sizing:border-box" placeholder="진단 결과에 대한 추가 의견, 액션 아이템, 특이 사항 등을 자유롭게 작성하세요.&#10;예) 7월 워크샵 전까지 팀장 1:1 면담으로 Q10 목표 설정 완료 예정"></textarea>
+        <div id="aiNoteActions" style="display:none;margin-top:8px;gap:8px">
+          <button class="btn btn-primary" onclick="saveAiNote()" style="font-size:12px">저장</button>
+          <button class="btn" onclick="cancelAiNote()" style="font-size:12px">취소</button>
         </div>
       </div>
     </div>
@@ -2004,7 +2013,7 @@ const HIST={
 };
 
 // ─── COLOR PALETTE (minimal) ───
-const C_BLUE='#2563EB', C_GRAY='#9CA3AF', C_GREEN='#16A34A', C_RED='#DC2626';
+const C_BLUE='#2563EB', C_GRAY='#9CA3AF', C_GREEN='#16A34A', C_RED='#DC2626', C_AMBER='#D97706';
 const C_BLUE_T='rgba(37,99,235,.08)', C_GREEN_T='rgba(22,163,74,.1)';
 
 const BASE_OPT={
@@ -2543,7 +2552,7 @@ function setH(filter,btn){
 
 // ─── NAV ───
 const views={sm:'SM 총괄 — 전사 통합 현황',dx:'DX 사업부 대시보드',ad:'AD 사업부 대시보드',pez:'FZ 사업부 대시보드',dh:'DH 사업부 대시보드',ai:'AI / MCP 현황 — 전사 역량',mkt:'시장 & 경쟁사 현황',proj:'프로젝트 분석 — 전사 프로젝트 성과',sales:'영업관리 — 제안 프로젝트',cfg:'설정'};
-const metas={sm:'2026년 6월 기준 · 전 사업부 통합',dx:'디지털 플랫폼 구축·운영 · 2026 상반기',ad:'광고·캠페인·브랜드 · 2026',pez:'정부·공공기관 FZ 사업 · 2026',dh:'DH 사업부 · 2026',ai:'AI 역량 진단 + MCP 연동 현황 · 2026.06',mkt:'국내 디지털 에이전시 시장 · 경쟁사 분석',proj:'ERP 연동 준비 중 · 샘플 데이터 기준 · 2026.06',sales:'DX · AD 사업부 · 2026 상반기',cfg:'시스템 연동 · 멤버 · 데이터 관리'};
+const metas={sm:'2026년 6월 기준 · 전 사업부 통합',dx:'디지털 플랫폼 구축·운영 · 2026 상반기',ad:'광고·캠페인·브랜드 · 2026',pez:'정부·공공기관 FZ 사업 · 2026',dh:'DH 사업부 · 2026',ai:'D2 AI 진단결과 · 차수별 역량 추이 · 2026.06 기준',mkt:'국내 디지털 에이전시 시장 · 경쟁사 분석',proj:'ERP 연동 준비 중 · 샘플 데이터 기준 · 2026.06',sales:'DX · AD 사업부 · 2026 상반기',cfg:'시스템 연동 · 멤버 · 데이터 관리'};
 function sw(v){
   document.querySelectorAll('.view-pane').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-item[id^="nav-"]').forEach(n=>n.classList.remove('active'));
@@ -2718,17 +2727,18 @@ function initProj(){
 }
 
 // ─── AI Q BARS ───
+// AI 역량 진단 — 2026년 6월 2차 조사 실데이터 (MCP 연동)
 const aiQData=[
-  {id:'Q01',label:'AI에게 업무 맡기기',val:3.30},
-  {id:'Q02',label:'결과물 실무 적용',val:2.82},
-  {id:'Q03',label:'노하우 재사용',val:2.60},
-  {id:'Q04',label:'AI·도구 연결',val:2.37},
-  {id:'Q05',label:'반복 자동화',val:2.63},
-  {id:'Q06',label:'팀 산출물 품질',val:2.32},
-  {id:'Q07',label:'팀 데이터 보고',val:2.12},
-  {id:'Q08',label:'일정·검수 시스템화',val:1.96},
-  {id:'Q09',label:'팀 공용 AI 도구',val:2.04},
-  {id:'Q10',label:'AI 전파·성과관리',val:1.91},
+  {id:'Q01',label:'AI에게 업무 맡기기',val:3.26},
+  {id:'Q02',label:'결과물 실무 적용',val:2.71},
+  {id:'Q03',label:'노하우 재사용',val:2.46},
+  {id:'Q04',label:'AI·도구 연결',val:2.29},
+  {id:'Q05',label:'반복 자동화',val:2.47},
+  {id:'Q06',label:'팀 산출물 품질',val:2.26},
+  {id:'Q07',label:'팀 데이터 보고',val:2.01},
+  {id:'Q08',label:'일정·검수 시스템화',val:1.86},
+  {id:'Q09',label:'팀 공용 AI 도구',val:2.03},
+  {id:'Q10',label:'AI 전파·성과관리 ⚠',val:1.81},
 ];
 const aiQC=document.getElementById('aiQBars');
 aiQData.forEach(q=>{
@@ -2745,63 +2755,409 @@ let aiDone=false;
 function initAi(){
   if(aiDone)return; aiDone=true;
 
-  // 부서·직군별 AI 역량
+  // 부서별 AI 역량 — 2026년 6월 2차 조사 실데이터
+  const aiDepts=['SM·D2H·FZ','DX-기획','DX-디자인','DX-개발','AD'];
+  const aiVals=[1.90,2.03,1.68,2.85,2.12];
   new Chart(document.getElementById('cAiBar').getContext('2d'),{
     type:'bar',
     data:{
-      labels:['SM 기획','SM 경영','DX 기획','DX 디자인','DX 개발','DX PM','AD AE','AD CD','AD PD','FZ'],
+      labels:aiDepts,
       datasets:[{
-        data:[2.6,2.1,1.60,1.33,2.10,2.40,2.35,2.20,1.55,2.42],
-        backgroundColor:([2.6,2.1,1.60,1.33,2.10,2.40,2.35,2.20,1.55,2.42]).map(v=>v>=2.5?C_BLUE:v>=2.0?'#93C5FD':C_RED),
+        label:'종합 평균',
+        data:aiVals,
+        backgroundColor:aiVals.map(v=>v>=2.5?C_GREEN:v>=2.0?C_BLUE:C_RED),
         borderRadius:5,borderSkipped:false
       }]
     },
-    options:{...BASE_OPT,scales:{
-      x:{grid:{display:false},ticks:{font:{size:11,family:'Inter'},color:C_GRAY,maxRotation:30}},
-      y:{grid:{color:'#F3F4F6'},ticks:{font:{size:11,family:'Inter'},color:C_GRAY,max:4,callback:v=>v+'점'}}
+    options:{...BASE_OPT,plugins:{legend:{display:false},datalabels:{display:false}},scales:{
+      x:{grid:{display:false},ticks:{font:{size:11,family:'Inter'},color:C_GRAY}},
+      y:{grid:{color:'#F3F4F6'},min:0,max:4,ticks:{font:{size:11,family:'Inter'},color:C_GRAY,callback:v=>v+'점'}}
     }}
   });
 
-  // MCP 도구별 활용률
+  // 조사 회차별 역량 변화 (1차 → 2차)
   new Chart(document.getElementById('cMcpBar').getContext('2d'),{
     type:'bar',
     data:{
-      labels:['ERP API','G. Sheets','Notion','Gmail','Calendar','Supabase','Claude API'],
-      datasets:[{
-        data:[91,78,65,54,48,31,22],
-        backgroundColor:([91,78,65,54,48,31,22]).map(v=>v>=70?C_BLUE:v>=40?'#93C5FD':'#DBEAFE'),
-        borderRadius:5,borderSkipped:false
-      }]
-    },
-    options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{
-      x:{ticks:{font:{size:11,family:'Inter'},color:C_GRAY,callback:v=>v+'%'},grid:{color:'#F3F4F6'},max:100},
-      y:{ticks:{font:{size:11,family:'Inter'},color:'#374151'},grid:{display:false}}
-    }}
-  });
-
-  // 월별 AI 활용 건수
-  new Chart(document.getElementById('cAiTrend').getContext('2d'),{
-    type:'line',
-    data:{
-      labels:['1월','2월','3월','4월','5월','6월'],
+      labels:['전체 평균','개인 AI','부서 운영','Q08-Q10'],
       datasets:[
-        {label:'MCP 호출',data:[3210,3580,4120,4890,5640,6650],borderColor:C_BLUE,backgroundColor:C_BLUE_T,borderWidth:2,tension:.4,fill:true,pointRadius:3,pointBackgroundColor:C_BLUE},
-        {label:'AI 자동화 실행',data:[8,11,14,17,20,23],borderColor:C_GREEN,borderDash:[4,3],borderWidth:1.5,pointRadius:2,fill:false,yAxisID:'y2'}
+        {label:'1차 조사',data:[2.01,2.34,1.68,1.62],backgroundColor:'#E2E8F0',borderRadius:3,borderSkipped:false},
+        {label:'2차 조사',data:[2.32,2.64,1.99,1.90],backgroundColor:C_BLUE,borderRadius:3,borderSkipped:false}
       ]
     },
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'bottom',labels:{font:{size:11,family:'Inter'},color:'#374151',boxWidth:8}}},scales:{
       x:{grid:{display:false},ticks:{font:{size:11,family:'Inter'},color:C_GRAY}},
-      y:{grid:{color:'#F3F4F6'},ticks:{font:{size:11,family:'Inter'},color:C_GRAY},position:'left'},
-      y2:{grid:{display:false},ticks:{font:{size:11,family:'Inter'},color:C_GRAY},position:'right'}
+      y:{grid:{color:'#F3F4F6'},min:0,max:4,ticks:{font:{size:11,family:'Inter'},color:C_GRAY,callback:v=>v+'점'}}
     }}
   });
 
-  // 레벨 분포
+  // 문항별 하위(L1+L2) 비율 — 2차 조사 실데이터
+  const lowShareData=[17,49,50,61,53,56,75,79,67,81];
+  new Chart(document.getElementById('cAiTrend').getContext('2d'),{
+    type:'bar',
+    data:{
+      labels:['Q01','Q02','Q03','Q04','Q05','Q06','Q07','Q08','Q09','Q10'],
+      datasets:[{
+        label:'하위(L1+L2) 비율',
+        data:lowShareData,
+        backgroundColor:lowShareData.map(v=>v>=75?C_RED:v>=55?C_AMBER:'#93C5FD'),
+        borderRadius:4,borderSkipped:false
+      }]
+    },
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{
+      x:{grid:{display:false},ticks:{font:{size:11,family:'Inter'},color:C_GRAY}},
+      y:{grid:{color:'#F3F4F6'},min:0,max:100,ticks:{font:{size:11,family:'Inter'},color:C_GRAY,callback:v=>v+'%'}}
+    }}
+  });
+
+  // Q01 분포 도넛 (전사 참고용)
   new Chart(document.getElementById('cAiLevel').getContext('2d'),{
     type:'doughnut',
-    data:{labels:['L1 탐색 (1.0-1.9)','L2 활용 (2.0-2.9)','L3 자동화 (3.0-3.9)','L4 내재화 (4.0)'],datasets:[{data:[12,34,10,1],backgroundColor:['#DBEAFE','#3B82F6',C_BLUE,'#111827'],borderWidth:0,hoverOffset:4}]},
-    options:{responsive:true,maintainAspectRatio:false,cutout:'60%',plugins:{legend:{position:'bottom',labels:{font:{size:11,family:'Inter'},color:'#374151'}}}}
+    data:{
+      labels:['L1 탐색','L2 활용','L3 자동화','L4 내재화'],
+      // Q01~Q10 평균 분포 추정 (2차 조사)
+      datasets:[{data:[19,24,18,11],backgroundColor:['#FCA5A5',C_BLUE,'#34D399','#111827'],borderWidth:0,hoverOffset:4}]
+    },
+    options:{responsive:true,maintainAspectRatio:false,cutout:'58%',plugins:{legend:{position:'bottom',labels:{font:{size:11,family:'Inter'},color:'#374151',boxWidth:8}},tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${ctx.parsed}명`}}}}
   });
+
+  // 테이블 + AI노트 + 개선포인트 초기 렌더링
+  loadImproveData();
+  renderImproveView();
+  renderMcpTable();
+  renderAutoTable();
+  initAiNote();
+
+  // Supabase에서 차수 목록 로드
+  loadAiRounds();
+}
+
+// ─────────────────────────────────────────────
+// MCP 연동 현황 편집 기능
+// ─────────────────────────────────────────────
+let mcpData = [
+  {name:'AI 진단 MCP',    use:'역량 진단 · 부서 분석',   target:'전사',    st:'green', stl:'연동'},
+  {name:'Supabase MCP',   use:'MIS DB · 실적 데이터',    target:'SM · DX', st:'green', stl:'연동'},
+  {name:'Gmail MCP',      use:'메일 검색 · 라벨',         target:'전사',    st:'green', stl:'연동'},
+  {name:'Google Calendar',use:'일정 조회 · 등록',          target:'전사',    st:'green', stl:'연동'},
+  {name:'Notion MCP',     use:'문서 · 데이터베이스',       target:'전사',    st:'green', stl:'연동'},
+  {name:'Google Drive MCP',use:'파일 검색 · 읽기',         target:'전사',    st:'green', stl:'연동'},
+  {name:'Vercel MCP',     use:'MIS 배포 · 로그',           target:'DX 개발', st:'green', stl:'연동'},
+  {name:'Apps Script (Sheets)',use:'실적 자동 동기화',      target:'SM',      st:'green', stl:'연동'},
+  {name:'Naver Search MCP',use:'시장 · 경쟁사 검색',       target:'SM',      st:'green', stl:'연동'},
+  {name:'KakaoTalk MCP',  use:'리포트 메모 발송',           target:'SM',      st:'green', stl:'연동'},
+  {name:'Scheduled Tasks',use:'정기 자동화 스케줄',         target:'전사',    st:'blue',  stl:'운영'},
+];
+let autoData = [
+  {name:'MIS 실적 자동 동기화', mcp:'Apps Script → Supabase', freq:'매시간',    st:'green', stl:'운영'},
+  {name:'AI 진단 결과 분석',    mcp:'AI 진단 MCP',             freq:'조사 때마다',st:'green', stl:'운영'},
+  {name:'MIS 자동 배포',        mcp:'Vercel MCP',              freq:'변경 시',    st:'green', stl:'운영'},
+  {name:'경쟁사 시장 리서치',   mcp:'Naver Search MCP',        freq:'수시',       st:'green', stl:'운영'},
+  {name:'일정 · 회의 연동',     mcp:'Google Calendar',         freq:'수시',       st:'green', stl:'운영'},
+  {name:'리포트 메모 발송',     mcp:'KakaoTalk MCP',           freq:'주 1회',     st:'blue',  stl:'운영'},
+  {name:'문서 검색 · 분석',     mcp:'Notion + Drive',          freq:'수시',       st:'blue',  stl:'운영'},
+];
+const ST_OPTS = [{v:'green',l:'연동'},{v:'blue',l:'운영'},{v:'amber',l:'점검'},{v:'red',l:'중단'}];
+let mcpEditMode=false, autoEditMode=false;
+
+function renderMcpTable(){
+  const tb=document.getElementById('mcpTbody');
+  const addBtn=document.getElementById('mcpAddBtn');
+  const editBtn=document.getElementById('mcpEditBtn');
+  const thead=document.getElementById('mcpThead');
+  if(!tb)return;
+  const ce=mcpEditMode?'contenteditable="true" class="tbl-edit-ce"':'';
+  thead.innerHTML=mcpEditMode
+    ?'<tr><th>MCP / 커넥터</th><th>용도</th><th>대상</th><th>상태</th><th></th></tr>'
+    :'<tr><th>MCP / 커넥터</th><th>용도</th><th>대상</th><th>상태</th></tr>';
+  tb.innerHTML=mcpData.map((r,i)=>`
+    <tr data-i="${i}">
+      <td class="td-hi" ${ce} data-field="name">${r.name}</td>
+      <td ${ce} data-field="use">${r.use}</td>
+      <td ${ce} data-field="target">${r.target}</td>
+      <td>${mcpEditMode
+        ?`<select class="tbl-st-sel" data-table="mcp" data-i="${i}" onchange="onStChange(this,'mcp')">
+            ${ST_OPTS.map(o=>`<option value="${o.v}" ${r.st===o.v?'selected':''}>${o.l}</option>`).join('')}
+          </select>`
+        :`<span class="bx bx-${r.st}">${r.stl}</span>`
+      }</td>
+      ${mcpEditMode?`<td style="white-space:nowrap"><button class="tbl-del-btn" onclick="mcpDelRow(${i})">✕</button></td>`:''}
+    </tr>`).join('');
+  addBtn.style.display=mcpEditMode?'block':'none';
+  editBtn.textContent=mcpEditMode?'✓ 저장':'✏ 편집';
+  document.getElementById('mcpBadge').textContent=mcpData.length+'개 연동 완료';
+}
+
+function toggleMcpEdit(){
+  if(mcpEditMode){ // 저장
+    const rows=document.querySelectorAll('#mcpTbody tr');
+    rows.forEach((tr,i)=>{
+      const cells=tr.querySelectorAll('td[data-field]');
+      cells.forEach(td=>{ const f=td.dataset.field; if(f)mcpData[i][f]=td.innerText.trim(); });
+      const sel=tr.querySelector('select');
+      if(sel){ mcpData[i].st=sel.value; mcpData[i].stl=sel.options[sel.selectedIndex].text; }
+    });
+  }
+  mcpEditMode=!mcpEditMode; renderMcpTable();
+}
+function mcpAddRow(){
+  mcpData.push({name:'신규 MCP',use:'용도',target:'전사',st:'blue',stl:'운영'});
+  renderMcpTable();
+}
+function mcpDelRow(i){ mcpData.splice(i,1); renderMcpTable(); }
+
+function renderAutoTable(){
+  const tb=document.getElementById('autoTbody');
+  const addBtn=document.getElementById('autoAddBtn');
+  const editBtn=document.getElementById('autoEditBtn');
+  if(!tb)return;
+  const ce=autoEditMode?'contenteditable="true" class="tbl-edit-ce"':'';
+  tb.innerHTML=autoData.map((r,i)=>`
+    <tr data-i="${i}">
+      <td class="td-hi" ${ce} data-field="name">${r.name}</td>
+      <td ${ce} data-field="mcp">${r.mcp}</td>
+      <td ${ce} data-field="freq">${r.freq}</td>
+      <td>${autoEditMode
+        ?`<select class="tbl-st-sel" data-table="auto" data-i="${i}" onchange="onStChange(this,'auto')">
+            ${ST_OPTS.map(o=>`<option value="${o.v}" ${r.st===o.v?'selected':''}>${o.l}</option>`).join('')}
+          </select>`
+        :`<span class="bx bx-${r.st}">${r.stl}</span>`
+      }</td>
+      ${autoEditMode?`<td style="white-space:nowrap"><button class="tbl-del-btn" onclick="autoDelRow(${i})">✕</button></td>`:''}
+    </tr>`).join('');
+  addBtn.style.display=autoEditMode?'block':'none';
+  editBtn.textContent=autoEditMode?'✓ 저장':'✏ 편집';
+}
+
+function toggleAutoEdit(){
+  if(autoEditMode){
+    const rows=document.querySelectorAll('#autoTbody tr');
+    rows.forEach((tr,i)=>{
+      const cells=tr.querySelectorAll('td[data-field]');
+      cells.forEach(td=>{ const f=td.dataset.field; if(f)autoData[i][f]=td.innerText.trim(); });
+      const sel=tr.querySelector('select');
+      if(sel){ autoData[i].st=sel.value; autoData[i].stl=sel.options[sel.selectedIndex].text; }
+    });
+  }
+  autoEditMode=!autoEditMode; renderAutoTable();
+}
+function autoAddRow(){
+  autoData.push({name:'신규 업무',mcp:'MCP 명',freq:'수시',st:'blue',stl:'운영'});
+  renderAutoTable();
+}
+function autoDelRow(i){ autoData.splice(i,1); renderAutoTable(); }
+function onStChange(sel,tbl){
+  const i=parseInt(sel.dataset.i);
+  const st=sel.value;
+  const stl=sel.options[sel.selectedIndex].text;
+  if(tbl==='mcp'){mcpData[i].st=st;mcpData[i].stl=stl;}
+  else{autoData[i].st=st;autoData[i].stl=stl;}
+}
+
+// ─── AI 진단 Supabase 연동 ───
+let aiRoundsCache = [];
+
+async function loadAiRounds(){
+  const sel = document.getElementById('aiRoundSel');
+  try {
+    const { data, error } = await SB.from('ai_survey_rounds').select('*').order('round_no');
+    if(error || !data || !data.length){
+      if(sel) sel.innerHTML = '<option value="2">2026.06 · 2차 (현재)</option>';
+      return;
+    }
+    aiRoundsCache = data;
+    if(sel){
+      sel.innerHTML = data.map(r =>
+        `<option value="${r.id}" ${r.round_no===2?'selected':''}>
+          ${r.survey_ym} · ${r.round_label} (N=${r.participants||'?'})
+        </option>`
+      ).join('');
+    }
+    // 최신 차수 KPI 업데이트
+    const latest = data[data.length - 1];
+    const prev   = data.length >= 2 ? data[data.length - 2] : null;
+    updateAiKpis(latest, prev);
+  } catch(e){
+    console.warn('[AI rounds]', e);
+    if(sel) sel.innerHTML = '<option value="2">2026.06 · 2차 (현재)</option>';
+  }
+}
+
+function updateAiKpis(round, prevRound){
+  const fmt = v => v != null ? parseFloat(v).toFixed(2) : '—';
+  const diff = (a, b) => (a != null && b != null) ? (parseFloat(a) - parseFloat(b)).toFixed(2) : null;
+
+  // KPI 값
+  const setEl = (id, val) => { const el=document.getElementById(id); if(el) el.textContent=val; };
+  setEl('aiKpiTotal',    fmt(round.avg_total));
+  setEl('aiKpiPersonal', fmt(round.avg_personal));
+  setEl('aiKpiDept',     fmt(round.avg_dept_ops));
+  setEl('aiKpiPartic',   round.participants || '—');
+
+  // KPI 변화값
+  if(prevRound){
+    const dTotal    = diff(round.avg_total,    prevRound.avg_total);
+    const dPersonal = diff(round.avg_personal, prevRound.avg_personal);
+    const dDept     = diff(round.avg_dept_ops, prevRound.avg_dept_ops);
+    const chgClass  = v => parseFloat(v) >= 0 ? 'kpi-chg up' : 'kpi-chg dn';
+    const sign      = v => parseFloat(v) >= 0 ? '+' : '';
+    const chgLabel  = `vs ${prevRound.round_label} 조사`;
+
+    const setChg = (id, val) => {
+      const el=document.getElementById(id);
+      if(el && val != null){ el.className=chgClass(val); el.textContent=sign(val)+val+' '+chgLabel; }
+    };
+    setChg('aiKpiTotalChg',    dTotal);
+    setChg('aiKpiPersonalChg', dPersonal);
+    setChg('aiKpiDeptChg',     dDept);
+    setEl('aiKpiParticChg', `${round.response_rate||'—'}% 응답률`);
+  } else {
+    setEl('aiKpiParticChg', `${round.response_rate||'—'}% 응답률`);
+  }
+
+  // sh-action 텍스트
+  const shAction = document.querySelector('#view-ai .sh-action');
+  if(shAction){
+    const txt = shAction.firstChild;
+    if(txt && txt.nodeType===3) txt.textContent = `📡 DB 연동 · ${round.survey_name||round.survey_ym} (N=${round.participants||'?'}) `;
+  }
+}
+
+async function onAiRoundChange(){
+  const sel = document.getElementById('aiRoundSel');
+  if(!sel) return;
+  const roundId = parseInt(sel.value);
+  const round = aiRoundsCache.find(r => r.id === roundId);
+  if(!round) return;
+  const idx = aiRoundsCache.indexOf(round);
+  const prev = idx > 0 ? aiRoundsCache[idx - 1] : null;
+  updateAiKpis(round, prev);
+}
+
+// ─── 개선 포인트 편집 ───
+let improveEditMode=false;
+const IMPROVE_DEFAULT=[
+  {color:'red',   title:'🔴 개선 포인트 1 — Q10 조직 전파 역량 부재',
+   desc:'현황: AI 활용 전파·성과관리 1.81점, L1·L2 81%로 집단 공백 상태.',
+   action:'▶ 방안: 7월 팀장 책임 과제로 지정. 사용 현황·절감 시간 등 성과 지표 관리 체계 수립. 우수 사례 공유 채널(Notion) 운영.'},
+  {color:'amber', title:'🟡 개선 포인트 2 — Q02·Q05·Q09 양극화',
+   desc:'현황: 선도자(L3+)와 미활용층(L1)이 공존. DX-개발 Q05=3.11 vs DX-디자인 Q05=1.40 (격차 1.71).',
+   action:'▶ 방안: 선도자를 사내 전파자로 지정(DX-개발 → 전사 전파). 하위 그룹은 기초 과정 별도 운영.'},
+  {color:'blue',  title:'🔵 개선 포인트 3 — 개인→팀 역량 전환 지연',
+   desc:'현황: 개인 AI 2.64 vs 부서 운영 1.99, 격차 0.65. Q08(시스템 추적) 1.86 — L1 비율 79%.',
+   action:'▶ 방안: 팀 단위 AI 도구·데이터 연결(Q09) 과제화. DX-디자인 집중 코칭. Q08 시스템(노션·ERP) 활용 교육.'},
+];
+let improveData=[...IMPROVE_DEFAULT];
+
+function loadImproveData(){
+  const s=localStorage.getItem('misImproveData');
+  if(s){ try{ improveData=JSON.parse(s); }catch(e){} }
+}
+function renderImproveView(){
+  const v=document.getElementById('improveView');
+  if(!v) return;
+  v.innerHTML=improveData.map(r=>`
+    <div style="background:var(--surface);border-left:3px solid var(--${r.color});padding:10px 12px;border-radius:0 var(--r1) var(--r1) 0">
+      <div class="f-label" style="color:var(--${r.color});margin-bottom:4px">${r.title}</div>
+      <div style="font-size:13px;color:var(--ink2);margin-bottom:5px">${r.desc}</div>
+      <div style="font-size:12px;color:var(--ink3);border-top:1px solid var(--border2);padding-top:5px;margin-top:5px">${r.action}</div>
+    </div>`).join('');
+}
+function renderImproveEditArea(){
+  const e=document.getElementById('improveEditArea');
+  if(!e) return;
+  e.innerHTML=improveData.map((r,i)=>`
+    <div style="border:1px solid var(--border2);border-radius:var(--r1);padding:10px;background:var(--surface)">
+      <div style="font-size:11px;font-weight:600;color:var(--ink3);margin-bottom:5px">항목 ${i+1}</div>
+      <div style="font-size:11px;color:var(--ink4);margin-bottom:3px">제목</div>
+      <input data-i="${i}" data-field="title" value="${r.title.replace(/"/g,'&quot;').replace(/</g,'&lt;')}"
+             style="width:100%;font-size:13px;padding:5px 8px;border:1px solid var(--border2);border-radius:4px;box-sizing:border-box;margin-bottom:6px;font-family:inherit">
+      <div style="font-size:11px;color:var(--ink4);margin-bottom:3px">현황</div>
+      <textarea data-i="${i}" data-field="desc" rows="2"
+             style="width:100%;font-size:12px;padding:5px 8px;border:1px solid var(--border2);border-radius:4px;resize:vertical;box-sizing:border-box;margin-bottom:6px;font-family:inherit">${r.desc}</textarea>
+      <div style="font-size:11px;color:var(--ink4);margin-bottom:3px">방안</div>
+      <textarea data-i="${i}" data-field="action" rows="2"
+             style="width:100%;font-size:12px;padding:5px 8px;border:1px solid var(--border2);border-radius:4px;resize:vertical;box-sizing:border-box;font-family:inherit">${r.action}</textarea>
+    </div>`).join('');
+}
+function toggleImproveEdit(){
+  improveEditMode=!improveEditMode;
+  const view=document.getElementById('improveView');
+  const edit=document.getElementById('improveEditArea');
+  const actions=document.getElementById('improveActions');
+  const btn=document.getElementById('improveEditBtn');
+  if(improveEditMode){
+    renderImproveEditArea();
+    view.style.display='none';
+    edit.style.display='flex';
+    actions.style.display='flex';
+    btn.textContent='취소';
+  } else { cancelImprove(); }
+}
+function saveImprove(){
+  document.querySelectorAll('#improveEditArea [data-i]').forEach(el=>{
+    const i=parseInt(el.dataset.i), f=el.dataset.field;
+    improveData[i][f]=(el.tagName==='TEXTAREA'?el.value:el.value)||'';
+  });
+  localStorage.setItem('misImproveData',JSON.stringify(improveData));
+  renderImproveView();
+  document.getElementById('improveView').style.display='flex';
+  document.getElementById('improveEditArea').style.display='none';
+  document.getElementById('improveActions').style.display='none';
+  document.getElementById('improveEditBtn').textContent='✏ 편집';
+  improveEditMode=false;
+}
+function cancelImprove(){
+  document.getElementById('improveView').style.display='flex';
+  document.getElementById('improveEditArea').style.display='none';
+  document.getElementById('improveActions').style.display='none';
+  document.getElementById('improveEditBtn').textContent='✏ 편집';
+  improveEditMode=false;
+}
+
+// ─── AI 노트 편집 ───
+let aiNoteEditMode=false;
+let aiNoteSaved=localStorage.getItem('misAiNote')||'';
+function initAiNote(){
+  const view=document.getElementById('aiNoteView');
+  if(!view) return;
+  // 빈 문자열로 덮어쓰지 않음 — :empty::before CSS 플레이스홀더 유지
+  if(aiNoteSaved) view.textContent=aiNoteSaved;
+}
+function toggleAiNote(){
+  const view=document.getElementById('aiNoteView');
+  const edit=document.getElementById('aiNoteEdit');
+  const actions=document.getElementById('aiNoteActions');
+  const btn=document.getElementById('aiNoteEditBtn');
+  aiNoteEditMode=!aiNoteEditMode;
+  if(aiNoteEditMode){
+    edit.value=aiNoteSaved;
+    view.style.display='none';
+    edit.style.display='block';
+    actions.style.display='flex';
+    btn.textContent='취소';
+  } else {
+    cancelAiNote();
+  }
+}
+function saveAiNote(){
+  const edit=document.getElementById('aiNoteEdit');
+  aiNoteSaved=edit.value;
+  localStorage.setItem('misAiNote',aiNoteSaved);
+  const view=document.getElementById('aiNoteView');
+  view.textContent=aiNoteSaved;
+  view.style.display='';
+  edit.style.display='none';
+  document.getElementById('aiNoteActions').style.display='none';
+  document.getElementById('aiNoteEditBtn').textContent='✏ 편집';
+  aiNoteEditMode=false;
+}
+function cancelAiNote(){
+  document.getElementById('aiNoteEdit').style.display='none';
+  document.getElementById('aiNoteView').style.display='';
+  document.getElementById('aiNoteActions').style.display='none';
+  document.getElementById('aiNoteEditBtn').textContent='✏ 편집';
+  aiNoteEditMode=false;
 }
 
 // ─── MKT CHARTS (lazy) ───
