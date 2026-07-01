@@ -746,7 +746,7 @@ body.present .notif-panel { display: none !important; }
     <div class="view-pane active" id="view-sm">
 
       <!-- KPI -->
-      <div class="sh"><span class="sh-title">핵심 지표 — 2026 당월포함 누적</span><span class="sh-action" onclick="openHist('매출','전사 5개년 추이')">추이 분석</span></div>
+      <div class="sh"><span class="sh-title">핵심 지표 — 2026 H1 누적</span><span class="sh-action" onclick="openHist('매출','전사 5개년 추이')">추이 분석</span></div>
       <div class="kpi-grid g6" style="margin-bottom:16px">
         <div class="kpi" style="opacity:.55"><div class="kpi-lbl">취급고매출 — 누적</div><div class="kpi-val" id="kpi-sm-gross-val">—<span class="kpi-unit">억</span></div><div class="kpi-chg flat" id="kpi-sm-gross-chg">데이터 연동 준비중</div><button class="hist-btn" onclick="openHist('매출','취급고 5개년 추이')">📊 과거 데이터 보기</button></div>
         <div class="kpi accent"><div class="kpi-lbl">순매출 — 누적</div><div class="kpi-val" id="kpi-sm-rev-val">—<span class="kpi-unit">억</span></div><div class="kpi-chg up" id="kpi-sm-rev-chg">전년동기 대비</div><button class="hist-btn" onclick="openHist('매출','전사 월별 매출 5개년 추이')">📊 과거 데이터 보기</button></div>
@@ -754,6 +754,12 @@ body.present .notif-panel { display: none !important; }
         <div class="kpi" id="kpi-sm-yoy-card"><div class="kpi-lbl">전년대비 증감률</div><div class="kpi-val" id="kpi-sm-yoy-val">—<span class="kpi-unit">%</span></div><div class="kpi-chg" id="kpi-sm-yoy-chg">순매출 기준</div><button class="hist-btn" onclick="openHistDual('매출','수익','전사 매출·손익 추이')">📊 매출·손익 보기</button></div>
         <div class="kpi warn" id="kpi-sm-util"><div class="kpi-lbl">전사 가동율</div><div class="kpi-val"><span id="sm-util-val">76</span><span class="kpi-unit">%</span></div><div class="kpi-chg flat" id="sm-util-chg">목표 80% 대비 -4%p</div><button class="hist-btn" onclick="openHist('가동율','전사 가동율 5개년 추이')">📊 과거 데이터 보기</button></div>
         <div class="kpi" id="kpi-sm-member"><div class="kpi-lbl">전체 인원</div><div class="kpi-val"><span id="sm-member-val">61</span><span class="kpi-unit">명</span></div><div class="kpi-chg flat" id="sm-member-chg">정규 57 · 계약 4</div><button class="hist-btn" onclick="openHist('인원','전사 인원 5개년 추이')">📊 과거 데이터 보기</button></div>
+      </div>
+      <!-- 3Q 예상 실적 -->
+      <div class="sh" style="margin-top:4px"><span class="sh-title" style="font-size:12px;color:var(--ink3)">3Q 예상 실적 (7~9월)</span></div>
+      <div class="kpi-grid g2" style="margin-bottom:16px">
+        <div class="kpi" id="kpi-sm-3q-sales-card" style="opacity:.6"><div class="kpi-lbl">3Q 예상 매출</div><div class="kpi-val" id="kpi-sm-3q-sales">—<span class="kpi-unit">억</span></div><div class="kpi-chg flat" id="kpi-sm-3q-sales-chg">7·8·9월 순매출 합계</div></div>
+        <div class="kpi" id="kpi-sm-3q-profit-card" style="opacity:.6"><div class="kpi-lbl">3Q 예상 수익</div><div class="kpi-val" id="kpi-sm-3q-profit">—<span class="kpi-unit">억</span></div><div class="kpi-chg flat" id="kpi-sm-3q-profit-chg">영업이익 예측</div></div>
       </div>
 
       <!-- AI 인사이트 — 편집가능 탭 -->
@@ -926,6 +932,12 @@ body.present .notif-panel { display: none !important; }
         <div class="kpi" id="kpi-dx-util"><div class="kpi-lbl">가동율</div><div class="kpi-val"><span id="dx-util-val">76</span><span class="kpi-unit">%</span></div><div class="kpi-chg flat" id="dx-util-chg">목표 80% 대비 -4%p</div><button class="hist-btn" onclick="openHist('가동율','전사 가동율 5개년 추이')">📊 과거 데이터 보기</button></div>
         <div class="kpi" id="kpi-dx-member"><div class="kpi-lbl">인원</div><div class="kpi-val"><span id="dx-member-val">33</span><span class="kpi-unit">명</span></div><div class="kpi-chg flat" id="dx-member-chg">정규 30 · 계약 3</div><button class="hist-btn" onclick="openHist('인원','전사 인원 5개년 추이')">📊 과거 데이터 보기</button></div>
       </div>
+      <!-- 3Q 예상 실적 -->
+      <div class="sh" style="margin-top:4px"><span class="sh-title" style="font-size:12px;color:var(--ink3)">3Q 예상 실적 (7~9월)</span></div>
+      <div class="kpi-grid g2" style="margin-bottom:16px">
+        <div class="kpi" id="kpi-dx-3q-sales-card" style="opacity:.6"><div class="kpi-lbl">3Q 예상 매출</div><div class="kpi-val" id="kpi-dx-3q-sales">—<span class="kpi-unit">억</span></div><div class="kpi-chg flat" id="kpi-dx-3q-sales-chg">7·8·9월 순매출 합계</div></div>
+        <div class="kpi" id="kpi-dx-3q-profit-card" style="opacity:.6"><div class="kpi-lbl">3Q 예상 수익</div><div class="kpi-val" id="kpi-dx-3q-profit">—<span class="kpi-unit">억</span></div><div class="kpi-chg flat" id="kpi-dx-3q-profit-chg">영업이익 예측</div></div>
+      </div>
 
       <div class="insight-grid">
         <div class="insight ins-green"><div class="ins-tag">H1 달성</div><div class="ins-title">목표 99.9% 초과 달성</div><div class="ins-body">H1 실적 31.80억 / 목표 31.84억. 2025 H1 대비 +20.7% 성장. Q3 목표 15.38억(7월 4.36, 8월 7.79, 9월 3.23억) 순항 시 연간 63.5억 달성 가능.</div></div>
@@ -1047,6 +1059,12 @@ body.present .notif-panel { display: none !important; }
         <div class="kpi"><div class="kpi-lbl">전년대비 증감률</div><div class="kpi-val">+3.8<span class="kpi-unit">%</span></div><div class="kpi-chg up">전년 10.98억 대비</div><button class="hist-btn" onclick="openHistDual('AD매출','AD수익','AD 매출·손익 추이')">📊 매출·손익 보기</button></div>
         <div class="kpi warn" id="kpi-ad-util"><div class="kpi-lbl">가동율</div><div class="kpi-val"><span id="ad-util-val">71</span><span class="kpi-unit">%</span></div><div class="kpi-chg down" id="ad-util-chg">목표 -9%p</div><button class="hist-btn" onclick="openHist('AD가동율','AD 가동율 5개년 추이')">📊 과거 데이터 보기</button></div>
         <div class="kpi" id="kpi-ad-member"><div class="kpi-lbl">인원</div><div class="kpi-val"><span id="ad-member-val">14</span><span class="kpi-unit">명</span></div><div class="kpi-chg flat" id="ad-member-chg">AE · CD · PD</div><button class="hist-btn" onclick="openHist('인원','전사 인원 5개년 추이')">📊 과거 데이터 보기</button></div>
+      </div>
+      <!-- 3Q 예상 실적 -->
+      <div class="sh" style="margin-top:4px"><span class="sh-title" style="font-size:12px;color:var(--ink3)">3Q 예상 실적 (7~9월)</span></div>
+      <div class="kpi-grid g2" style="margin-bottom:16px">
+        <div class="kpi" id="kpi-ad-3q-sales-card" style="opacity:.6"><div class="kpi-lbl">3Q 예상 매출</div><div class="kpi-val" id="kpi-ad-3q-sales">—<span class="kpi-unit">억</span></div><div class="kpi-chg flat" id="kpi-ad-3q-sales-chg">7·8·9월 순매출 합계</div></div>
+        <div class="kpi" id="kpi-ad-3q-profit-card" style="opacity:.6"><div class="kpi-lbl">3Q 예상 수익</div><div class="kpi-val" id="kpi-ad-3q-profit">—<span class="kpi-unit">억</span></div><div class="kpi-chg flat" id="kpi-ad-3q-profit-chg">영업이익 예측</div></div>
       </div>
 
       <div class="insight-grid">
@@ -1184,6 +1202,12 @@ body.present .notif-panel { display: none !important; }
         <div class="kpi" id="kpi-fz-util"><div class="kpi-lbl">가동율</div><div class="kpi-val" style="color:var(--green)"><span id="fz-util-val">88</span><span class="kpi-unit">%</span></div><div class="kpi-chg up" id="fz-util-chg">목표 초과 +8%p</div><button class="hist-btn" onclick="openHist('가동율','전사 가동율 5개년 추이')">📊 과거 데이터 보기</button></div>
         <div class="kpi" id="kpi-fz-member"><div class="kpi-lbl">인원</div><div class="kpi-val"><span id="fz-member-val">4</span><span class="kpi-unit">명</span></div><div class="kpi-chg flat" id="fz-member-chg">공공·정부 담당</div><button class="hist-btn" onclick="openHist('인원','전사 인원 5개년 추이')">📊 과거 데이터 보기</button></div>
       </div>
+      <!-- 3Q 예상 실적 -->
+      <div class="sh" style="margin-top:4px"><span class="sh-title" style="font-size:12px;color:var(--ink3)">3Q 예상 실적 (7~9월)</span></div>
+      <div class="kpi-grid g2" style="margin-bottom:16px">
+        <div class="kpi" id="kpi-fz-3q-sales-card" style="opacity:.6"><div class="kpi-lbl">3Q 예상 매출</div><div class="kpi-val" id="kpi-fz-3q-sales">—<span class="kpi-unit">억</span></div><div class="kpi-chg flat" id="kpi-fz-3q-sales-chg">7·8·9월 순매출 합계</div></div>
+        <div class="kpi" id="kpi-fz-3q-profit-card" style="opacity:.6"><div class="kpi-lbl">3Q 예상 수익</div><div class="kpi-val" id="kpi-fz-3q-profit">—<span class="kpi-unit">억</span></div><div class="kpi-chg flat" id="kpi-fz-3q-profit-chg">영업이익 예측</div></div>
+      </div>
 
       <div class="insight-grid" style="grid-template-columns:1fr 1fr">
         <div class="insight ins-ok"><div class="ins-tag">AI 요약</div><div class="ins-title">4개 사업부 중 최고 달성률</div><div class="ins-body">상반기 84% 달성. 하반기 입찰 3건(3.2억) 확정 시 연간 목표 초과 달성 가능.</div></div>
@@ -1238,6 +1262,12 @@ body.present .notif-panel { display: none !important; }
         <div class="kpi"><div class="kpi-lbl">전년대비 증감률</div><div class="kpi-val">—<span class="kpi-unit">%</span></div><div class="kpi-chg flat">데이터 없음</div><button class="hist-btn" onclick="openHistDual('매출','DH수익','DH 매출·손익 추이')">📊 매출·손익 보기</button></div>
         <div class="kpi" id="kpi-dh-util"><div class="kpi-lbl">가동율</div><div class="kpi-val"><span id="dh-util-val">—</span><span class="kpi-unit">%</span></div><div class="kpi-chg flat" id="dh-util-chg">ERP 연동 대기</div><button class="hist-btn" onclick="openHist('가동율','전사 가동율 5개년 추이')">📊 과거 데이터 보기</button></div>
         <div class="kpi" id="kpi-dh-member"><div class="kpi-lbl">인원</div><div class="kpi-val"><span id="dh-member-val">—</span><span class="kpi-unit">명</span></div><div class="kpi-chg flat" id="dh-member-chg">ERP 연동 대기</div><button class="hist-btn" onclick="openHist('인원','전사 인원 5개년 추이')">📊 과거 데이터 보기</button></div>
+      </div>
+      <!-- 3Q 예상 실적 -->
+      <div class="sh" style="margin-top:4px"><span class="sh-title" style="font-size:12px;color:var(--ink3)">3Q 예상 실적 (7~9월)</span></div>
+      <div class="kpi-grid g2" style="margin-bottom:16px">
+        <div class="kpi" id="kpi-dh-3q-sales-card" style="opacity:.6"><div class="kpi-lbl">3Q 예상 매출</div><div class="kpi-val" id="kpi-dh-3q-sales">—<span class="kpi-unit">억</span></div><div class="kpi-chg flat" id="kpi-dh-3q-sales-chg">7·8·9월 순매출 합계</div></div>
+        <div class="kpi" id="kpi-dh-3q-profit-card" style="opacity:.6"><div class="kpi-lbl">3Q 예상 수익</div><div class="kpi-val" id="kpi-dh-3q-profit">—<span class="kpi-unit">억</span></div><div class="kpi-chg flat" id="kpi-dh-3q-profit-chg">영업이익 예측</div></div>
       </div>
       <div class="card" style="text-align:center;padding:40px 20px">
         <div style="font-size:32px;margin-bottom:12px">📋</div>
@@ -4754,8 +4784,8 @@ async function syncFromSupabase() {
 
     // ── 3b. GROSS_SALES: 취급고매출 KPI ──
     if (db.gross_sales) {
-      const curMonth = new Date().getMonth(); // 0-based, 6월=5
-      const curYear  = new Date().getFullYear(); // 2026
+      const H1_END  = 6;                        // H1 = 1~6월 고정 (워크샵 기준)
+      const curYear = new Date().getFullYear(); // 2026
       // 최신 연도부터 역순 탐색 (2026 없으면 2025도 사용)
       let gsTot = 0, gsYear = null;
       for (let yr = curYear; yr >= curYear - 1; yr--) {
@@ -4763,7 +4793,7 @@ async function syncFromSupabase() {
         let tot = 0;
         // 합계 행 우선
         if (db.gross_sales[yr]['합계']) {
-          for (let m = 1; m <= curMonth + 1; m++) {
+          for (let m = 1; m <= H1_END; m++) {
             const v = getV('gross_sales', yr, '합계', m);
             if (v !== null) tot += v / 100;
           }
@@ -4771,7 +4801,7 @@ async function syncFromSupabase() {
         // 없으면 BU 합산
         if (tot === 0) {
           ['DX','AD','FZ','DH'].forEach(bu => {
-            for (let m = 1; m <= curMonth + 1; m++) {
+            for (let m = 1; m <= H1_END; m++) {
               const v = getV('gross_sales', yr, bu, m);
               if (v !== null) tot += v / 100;
             }
@@ -4783,7 +4813,7 @@ async function syncFromSupabase() {
       const gsChgEl = document.getElementById('kpi-sm-gross-chg');
       if (gsTot > 0 && gsEl) {
         gsEl.innerHTML = gsTot.toFixed(2) + '<span class="kpi-unit">억</span>';
-        if (gsChgEl) gsChgEl.innerHTML = (gsYear !== curYear ? gsYear + '년 ' : '') + curMonth + '개월 누적 · 취급고';
+        if (gsChgEl) gsChgEl.innerHTML = (gsYear !== curYear ? gsYear + '년 ' : '') + 'H1 누적 (1~6월) · 취급고';
         gsEl.closest('.kpi')?.style?.removeProperty('opacity');
       }
 
@@ -4797,7 +4827,7 @@ async function syncFromSupabase() {
         let buTot = 0;
         for (let yr = curYear; yr >= curYear - 1; yr--) {
           if (!db.gross_sales?.[yr]?.[bu]) continue;
-          for (let m = 1; m <= curMonth + 1; m++) {
+          for (let m = 1; m <= H1_END; m++) {
             const v = getV('gross_sales', yr, bu, m);
             if (v !== null) buTot += v / 100;
           }
@@ -4806,7 +4836,7 @@ async function syncFromSupabase() {
         if (buTot > 0) {
           valEl.innerHTML = buTot.toFixed(2) + '<span class="kpi-unit">억</span>';
           const chgEl = document.getElementById(idPrefix + '-chg');
-          if (chgEl) chgEl.innerHTML = curMonth + '개월 누적 · 취급고';
+          if (chgEl) chgEl.innerHTML = 'H1 누적 (1~6월) · 취급고';
           valEl.closest('.kpi')?.style?.removeProperty('opacity');
         }
       });
@@ -4982,33 +5012,88 @@ async function syncFromSupabase() {
     // ── 8b. 사업부별 순매출 KPI (sales metric, BU_MON 활용) ──
     // AD 순매출
     const adMon = BU_MON.AD;
-    const adH1 = adMon.slice(0, curMonth + 1).reduce((s, v) => s + v, 0);
+    const adH1 = adMon.reduce((s, v) => s + v, 0);
     if (adH1 > 0) {
       setVal('kpi-ad-h1-val', adH1.toFixed(2) + '<span class="kpi-unit">억</span>');
-      setVal('kpi-ad-h1-chg', curMonth + '개월 누적');
+      setVal('kpi-ad-h1-chg', 'H1 누적 (1~6월)');
     }
     // FZ 순매출
     const fzMon = BU_MON.PEZ;
-    const fzH1 = fzMon.slice(0, curMonth + 1).reduce((s, v) => s + v, 0);
+    const fzH1 = fzMon.reduce((s, v) => s + v, 0);
     if (fzH1 > 0) {
       setVal('kpi-fz-h1-val', fzH1.toFixed(2) + '<span class="kpi-unit">억</span>');
-      setVal('kpi-fz-h1-chg', curMonth + '개월 누적');
+      setVal('kpi-fz-h1-chg', 'H1 누적 (1~6월)');
     }
     // DH 순매출
     const dhMon = BU_MON['기타'];
-    const dhH1 = dhMon.slice(0, curMonth + 1).reduce((s, v) => s + v, 0);
+    const dhH1 = dhMon.reduce((s, v) => s + v, 0);
     if (dhH1 > 0) {
       setVal('kpi-dh-h1-val', dhH1.toFixed(2) + '<span class="kpi-unit">억</span>');
-      setVal('kpi-dh-h1-chg', curMonth + '개월 누적');
+      setVal('kpi-dh-h1-chg', 'H1 누적 (1~6월)');
     }
 
-    // ── 9. 동기화 상태 ──
+    // ── 9. 3Q 예상 실적 KPI (7~9월 매출 + 영업이익) ──
+    {
+      const CY3Q = 2026;
+      const Q3_MONTHS = [7, 8, 9];
+      // 사업부 설정: supaKey=null이면 전사 합산
+      const q3Configs = [
+        { supaKeys: ['DX','AD','FZ','DH'], idPrefix: 'kpi-sm-3q', profitKey: '합계' },
+        { supaKeys: ['DX'],  idPrefix: 'kpi-dx-3q', profitKey: 'DX' },
+        { supaKeys: ['AD'],  idPrefix: 'kpi-ad-3q', profitKey: 'AD' },
+        { supaKeys: ['FZ'],  idPrefix: 'kpi-fz-3q', profitKey: 'FZ' },
+        { supaKeys: ['DH'],  idPrefix: 'kpi-dh-3q', profitKey: 'DH' },
+      ];
+      q3Configs.forEach(({ supaKeys, idPrefix, profitKey }) => {
+        const salesEl  = document.getElementById(idPrefix + '-sales');
+        const salesChg = document.getElementById(idPrefix + '-sales-chg');
+        const profEl   = document.getElementById(idPrefix + '-profit');
+        const profChg  = document.getElementById(idPrefix + '-profit-chg');
+
+        // 3Q 매출: 7·8·9월 합산
+        let q3Sales = 0, hasSales = false;
+        supaKeys.forEach(bu => {
+          Q3_MONTHS.forEach(m => {
+            const v = getV('sales', CY3Q, bu, m);
+            if (v !== null) { q3Sales += v / 100; hasSales = true; }
+          });
+        });
+        if (hasSales && salesEl) {
+          salesEl.innerHTML = q3Sales.toFixed(2) + '<span class="kpi-unit">억</span>';
+          if (salesChg) salesChg.innerHTML = '7·8·9월 예측 합계';
+          salesEl.closest('.kpi')?.style?.removeProperty('opacity');
+        }
+
+        // 3Q 수익: 누적(Sep) − 누적(Jun) — BU_MON_PROFIT 활용
+        if (BU_MON_PROFIT && profEl) {
+          const profArr = BU_MON_PROFIT[profitKey];
+          if (profArr) {
+            const cumJun = profArr[5]; // index 5 = 6월
+            // Q3 내 가장 최근 non-null 누적값 사용
+            let cumQ3 = null;
+            for (let idx = 8; idx >= 6; idx--) {
+              if (profArr[idx] !== null && profArr[idx] !== undefined) { cumQ3 = profArr[idx]; break; }
+            }
+            if (cumJun !== null && cumJun !== undefined && cumQ3 !== null) {
+              const q3Prof = cumQ3 - cumJun;
+              const pColor = q3Prof >= 0 ? 'var(--green)' : 'var(--red)';
+              const pSign  = q3Prof >= 0 ? '+' : '';
+              profEl.innerHTML = '<span style="color:' + pColor + '">' + pSign + q3Prof.toFixed(2) + '<span class="kpi-unit">억</span></span>';
+              if (profChg) profChg.innerHTML = q3Prof >= 0 ? '흑자 예측' : '적자 예측';
+              profEl.closest('.kpi')?.style?.removeProperty('opacity');
+            }
+          }
+        }
+      });
+    }
+
+    // ── 10. 동기화 상태 ──
     const now = new Date();
     const ts  = now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0');
     if (syncBadge) syncBadge.textContent = '✓ ' + ts + ' 동기화됨';
     console.log('[MIS Sync] 완료 — ' + rows.length + '행, ' + ts);
 
-    // ── 10. 디버그 패널 (?debug=1 일 때만) ──
+    // ── 11. 디버그 패널 (?debug=1 일 때만) ──
     if (new URLSearchParams(location.search).get('debug') === '1') {
       renderDebugPanel(db, rows.length, curMonth);
     }
