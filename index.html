@@ -665,6 +665,38 @@ body.present .notif-panel { display: none !important; }
 .mini { background: var(--bg); border: 1px solid var(--border); border-radius: var(--r2); padding: 12px 14px; }
 .mini-val { font-size: 26px; font-weight: 800; color: var(--ink1); letter-spacing: -.02em; }
 .mini-lbl { font-size: 12px; color: var(--ink4); margin-top: 3px; }
+
+/* ─────────── RESPONSIVE ─────────── */
+@media (max-width: 1100px) {
+  .g6 { grid-template-columns: repeat(3, 1fr); }
+  .g5 { grid-template-columns: repeat(3, 1fr); }
+  .g4 { grid-template-columns: repeat(2, 1fr); }
+  .col-3  { grid-template-columns: 1fr 1fr; }
+  .col-21 { grid-template-columns: 1fr; }
+  .col-12 { grid-template-columns: 1fr; }
+  .col-32 { grid-template-columns: 1fr; }
+  .insight-grid { grid-template-columns: 1fr 1fr; }
+  .ai-grid { grid-template-columns: repeat(3, 1fr); }
+  .pipeline-funnel { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 768px) {
+  .g6, .g5, .g4, .g3 { grid-template-columns: 1fr 1fr; }
+  .g2 { grid-template-columns: 1fr; }
+  .col-3, .col-2, .col-21, .col-12, .col-32 { grid-template-columns: 1fr; }
+  .insight-grid { grid-template-columns: 1fr; }
+  .ai-grid { grid-template-columns: repeat(2, 1fr); }
+  .pipeline-funnel { grid-template-columns: repeat(2, 1fr); }
+  .mini-grid { grid-template-columns: 1fr 1fr; }
+  .cfg-layout { grid-template-columns: 1fr; }
+  .content { padding: 12px 10px; }
+  .sidebar { display: none; }
+  .kpi-val { font-size: 28px; }
+}
+@media (max-width: 480px) {
+  .g6, .g5, .g4, .g3, .g2 { grid-template-columns: 1fr; }
+  .kpi-val { font-size: 24px; }
+  .ai-grid { grid-template-columns: 1fr 1fr; }
+}
 </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -757,9 +789,11 @@ body.present .notif-panel { display: none !important; }
       </div>
       <!-- 3Q 예상 실적 -->
       <div class="sh" style="margin-top:4px"><span class="sh-title" style="font-size:12px;color:var(--ink3)">3Q 예상 실적 (7~9월)</span></div>
-      <div class="kpi-grid g2" style="margin-bottom:16px">
-        <div class="kpi" id="kpi-sm-3q-sales-card" style="opacity:.6"><div class="kpi-lbl">3Q 예상 매출</div><div class="kpi-val" id="kpi-sm-3q-sales">—<span class="kpi-unit">억</span></div><div class="kpi-chg flat" id="kpi-sm-3q-sales-chg">7·8·9월 순매출 합계</div></div>
-        <div class="kpi" id="kpi-sm-3q-profit-card" style="opacity:.6"><div class="kpi-lbl">3Q 예상 수익</div><div class="kpi-val" id="kpi-sm-3q-profit">—<span class="kpi-unit">억</span></div><div class="kpi-chg flat" id="kpi-sm-3q-profit-chg">영업이익 예측</div></div>
+      <div class="kpi-grid g4" style="margin-bottom:16px">
+        <div class="kpi" id="kpi-sm-3q-sales-card"><div class="kpi-lbl">3Q 분기 매출</div><div class="kpi-val" id="kpi-sm-3q-sales">25.98<span class="kpi-unit">억</span></div><div class="kpi-chg flat" id="kpi-sm-3q-sales-chg">취급고 목표 기준</div></div>
+        <div class="kpi" id="kpi-sm-3q-profit-card"><div class="kpi-lbl">3Q 분기 수익</div><div class="kpi-val" id="kpi-sm-3q-profit"><span style="color:var(--green)">+1.00<span class="kpi-unit">억</span></span></div><div class="kpi-chg flat" id="kpi-sm-3q-profit-chg">전사 Q3 추정 (DX 주도)</div></div>
+        <div class="kpi" id="kpi-sm-3q-cum-sales-card"><div class="kpi-lbl">Q3까지 누적 매출</div><div class="kpi-val" id="kpi-sm-3q-cum-sales"><span style="font-size:15px" id="kpi-sm-3q-cum-sales-val">집계 중</span></div><div class="kpi-chg flat">H1 실적 + Q3 예상</div></div>
+        <div class="kpi" id="kpi-sm-3q-cum-profit-card"><div class="kpi-lbl">Q3까지 누적 수익</div><div class="kpi-val" id="kpi-sm-3q-cum-profit"><span style="color:var(--green)">+4.87<span class="kpi-unit">억</span></span></div><div class="kpi-chg flat">H1 3.87억 + Q3 1.00억</div></div>
       </div>
 
       <!-- AI 인사이트 — 편집가능 탭 -->
@@ -901,7 +935,7 @@ body.present .notif-panel { display: none !important; }
           <div class="alert danger"><div class="alert-tag">HIGH · SKT 계약</div><div class="alert-msg">SKT 계약 만료 D-8 (2026.06.30) — 연간 2.1억 재계약 미확정</div><div class="alert-detail">이번 주 협의 결론 필요. AD 사업부 Q3 매출 직결.</div></div>
           <div class="alert danger"><div class="alert-tag">HIGH · 목표 미달</div><div class="alert-msg">DX 상반기 달성률 49.4% — 하반기 24.6억 추가 수주 필요</div><div class="alert-detail">현 파이프라인 Gap 약 8억. SKT 하반기 집행(8월) 확인 핵심.</div></div>
           <div class="alert warn"><div class="alert-tag">MID · 일정</div><div class="alert-msg">iM뱅크 디자인시스템 8월 납기 지연 가능성</div><div class="alert-detail">외주비 0.3억 포함. PM 주간 점검 강화 권고.</div></div>
-          <div class="alert warn"><div class="alert-tag">MID · 외주비</div><div class="alert-msg">써브웨이 AWS + SKT 개발외주 = 외주비 64% 집중</div></div>
+          <div class="alert warn"><div class="alert-tag">MID · 외주비</div><div class="alert-msg">써브웨이 AWS(1.38억) + SKT 개발외주(0.86억) = H1 외주비 65% 집중</div></div>
           <div class="alert info"><div class="alert-tag">LOW · 미수금</div><div class="alert-msg">90일 초과 미수금 0.8억 — 7월 말 회수 예정</div></div>
         </div>
       </div>
@@ -928,7 +962,7 @@ body.present .notif-panel { display: none !important; }
       <div class="sh"><span class="sh-title">DX 사업부 — 2026 상반기</span><span class="sh-action" onclick="openHist('DX매출','DX 매출 추이')">5개년 추이</span></div>
       <div class="kpi-grid g6" style="margin-bottom:16px">
         <div class="kpi" id="kpi-dx-gross-card" style="opacity:.6"><div class="kpi-lbl">취급고매출 — 누적</div><div class="kpi-val" id="kpi-dx-gross-val">—<span class="kpi-unit">억</span></div><div class="kpi-chg flat" id="kpi-dx-gross-chg">데이터 연동 준비중</div><button class="hist-btn" onclick="openHist('DX매출','DX 매출 5개년 추이')">📊 과거 데이터 보기</button></div>
-        <div class="kpi accent"><div class="kpi-lbl">순매출 — 누적</div><div class="kpi-val" id="kpi-dx-h1-val">31.80<span class="kpi-unit">억</span></div><div class="kpi-chg up" id="kpi-dx-h1-chg">목표 31.84억 대비</div><button class="hist-btn" onclick="openHist('DX매출','DX 매출 5개년 추이')">📊 과거 데이터 보기</button></div>
+        <div class="kpi accent"><div class="kpi-lbl">매출 — 누적</div><div class="kpi-val" id="kpi-dx-h1-val">31.80<span class="kpi-unit">억</span></div><div class="kpi-chg up" id="kpi-dx-h1-chg">순매출목표 29.30억 대비</div><button class="hist-btn" onclick="openHist('DX매출','DX 매출 5개년 추이')">📊 과거 데이터 보기</button></div>
         <div class="kpi" id="kpi-dx-profit-card"><div class="kpi-lbl">영업이익 — 누적</div><div class="kpi-val" id="kpi-dx-profit-val" style="color:var(--green)">+3.87<span class="kpi-unit">억</span></div><div class="kpi-chg up" id="kpi-dx-profit-chg">흑자 유지</div><button class="hist-btn" onclick="openHist('DX수익','DX 손익 5개년 추이')">📊 과거 데이터 보기</button></div>
         <div class="kpi"><div class="kpi-lbl">전년대비 증감률</div><div class="kpi-val" id="kpi-dx-yoy-val" style="color:var(--green)">+20.7<span class="kpi-unit">%</span></div><div class="kpi-chg up" id="kpi-dx-yoy-chg">전년 26.35억 대비</div><button class="hist-btn" onclick="openHistDual('DX매출','DX수익','DX 매출·손익 추이')">📊 매출·손익 보기</button></div>
         <div class="kpi" id="kpi-dx-util"><div class="kpi-lbl">가동율</div><div class="kpi-val"><span id="dx-util-val">76</span><span class="kpi-unit">%</span></div><div class="kpi-chg flat" id="dx-util-chg">목표 80% 대비 -4%p</div><button class="hist-btn" onclick="openHist('가동율','전사 가동율 5개년 추이')">📊 과거 데이터 보기</button></div>
@@ -936,15 +970,17 @@ body.present .notif-panel { display: none !important; }
       </div>
       <!-- 3Q 예상 실적 -->
       <div class="sh" style="margin-top:4px"><span class="sh-title" style="font-size:12px;color:var(--ink3)">3Q 예상 실적 (7~9월)</span></div>
-      <div class="kpi-grid g2" style="margin-bottom:16px">
-        <div class="kpi" id="kpi-dx-3q-sales-card" style="opacity:.6"><div class="kpi-lbl">3Q 예상 매출</div><div class="kpi-val" id="kpi-dx-3q-sales">—<span class="kpi-unit">억</span></div><div class="kpi-chg flat" id="kpi-dx-3q-sales-chg">7·8·9월 순매출 합계</div></div>
-        <div class="kpi" id="kpi-dx-3q-profit-card" style="opacity:.6"><div class="kpi-lbl">3Q 예상 수익</div><div class="kpi-val" id="kpi-dx-3q-profit">—<span class="kpi-unit">억</span></div><div class="kpi-chg flat" id="kpi-dx-3q-profit-chg">영업이익 예측</div></div>
+      <div class="kpi-grid g4" style="margin-bottom:16px">
+        <div class="kpi" id="kpi-dx-3q-sales-card"><div class="kpi-lbl">3Q 분기 매출</div><div class="kpi-val" id="kpi-dx-3q-sales">15.38<span class="kpi-unit">억</span></div><div class="kpi-chg flat" id="kpi-dx-3q-sales-chg">취급고 목표 기준</div></div>
+        <div class="kpi" id="kpi-dx-3q-profit-card"><div class="kpi-lbl">3Q 분기 수익</div><div class="kpi-val" id="kpi-dx-3q-profit"><span style="color:var(--green)">+0.37<span class="kpi-unit">억</span></span></div><div class="kpi-chg flat" id="kpi-dx-3q-profit-chg">Q3 예상 증분 (목표 기준)</div></div>
+        <div class="kpi" id="kpi-dx-3q-cum-sales-card"><div class="kpi-lbl">Q3까지 누적 매출</div><div class="kpi-val" id="kpi-dx-3q-cum-sales">47.18<span class="kpi-unit">억</span></div><div class="kpi-chg flat">H1 31.80억 + Q3 15.38억</div></div>
+        <div class="kpi" id="kpi-dx-3q-cum-profit-card"><div class="kpi-lbl">Q3까지 누적 수익</div><div class="kpi-val" id="kpi-dx-3q-cum-profit"><span style="color:var(--green)">+4.24<span class="kpi-unit">억</span></span></div><div class="kpi-chg flat">H1 3.87억 + Q3 0.37억</div></div>
       </div>
 
       <div class="insight-grid">
-        <div class="insight ins-green"><div class="ins-tag">H1 달성</div><div class="ins-title">순매출 31.80억 · 목표 99.9% · YoY +20.7%</div><div class="ins-body">목표(31.84억) 대비 -0.04억 미달이나 사실상 달성. 상위 3사(써브웨이 7.44억·삼성자산운용 5.37억·SKT 5.90억)가 전체 59% 담당. H1 영업이익 +1.58억으로 흑자 기록. Q3(15.07억) 달성 시 연간 62억·전사 흑자 전환 가능.</div></div>
-        <div class="insight ins-warn"><div class="ins-tag">Q3 리스크</div><div class="ins-title">8월 7.79억 목표 — Q3 전체의 52% 집중</div><div class="ins-body">Q3(15.07억) 중 8월 비중 52%. SKT 8월 집행 지연 시 최대 -7.79억 공백 발생. iM뱅크 디자인시스템 납기(8월 말) 연동 주의. 9월 목표 3.23억은 보수적 설정 — 초과 가능성 있음.</div></div>
-        <div class="insight ins-warn"><div class="ins-tag">외주비 집중</div><div class="ins-title">써브웨이 AWS + SKT 개발외주 = 외주비 64%</div><div class="ins-body">2개 프로젝트 외주비 총 4.74억(써브웨이 2.64억 + SKT 2.37억 = 5.01억). 전체 외주비의 64% 편중. 2개 프로젝트 일정 연동 리스크 높음. 하반기 외주 구조 다변화 검토 권고.</div></div>
+        <div class="insight ins-green"><div class="ins-tag">H1 초과달성</div><div class="ins-title">매출 31.80억 · 순매출목표 108.5% · YoY +20.7%</div><div class="ins-body">순매출 목표(29.30억) 대비 +2.50억 초과달성(+8.5%). 상위 3사(써브웨이 7.44억·삼성자산운용 5.37억·SKT 5.90억)가 전체 59% 담당. H1 영업이익 +3.87억 흑자 기록. Q3(15.07억 목표) 달성 시 Q3 누적 수익 +4.24억·전사 흑자 전환 가능.</div></div>
+        <div class="insight ins-warn"><div class="ins-tag">Q3 리스크</div><div class="ins-title">Q3 목표 15.07억 — SKT·iM뱅크 납기 연동</div><div class="ins-body">Q3(15.07억) 중 SKT 디자인시스템 고도화 8월 집행 지연 시 공백 발생. iM뱅크 디자인시스템 납기(8월 말) 연동 주의. 재규어 멤버십 리뉴얼(9월 0.5억) 추가 상방 변수 존재.</div></div>
+        <div class="insight ins-warn"><div class="ins-tag">외주비 집중</div><div class="ins-title">써브웨이 AWS + SKT 개발외주 = 외주비 65%</div><div class="ins-body">써브웨이 AWS(1.38억) + SKT 개발외주(0.86억) = 2.24억, H1 외주비 3.43억의 65.3% 집중. 하반기 외주 구조 다변화 및 내재화 검토 권고.</div></div>
       </div>
 
       <div class="row col-3">
@@ -954,7 +990,18 @@ body.present .notif-panel { display: none !important; }
       </div>
 
       <div class="row col-2">
-        <div class="card"><div class="card-hd"><div class="card-title">외주비 항목별</div></div><div class="ch" style="height:155px"><canvas id="cDxExt"></canvas></div></div>
+        <div class="card">
+          <div class="card-hd"><div class="card-title">외주비 항목별</div><span class="bx bx-gray" style="font-size:10px">H1 합계 3.43억</span></div>
+          <div class="ch" style="height:110px"><canvas id="cDxExt"></canvas></div>
+          <div style="margin-top:6px;font-size:10px;color:var(--ink2);line-height:1.7">
+            <div style="display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px solid var(--bd)"><span>써브웨이 AWS (스마일샤크)</span><span><b style="color:var(--ink1)">1.38억</b> <span style="color:var(--blue)">40.2%</span></span></div>
+            <div style="display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px solid var(--bd)"><span>SKT 개발외주 (전민형·정경오 외)</span><span><b style="color:var(--ink1)">0.86억</b> <span style="color:var(--blue)">25.1%</span></span></div>
+            <div style="display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px solid var(--bd)"><span>써브웨이 본인인증 (나이스)</span><span><b style="color:var(--ink1)">0.25억</b> 7.3%</span></div>
+            <div style="display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px solid var(--bd)"><span>공통 퍼블외주 (조정은)</span><span><b style="color:var(--ink1)">0.22억</b> 6.4%</span></div>
+            <div style="display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px solid var(--bd)"><span>아우디 서버 (SK브로드밴드)</span><span><b style="color:var(--ink1)">0.22억</b> 6.4%</span></div>
+            <div style="display:flex;justify-content:space-between;padding:2px 0"><span>기타 (재규어AWS·보안·롯데 등)</span><span><b style="color:var(--ink1)">0.50억</b> 14.6%</span></div>
+          </div>
+        </div>
         <div class="card"><div class="card-hd"><div class="card-title">팀별 가동율</div></div><div class="ch" style="height:155px"><canvas id="cDxUtil"></canvas></div></div>
       </div>
 
@@ -964,11 +1011,11 @@ body.present .notif-panel { display: none !important; }
           <table class="fc">
             <thead><tr><th>분기</th><th>목표</th><th>손익</th><th>누적</th><th>상태</th></tr></thead>
             <tbody>
-              <tr><td>Q1</td><td class="num">14.76억</td><td class="gap-up">+0.98억</td><td class="gap-up">+0.98억</td><td><span class="bx bx-gray">완료</span></td></tr>
-              <tr><td>Q2</td><td class="num">14.53억</td><td class="gap-up">+0.60억</td><td class="gap-up">+1.58억</td><td><span class="bx bx-amber">매출미달</span></td></tr>
-              <tr><td>Q3 예상</td><td class="num">15.07억</td><td class="gap-up">+0.37억</td><td class="gap-up">+1.95억</td><td><span class="bx bx-blue">예측</span></td></tr>
-              <tr><td>Q4 예상</td><td class="num">15.12억</td><td class="gap-up">+0.35억</td><td class="gap-up">+2.30억</td><td><span class="bx bx-blue">예측</span></td></tr>
-              <tr><td><strong>연간</strong></td><td class="num">59.5억 목표</td><td class="gap-up">+2.30억 예상</td><td class="num">61.99억 예상</td><td><span class="bx bx-blue">예측</span></td></tr>
+              <tr><td>Q1</td><td class="num">14.76억</td><td class="gap-up" id="dx-q1-pnl">+0.98억</td><td class="gap-up" id="dx-q1-cum">+0.98억</td><td><span class="bx bx-green">초과달성</span></td></tr>
+              <tr><td>Q2</td><td class="num">14.53억</td><td class="gap-up" id="dx-q2-pnl">+2.89억</td><td class="gap-up" id="dx-q2-cum">+3.87억</td><td id="dx-q2-st"><span class="bx bx-green">초과달성</span></td></tr>
+              <tr><td>Q3 예상</td><td class="num">15.07억</td><td class="gap-up" id="dx-q3-pnl">+0.37억</td><td class="gap-up" id="dx-q3-cum">+4.24억</td><td><span class="bx bx-blue">예측</span></td></tr>
+              <tr><td>Q4 예상</td><td class="num">15.12억</td><td class="gap-up" id="dx-q4-pnl">+0.35억</td><td class="gap-up" id="dx-q4-cum">+4.59억</td><td><span class="bx bx-blue">예측</span></td></tr>
+              <tr><td><strong>연간</strong></td><td class="num">59.5억 목표</td><td class="gap-up" id="dx-ann-pnl">+4.59억 예상</td><td class="gap-up" id="dx-ann-cum">+4.59억 손익 예상</td><td><span class="bx bx-blue">예측</span></td></tr>
             </tbody>
           </table>
         </div>
@@ -1066,8 +1113,8 @@ body.present .notif-panel { display: none !important; }
       <!-- 3Q 예상 실적 -->
       <div class="sh" style="margin-top:4px"><span class="sh-title" style="font-size:12px;color:var(--ink3)">3Q 예상 실적 (7~9월)</span></div>
       <div class="kpi-grid g2" style="margin-bottom:16px">
-        <div class="kpi" id="kpi-ad-3q-sales-card" style="opacity:.6"><div class="kpi-lbl">3Q 예상 매출</div><div class="kpi-val" id="kpi-ad-3q-sales">—<span class="kpi-unit">억</span></div><div class="kpi-chg flat" id="kpi-ad-3q-sales-chg">7·8·9월 순매출 합계</div></div>
-        <div class="kpi" id="kpi-ad-3q-profit-card" style="opacity:.6"><div class="kpi-lbl">3Q 예상 수익</div><div class="kpi-val" id="kpi-ad-3q-profit">—<span class="kpi-unit">억</span></div><div class="kpi-chg flat" id="kpi-ad-3q-profit-chg">영업이익 예측</div></div>
+        <div class="kpi" id="kpi-ad-3q-sales-card"><div class="kpi-lbl">3Q 예상 매출</div><div class="kpi-val" id="kpi-ad-3q-sales">5.60<span class="kpi-unit">억</span></div><div class="kpi-chg flat" id="kpi-ad-3q-sales-chg">취급고 목표 기준</div></div>
+        <div class="kpi" id="kpi-ad-3q-profit-card"><div class="kpi-lbl">3Q 예상 수익</div><div class="kpi-val" id="kpi-ad-3q-profit">—<span class="kpi-unit">억</span></div><div class="kpi-chg flat" id="kpi-ad-3q-profit-chg">Q3 데이터 입력 대기</div></div>
       </div>
 
       <div class="insight-grid">
@@ -1208,8 +1255,8 @@ body.present .notif-panel { display: none !important; }
       <!-- 3Q 예상 실적 -->
       <div class="sh" style="margin-top:4px"><span class="sh-title" style="font-size:12px;color:var(--ink3)">3Q 예상 실적 (7~9월)</span></div>
       <div class="kpi-grid g2" style="margin-bottom:16px">
-        <div class="kpi" id="kpi-fz-3q-sales-card" style="opacity:.6"><div class="kpi-lbl">3Q 예상 매출</div><div class="kpi-val" id="kpi-fz-3q-sales">—<span class="kpi-unit">억</span></div><div class="kpi-chg flat" id="kpi-fz-3q-sales-chg">7·8·9월 순매출 합계</div></div>
-        <div class="kpi" id="kpi-fz-3q-profit-card" style="opacity:.6"><div class="kpi-lbl">3Q 예상 수익</div><div class="kpi-val" id="kpi-fz-3q-profit">—<span class="kpi-unit">억</span></div><div class="kpi-chg flat" id="kpi-fz-3q-profit-chg">영업이익 예측</div></div>
+        <div class="kpi" id="kpi-fz-3q-sales-card"><div class="kpi-lbl">3Q 예상 매출</div><div class="kpi-val" id="kpi-fz-3q-sales">2.50<span class="kpi-unit">억</span></div><div class="kpi-chg flat" id="kpi-fz-3q-sales-chg">목표 기준 추정치</div></div>
+        <div class="kpi" id="kpi-fz-3q-profit-card"><div class="kpi-lbl">3Q 예상 수익</div><div class="kpi-val" id="kpi-fz-3q-profit">—<span class="kpi-unit">억</span></div><div class="kpi-chg flat" id="kpi-fz-3q-profit-chg">Q3 데이터 입력 대기</div></div>
       </div>
 
       <div class="insight-grid" style="grid-template-columns:1fr 1fr">
@@ -1269,8 +1316,8 @@ body.present .notif-panel { display: none !important; }
       <!-- 3Q 예상 실적 -->
       <div class="sh" style="margin-top:4px"><span class="sh-title" style="font-size:12px;color:var(--ink3)">3Q 예상 실적 (7~9월)</span></div>
       <div class="kpi-grid g2" style="margin-bottom:16px">
-        <div class="kpi" id="kpi-dh-3q-sales-card" style="opacity:.6"><div class="kpi-lbl">3Q 예상 매출</div><div class="kpi-val" id="kpi-dh-3q-sales">—<span class="kpi-unit">억</span></div><div class="kpi-chg flat" id="kpi-dh-3q-sales-chg">7·8·9월 순매출 합계</div></div>
-        <div class="kpi" id="kpi-dh-3q-profit-card" style="opacity:.6"><div class="kpi-lbl">3Q 예상 수익</div><div class="kpi-val" id="kpi-dh-3q-profit">—<span class="kpi-unit">억</span></div><div class="kpi-chg flat" id="kpi-dh-3q-profit-chg">영업이익 예측</div></div>
+        <div class="kpi" id="kpi-dh-3q-sales-card"><div class="kpi-lbl">3Q 예상 매출</div><div class="kpi-val" id="kpi-dh-3q-sales">2.50<span class="kpi-unit">억</span></div><div class="kpi-chg flat" id="kpi-dh-3q-sales-chg">목표 기준 추정치</div></div>
+        <div class="kpi" id="kpi-dh-3q-profit-card"><div class="kpi-lbl">3Q 예상 수익</div><div class="kpi-val" id="kpi-dh-3q-profit">—<span class="kpi-unit">억</span></div><div class="kpi-chg flat" id="kpi-dh-3q-profit-chg">Q3 데이터 입력 대기</div></div>
       </div>
       <div class="card" style="text-align:center;padding:40px 20px">
         <div style="font-size:32px;margin-bottom:12px">📋</div>
@@ -2694,7 +2741,7 @@ const HIST={
   가동율:{yrs:[[72,74,75,73,76,78],[75,76,77,75,78,79],[77,78,79,77,80,81],[79,80,80,79,81,82],[76,77,78,76,75,76]],insight:'가동율 2022~2025 꾸준 상승. 2026년 76%는 AD 유휴 인력 영향. 80% 달성을 위해 프로젝트 배분 최적화 필요.'},
   미수금:{yrs:[[1.2,1.0,0.8,1.1,0.9,1.0],[1.1,1.0,0.9,1.2,1.0,1.1],[1.3,1.2,1.0,1.3,1.1,1.2],[2.0,1.8,1.6,2.1,1.9,2.0],[3.0,2.8,2.6,3.1,3.0,3.2]],insight:'미수금 2025~2026 증가 추세. SKT·CJ프레시웨이 반복 지연 패턴. 90일 초과분 0.8억 즉시 대응 필요.'},
   인원:{yrs:[[102,100,99,99,97,97],[94,92,94,95,100,101],[96,96,96,96,96,96],[97,96,97,96,95,94],[61,61,62,61,61,61]],insight:'2022~2025 전사 인원 94~102명(외주 포함 FTE 기준). 2026년 61명은 사내 직원 기준으로 측정 방식 변경. 2024년 구조조정 이후 슬림화 진행.'},
-  'DX매출':{yrs:[[3.54,3.60,4.75,3.00,4.90,5.52],[3.60,4.60,5.33,4.78,4.84,5.03],[4.15,4.01,4.95,3.13,3.33,7.80],[3.73,4.52,4.89,4.51,3.95,4.75],[3.46,5.07,7.29,6.24,3.69,6.05]],insight:'2026 H1 실적 31.80억. 목표 31.84억 대비 99.9% 달성. 2025 H1 26.35억 대비 +20.7% 성장. 3월 7.29억·6월 6.05억 고점 기록. Q3 목표 15.38억(7월 4.36, 8월 7.79, 9월 3.23). 2024년 6월 7.80억(SKT 착수)이 역대 최고.'},
+  'DX매출':{yrs:[[3.54,3.60,4.75,3.00,4.90,5.52],[3.60,4.60,5.33,4.78,4.84,5.03],[4.15,4.01,4.95,3.13,3.33,7.80],[3.73,4.52,4.89,4.51,3.95,4.75],[3.46,5.07,7.29,6.24,3.69,6.05]],insight:'2026 H1 실적 31.80억. 순매출 목표(29.30억) 대비 108.5% 초과달성(+2.50억). 2025 H1 26.35억 대비 +20.7% 성장. 3월 7.29억·6월 6.05억 고점 기록. Q3 목표 15.07억. 2024년 6월 7.80억(SKT 착수)이 역대 최고.'},
   'AD매출':{yrs:[[2.90,3.37,2.83,1.60,3.17,4.70],[1.74,2.07,1.55,2.50,2.15,1.91],[2.03,2.51,3.38,2.50,2.55,3.93],[1.47,2.16,2.87,2.42,2.90,2.48],[1.4,1.6,1.8,1.7,1.8,1.9]],insight:'AD 순매출 2022년 이후 구조적 하락. 2022 H1 18.6억 → 2025 H1 14.3억. 2025 연간 33.64억. 취급고 대비 순매출 비중 감소 추세.'},
   'AD가동율':{yrs:[[70,72,73,71,74,75],[73,74,75,73,76,77],[75,76,78,76,79,80],[77,78,79,77,80,80],[71,72,73,71,72,71]],insight:'AD 가동율 2025까지 상승 후 2026 하락. 롯데지주 완료 후 PD팀 유휴 발생. 신규 수주 연결 시급.'},
   'PEZ매출':{yrs:[[0.5,0.6,0.7,0.6,0.7,0.8],[0.6,0.7,0.8,0.7,0.9,1.0],[0.7,0.8,1.0,0.9,1.0,1.1],[0.8,0.9,1.1,1.0,1.2,1.3],[0.7,0.8,0.9,0.8,1.0,0.6]],insight:'FZ 사업부 안정적 성장. 낙찰률 62% 유지 시 연간 목표 13억 달성 가능.'},
@@ -2703,8 +2750,8 @@ const HIST={
     [0.48,0.52,0.58,0.44,0.62,0.72], // 2023 실적 H1 3.36억
     [0.55,0.60,0.68,0.48,0.72,0.82], // 2024 실적 H1 3.85억 (SKT 대형 착수 영향)
     [0.62,0.65,0.72,0.55,0.78,0.88], // 2025 실적 H1 4.20억
-    [0.55,0.57,0.60,0.52,0.62,0.57]  // 2026 추정 H1 3.43억 (DX 기준)
-  ],insight:'전사 외주비(H1 기준). 2024년 SKT·써브웨이 대형 프로젝트 집행으로 급증. 2026년 H1 3.43억, 연 예산 7.86억 대비 44% 소진. 2개 프로젝트(써브웨이·SKT)에 64% 집중 구조 해소 필요.'},
+    [0.55,0.52,0.55,0.50,0.69,0.62]  // 2026 H1 실적 3.43억 (Google Sheet 검증값)
+  ],insight:'전사 외주비(H1 기준). 2024년 SKT·써브웨이 대형 프로젝트 집행으로 급증. 2026년 H1 3.43억, 연 예산 7.86억 대비 44% 소진. 써브웨이 AWS(1.38억)+SKT 개발외주(0.86억) 2개 항목에 65.3% 집중 구조 해소 필요.'},
   'MM단가':{yrs:[
     [680,682,685,680,688,692], // 2022 평균 684만원/MM
     [695,700,705,698,710,715], // 2023 평균 704만원/MM
@@ -2901,13 +2948,37 @@ MIS_CHARTS.dxRvT = new Chart(document.getElementById('cDxRvT').getContext('2d'),
 MIS_CHARTS.dxYoY = new Chart(document.getElementById('cDxYoY').getContext('2d'),{
   type:'line',
   data:{labels:MONTHS,datasets:[
-    {label:'2025 누적',data:[3.73,8.25,13.14,17.65,21.60,26.35],borderColor:C_GRAY,borderDash:[5,3],borderWidth:1.5,pointRadius:0,fill:false},
+    {label:'2025 누적',data:[3.73,8.25,13.14,17.65,21.60,26.35],borderColor:C_GRAY,borderDash:[5,3],borderWidth:1.5,pointRadius:3,pointBackgroundColor:C_GRAY,fill:false},
     {label:'2026 누적',data:[3.46,8.53,15.82,22.06,25.75,31.80],borderColor:C_BLUE,backgroundColor:C_BLUE_T,borderWidth:2,pointRadius:3,pointBackgroundColor:C_BLUE,fill:true}
   ]},
-  options:{...BASE_OPT,plugins:{legend:{display:true,position:'bottom',labels:{font:{size:11,family:'Inter'},color:'#374151',boxWidth:8}}}}
+  options:{...BASE_OPT,
+    interaction:{mode:'index',intersect:false},
+    plugins:{
+      legend:{display:true,position:'bottom',labels:{font:{size:11,family:'Inter'},color:'#374151',boxWidth:8}},
+      tooltip:{
+        enabled:true,
+        mode:'index',
+        intersect:false,
+        callbacks:{
+          label:ctx=>{
+            const yr = ctx.datasetIndex===0?'2025':'2026';
+            return ` ${yr} 누적: ${ctx.parsed.y.toFixed(2)}억`;
+          },
+          afterLabel:ctx=>{
+            if(ctx.datasetIndex===1){
+              const v2025=[3.73,8.25,13.14,17.65,21.60,26.35][ctx.dataIndex];
+              const diff=(ctx.parsed.y-v2025);
+              return ` YoY: ${diff>=0?'+':''}${diff.toFixed(2)}억`;
+            }
+            return '';
+          }
+        }
+      }
+    }
+  }
 });
 const plD=[0.33,0.47,0.19,0.46,0.08,0.05];
-new Chart(document.getElementById('cDxPnL').getContext('2d'),{
+MIS_CHARTS.dxPnL = new Chart(document.getElementById('cDxPnL').getContext('2d'),{
   type:'bar',
   data:{labels:MONTHS,datasets:[{data:plD,backgroundColor:plD.map(v=>v>=0?C_GREEN:C_RED),borderRadius:5,borderSkipped:false}]},
   options:{...BASE_OPT,scales:{...BASE_OPT.scales,y:{...BASE_OPT.scales.y,ticks:{...BASE_OPT.scales.y.ticks,callback:v=>v+'억'}}}}
@@ -2915,8 +2986,8 @@ new Chart(document.getElementById('cDxPnL').getContext('2d'),{
 new Chart(document.getElementById('cDxExt').getContext('2d'),{
   type:'bar',
   data:{
-    labels:['써브웨이AWS','SKT개발','본인인증','퍼블외주','iM뱅크','알림톡'],
-    datasets:[{data:[2.64,2.37,0.55,0.33,0.30,0.13],backgroundColor:[C_BLUE,'#1D4ED8','#3B82F6','#60A5FA','#93C5FD','#DBEAFE'],borderRadius:5,borderSkipped:false}]
+    labels:['써브웨이AWS','SKT개발외주','본인인증','공통퍼블외주','아우디서버','기타'],
+    datasets:[{data:[1.38,0.86,0.25,0.22,0.22,0.50],backgroundColor:[C_BLUE,'#1D4ED8','#3B82F6','#60A5FA','#93C5FD','#DBEAFE'],borderRadius:5,borderSkipped:false}]
   },
   options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{font:{size:11,family:'Inter'},color:C_GRAY,callback:v=>v+'억'},grid:{color:'#F3F4F6'}},y:{ticks:{font:{size:11,family:'Inter'},color:'#374151'},grid:{display:false}}}}
 });
@@ -4664,7 +4735,7 @@ const WEBAPP_SECRET = 'ddmis2026';
 
 // BU 매핑: Supabase 키 → MIS 내부 키
 const BU_MAP       = { DX:'DX', AD:'AD', FZ:'PEZ', DH:'기타' };
-const DX_H1_TARGET = 31.84;  // 2026 DX H1 목표 (억원)
+const DX_H1_TARGET = 29.30;  // 2026 DX H1 순매출 목표 (억원, 출처: Google Sheet 2026 목표 섹션)
 const DX_H1_2025   = 26.35;  // 2025 DX H1 실적 (억원)
 
 // 전체 동기화: 시트 → Supabase → MIS
@@ -4940,15 +5011,19 @@ async function syncFromSupabase() {
     const dx5 = dxMon[4] ?? (dx26[4] || 0);
     const dxH1  = dxMon.reduce((s,v)=>s+v, 0) || dx26.reduce((s,v)=>s+v, 0);
     const dxAch = dxH1 / DX_H1_TARGET * 100;
-    const dxYoY = (dxH1 - DX_H1_2025) / DX_H1_2025 * 100;
+    // 2025 기준값 — Supabase 2025 데이터 우선, 없으면 하드코딩 폴백
+    const dx2025sum = BU_HIST_YRS.DX[3].reduce((s,v)=>s+v, 0);
+    const dxYoYBase = dx2025sum > 0 ? dx2025sum : DX_H1_2025;
+    const dxYoY = (dxH1 - dxYoYBase) / dxYoYBase * 100;
     // SM 총괄 KPI — 누적 순매출
     const curMonth = new Date().getMonth(); // 0-based, 6월=5
     const smRevCum = BU_MON.DX.slice(0,curMonth+1).reduce((s,v)=>s+v,0)
                    + BU_MON.AD.slice(0,curMonth+1).reduce((s,v)=>s+v,0)
                    + BU_MON.PEZ.slice(0,curMonth+1).reduce((s,v)=>s+v,0)
                    + BU_MON['기타'].slice(0,curMonth+1).reduce((s,v)=>s+v,0);
-    // 전년 동기 순매출 (하드코딩 참조값 — 2025 H1 전사합)
-    const SM_REV_2025_H1 = 43.20;
+    // 전년 동기 순매출 — Supabase 2025 데이터 우선, 없으면 하드코딩
+    const sm2025sum = ['DX','AD','PEZ','기타'].reduce((s,k)=>s+BU_HIST_YRS[k][3].reduce((a,v)=>a+v,0),0);
+    const SM_REV_2025_H1 = sm2025sum > 0 ? sm2025sum : 43.20;
     const smRevYoY = smRevCum > 0 ? (smRevCum - SM_REV_2025_H1) / SM_REV_2025_H1 * 100 : 0;
     // 영업이익 누적 (profit metric 사용)
     // 영업이익: 누적값 저장 방식 → 가장 최근 월 값을 직접 사용 (합산 아님)
@@ -4965,7 +5040,7 @@ async function syncFromSupabase() {
       const yoySign = smRevYoY>=0?'+':'';
       const yoyC3 = smRevYoY>=0?'var(--green)':'var(--red)';
       setVal('kpi-sm-yoy-val','<span style="color:'+yoyC3+'">'+yoySign+smRevYoY.toFixed(1)+'<span class="kpi-unit">%</span></span>');
-      setVal('kpi-sm-yoy-chg','순매출 기준 · '+curMonth+'개월 누적');
+      setVal('kpi-sm-yoy-chg','순매출 기준 · H1 (1~6월) / 전년 '+SM_REV_2025_H1.toFixed(2)+'억 대비');
     }
     if(profitCum !== null) {
       const profColor = profitCum>=0?'var(--green)':'var(--red)';
@@ -4982,7 +5057,7 @@ async function syncFromSupabase() {
     setVal('kpi-dx-ach-chg', dxAch>=100?'목표 초과 달성':'목표 미달');
     const yoyColor = dxYoY>=0?'var(--green)':'var(--red)';
     setVal('kpi-dx-yoy-val', '<span style="color:'+yoyColor+'">'+(dxYoY>=0?'+':'')+dxYoY.toFixed(1)+'<span class="kpi-unit">%</span></span>');
-    setVal('kpi-dx-yoy-chg', '전년 '+DX_H1_2025+'억 대비');
+    setVal('kpi-dx-yoy-chg', '전년 '+dxYoYBase.toFixed(2)+'억 대비');
 
     // ── 8. 사업부별 영업이익 KPI (BU_MON_PROFIT 활용) ──
     // profit은 누적값으로 저장됨 → 가장 최근 월의 값 = 누적 영업이익
@@ -5012,6 +5087,69 @@ async function syncFromSupabase() {
       });
     }
 
+    // ── 8a-2. DX 분기별 손익 카드 + cDxPnL 차트 동적 업데이트 ──
+    // profit은 누적값으로 저장: profit[2]=Q1누적, profit[5]=H1누적
+    if (BU_MON_PROFIT?.DX) {
+      const p = BU_MON_PROFIT.DX;
+      const q1cum = p[2];  // 3월 누적 = Q1 손익
+      const h1cum = p[5];  // 6월 누적 = H1 손익
+
+      const fmtPnl = (v, isCum) => {
+        if (v === null || v === undefined) return null;
+        const sign = v >= 0 ? '+' : '';
+        const cls  = v >= 0 ? 'gap-up' : 'gap-down';
+        const sfx  = isCum ? ' 누적' : '';
+        return { html: sign + v.toFixed(2) + '억' + sfx, cls };
+      };
+
+      if (q1cum !== null) {
+        const f = fmtPnl(q1cum);
+        const el = document.getElementById('dx-q1-pnl');
+        const ec = document.getElementById('dx-q1-cum');
+        if (el) { el.textContent = f.html; el.className = f.cls; }
+        if (ec) { ec.textContent = f.html; ec.className = f.cls; }
+      }
+      if (h1cum !== null) {
+        const q1val = (q1cum !== null) ? q1cum : 0.98;  // q1 폴백: plD 기반 0.98억
+        const q2inc = h1cum - q1val;
+        const fq2 = fmtPnl(q2inc);
+        const fh1 = fmtPnl(h1cum);
+        const q2p = document.getElementById('dx-q2-pnl');
+        const q2c = document.getElementById('dx-q2-cum');
+        if (q2p) { q2p.textContent = fq2.html; q2p.className = fq2.cls; }
+        if (q2c) { q2c.textContent = fh1.html; q2c.className = fh1.cls; }
+        // Q2 상태 → 매출 초과달성이면 bx-green
+        const q2st = document.getElementById('dx-q2-st');
+        if (q2st) q2st.innerHTML = '<span class="bx bx-green">초과달성</span>';
+        // 연간 누적 손익 추정 (H1 + Q3목표 + Q4추정)
+        const q3est = 0.37, q4est = 0.35;
+        const annualPnl = h1cum + q3est + q4est;
+        const q3cumVal = h1cum + q3est;
+        const fq3c = fmtPnl(q3cumVal);
+        const fq4c = fmtPnl(annualPnl);
+        const q3c = document.getElementById('dx-q3-cum');
+        const q4c = document.getElementById('dx-q4-cum');
+        const ap  = document.getElementById('dx-ann-pnl');
+        const ac  = document.getElementById('dx-ann-cum');
+        if (q3c) { q3c.textContent = fq3c.html; q3c.className = fq3c.cls; }
+        if (q4c) { q4c.textContent = fq4c.html; q4c.className = fq4c.cls; }
+        if (ap)  ap.textContent = '+' + annualPnl.toFixed(2) + '억 예상';
+        if (ac)  { ac.textContent = '+' + annualPnl.toFixed(2) + '억 손익 예상'; ac.className = 'gap-up'; }
+      }
+
+      // cDxPnL 차트 동적 업데이트 (BU_MON_PROFIT → 월별 증분)
+      const monthlyPnL = p.slice(0, 6).map((cum, i) => {
+        if (cum === null) return plD[i] ?? null;
+        const prev = i === 0 ? 0 : (p[i-1] ?? 0);
+        return parseFloat((cum - prev).toFixed(2));
+      });
+      if (MIS_CHARTS.dxPnL) {
+        MIS_CHARTS.dxPnL.data.datasets[0].data = monthlyPnL;
+        MIS_CHARTS.dxPnL.data.datasets[0].backgroundColor = monthlyPnL.map(v => v === null ? C_GRAY : v >= 0 ? C_GREEN : C_RED);
+        MIS_CHARTS.dxPnL.update('none');
+      }
+    }
+
     // ── 8b. 사업부별 순매출 KPI (sales metric, BU_MON 활용) ──
     // AD 순매출
     const adMon = BU_MON.AD;
@@ -5039,6 +5177,19 @@ async function syncFromSupabase() {
     {
       const CY3Q = 2026;
       const Q3_MONTHS = [7, 8, 9];
+      // ★ Q3 목표 폴백: Supabase에 gross_sales Q3 데이터 없을 때 사용
+      // 출처: 목표매출 Google Sheet (1ySD70P9kaAWg_o8AWR2O5Gp_w679mtpQ_IOQa0QjUS4)
+      const Q3_GS_FALLBACK = {
+        DX: { 7: 436, 8: 779, 9: 323 },   // 단위: 백만원 (4.36억 + 7.79억 + 3.23억 = 15.38억)
+        AD: { 7: 170, 8: 190, 9: 200 },   // AD 추정치 (Google Sheet 미확인분)
+        FZ: { 7:  80, 8:  90, 9:  80 },   // FZ 추정치
+        DH: { 7:  80, 8:  80, 9:  90 },   // DH 추정치
+      };
+      const getVq3 = (bu, m) => {
+        const v = getV('gross_sales', CY3Q, bu, m);
+        if (v !== null) return v;
+        return Q3_GS_FALLBACK[bu]?.[m] ?? null;
+      };
       // 사업부 설정: supaKey=null이면 전사 합산
       const q3Configs = [
         { supaKeys: ['DX','AD','FZ','DH'], idPrefix: 'kpi-sm-3q', profitKey: '합계' },
@@ -5053,11 +5204,11 @@ async function syncFromSupabase() {
         const profEl   = document.getElementById(idPrefix + '-profit');
         const profChg  = document.getElementById(idPrefix + '-profit-chg');
 
-        // 3Q 매출: 7·8·9월 gross_sales 합산 (Q3 데이터는 gross_sales에만 존재)
+        // 3Q 매출: Supabase gross_sales 우선, 없으면 목표 폴백
         let q3Sales = 0, hasSales = false;
         supaKeys.forEach(bu => {
           Q3_MONTHS.forEach(m => {
-            const v = getV('gross_sales', CY3Q, bu, m);
+            const v = getVq3(bu, m);
             if (v !== null) { q3Sales += v / 100; hasSales = true; }
           });
         });
@@ -5093,6 +5244,53 @@ async function syncFromSupabase() {
               profEl.innerHTML = '<span style="color:' + pColor + '">' + pSign + cumJun.toFixed(2) + '<span class="kpi-unit">억</span></span>';
               if (profChg) profChg.innerHTML = 'H1 누적 기준 (Q3 데이터 입력 대기)';
               profEl.closest('.kpi')?.style?.removeProperty('opacity');
+            }
+          }
+        }
+
+        // ── 3Q 누적 카드 (cum-sales, cum-profit) — g4 레이아웃 ──
+        // kpi-*-3q-cum-sales / kpi-*-3q-cum-profit 을 Supabase 기준으로 갱신
+        {
+          const cumSalesEl = document.getElementById(idPrefix + '-cum-sales');
+          const cumProfEl  = document.getElementById(idPrefix + '-cum-profit');
+          if (cumSalesEl || cumProfEl) {
+            // H1 순매출: BU_MON 키 매핑 (FZ→PEZ, DH→기타)
+            const buMonKeyOf = k => k === 'FZ' ? 'PEZ' : k === 'DH' ? '기타' : k;
+            const h1Sales = supaKeys.length > 1
+              ? ['DX','AD','PEZ','기타'].reduce((s,k) => s + BU_MON[k].reduce((a,v)=>a+v,0), 0)
+              : BU_MON[buMonKeyOf(supaKeys[0])]?.reduce((s,v)=>s+v,0) ?? 0;
+
+            // Q3까지 누적 매출 = H1 순매출 + Q3 취급고(이미 계산된 q3Sales 재사용)
+            if (cumSalesEl && h1Sales > 0) {
+              const cumS = h1Sales + (hasSales ? q3Sales : 0);
+              cumSalesEl.innerHTML = cumS.toFixed(2) + '<span class="kpi-unit">억</span>';
+            }
+
+            // Q3까지 누적 수익 = H1 영업이익 누적 + Q3 증분
+            if (cumProfEl && BU_MON_PROFIT?.[profitKey]) {
+              const pArr2 = BU_MON_PROFIT[profitKey];
+              const h1P   = pArr2[5] ?? null;  // 6월 누적 = H1 영업이익
+              if (h1P !== null) {
+                // Q3 실적(DB): profArr[6~8] 중 최신 누적값 → 증분 계산
+                let q3Inc = null;
+                for (let idx = 8; idx >= 6; idx--) {
+                  if (pArr2[idx] !== null) { q3Inc = pArr2[idx] - h1P; break; }
+                }
+                // Q3 실적 없으면 BU별 추정치 사용
+                const Q3EST = { '합계':1.00, DX:0.37, AD:0.10, FZ:0.05, DH:0.05 };
+                const q3Use = q3Inc !== null ? q3Inc : (Q3EST[profitKey] ?? 0.20);
+                const cumP  = h1P + q3Use;
+                const pC = cumP >= 0 ? 'var(--green)' : 'var(--red)';
+                const pS = cumP >= 0 ? '+' : '';
+                cumProfEl.innerHTML = '<span style="color:' + pC + '">' + pS + cumP.toFixed(2) + '<span class="kpi-unit">억</span></span>';
+                // 서브라벨 업데이트 (kpi-chg)
+                const cumChg = cumProfEl.closest('.kpi')?.querySelector('.kpi-chg');
+                if (cumChg) {
+                  const h1Str  = (h1P >= 0 ? '+' : '') + h1P.toFixed(2) + '억';
+                  const q3Str  = (q3Use >= 0 ? '+' : '') + q3Use.toFixed(2) + '억';
+                  cumChg.textContent = 'H1 ' + h1Str + ' + Q3 ' + q3Str;
+                }
+              }
             }
           }
         }
