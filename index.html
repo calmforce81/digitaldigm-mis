@@ -4794,6 +4794,7 @@ async function syncFromSupabase() {
 
     const H1      = [1,2,3,4,5,6];
     const YRS_NUM = [2022, 2023, 2024, 2025, 2026];
+    const curYear = new Date().getFullYear(); // 2026 — 함수 스코프 선언 (섹션 3b·5b 공유)
     const getV = (metric, yr, bu, p) => db[metric]?.[yr]?.[bu]?.[p] ?? null;
 
     // ── 2. SALES: BU_HIST_YRS + BU_MON + HIST 재계산 ──
@@ -4859,7 +4860,7 @@ async function syncFromSupabase() {
     // ── 3b. GROSS_SALES: 취급고매출 KPI ──
     if (db.gross_sales) {
       const H1_END  = 6;                        // H1 = 1~6월 고정 (워크샵 기준)
-      const curYear = new Date().getFullYear(); // 2026
+      // curYear는 함수 스코프에서 선언됨 (line ~4797)
       // 최신 연도부터 역순 탐색 (2026 없으면 2025도 사용)
       let gsTot = 0, gsYear = null;
       for (let yr = curYear; yr >= curYear - 1; yr--) {
@@ -5026,10 +5027,10 @@ async function syncFromSupabase() {
     const SM_REV_2025_H1 = sm2025sum > 0 ? sm2025sum : 43.20;
     const smRevYoY = smRevCum > 0 ? (smRevCum - SM_REV_2025_H1) / SM_REV_2025_H1 * 100 : 0;
     // 영업이익 누적 (profit metric 사용)
-    // 영업이익: 누적값 저장 방식 → 가장 최근 월 값을 직접 사용 (합산 아님)
+    // 영업이익: 월별값 저장 방식 → 합산으로 누적 계산
     const profitArr = (BU_MON_PROFIT && BU_MON_PROFIT.합계)
       ? BU_MON_PROFIT.합계.slice(0,curMonth+1).filter(v=>v!==null) : [];
-    const profitCum = profitArr.length ? profitArr[profitArr.length-1] : null;
+    const profitCum = profitArr.length ? profitArr.reduce((s,v)=>s+v,0) : null;
     const setVal = (id, txt) => { const el=document.getElementById(id); if(el) el.innerHTML=txt; };
 
     // SM 총괄 누적 KPI
@@ -5060,7 +5061,7 @@ async function syncFromSupabase() {
     setVal('kpi-dx-yoy-chg', '전년 '+dxYoYBase.toFixed(2)+'억 대비');
 
     // ── 8. 사업부별 영업이익 KPI (BU_MON_PROFIT 활용) ──
-    // profit은 누적값으로 저장됨 → 가장 최근 월의 값 = 누적 영업이익
+    // profit은 월별값으로 저장됨 → 합산으로 누적 계산
     if (BU_MON_PROFIT) {
       const buProfitMap = { DX: 'kpi-dx-profit', AD: 'kpi-ad-profit', FZ: 'kpi-fz-profit', DH: 'kpi-dh-profit' };
       const buSupaKeys  = { DX: 'DX', AD: 'AD', FZ: 'FZ', DH: 'DH' };
@@ -5071,10 +5072,10 @@ async function syncFromSupabase() {
         // 데이터 없으면 하드코딩 유지
         const hasData = profArr.some(v => v !== null);
         if (!hasData) return;
-        // 누적값: 가장 최근 월의 값(마지막 non-null)을 직접 사용
+        // 월별값 합산 → H1 누적 영업이익
         const filled = profArr.slice(0, curMonth + 1).filter(v => v !== null);
         if (!filled.length) return;
-        const pCum = filled[filled.length - 1];  // 최신 누적값
+        const pCum = filled.reduce((s,v) => s+v, 0);  // 월별 합산
         const pColor = pCum >= 0 ? 'var(--green)' : 'var(--red)';
         const pSign = pCum >= 0 ? '+' : '';
         setVal(idPrefix + '-val', '<span style="color:' + pColor + '">' + pSign + pCum.toFixed(2) + '<span class="kpi-unit">억</span></span>');
@@ -5088,11 +5089,13 @@ async function syncFromSupabase() {
     }
 
     // ── 8a-2. DX 분기별 손익 카드 + cDxPnL 차트 동적 업데이트 ──
-    // profit은 누적값으로 저장: profit[2]=Q1누적, profit[5]=H1누적
+    // profit은 월별값으로 저장: Q1=Jan~Mar 합산, H1=Jan~Jun 합산
     if (BU_MON_PROFIT?.DX) {
       const p = BU_MON_PROFIT.DX;
-      const q1cum = p[2];  // 3월 누적 = Q1 손익
-      const h1cum = p[5];  // 6월 누적 = H1 손익
+      const q1arr = p.slice(0,3).filter(v=>v!==null);
+      const q1cum = q1arr.length ? q1arr.reduce((s,v)=>s+v,0) : null;  // Q1 합산
+      const h1arr = p.slice(0,6).filter(v=>v!==null);
+      const h1cum = h1arr.length ? h1arr.reduce((s,v)=>s+v,0) : null;  // H1 합산
 
       const fmtPnl = (v, isCum) => {
         if (v === null || v === undefined) return null;
@@ -5110,8 +5113,8 @@ async function syncFromSupabase() {
         if (ec) { ec.textContent = f.html; ec.className = f.cls; }
       }
       if (h1cum !== null) {
-        const q1val = (q1cum !== null) ? q1cum : 0.98;  // q1 폴백: plD 기반 0.98억
-        const q2inc = h1cum - q1val;
+        const q2arr = p.slice(3,6).filter(v=>v!==null);
+        const q2inc = q2arr.length ? q2arr.reduce((s,v)=>s+v,0) : (h1cum - (q1cum ?? 0.98));
         const fq2 = fmtPnl(q2inc);
         const fh1 = fmtPnl(h1cum);
         const q2p = document.getElementById('dx-q2-pnl');
@@ -5137,11 +5140,10 @@ async function syncFromSupabase() {
         if (ac)  { ac.textContent = '+' + annualPnl.toFixed(2) + '억 손익 예상'; ac.className = 'gap-up'; }
       }
 
-      // cDxPnL 차트 동적 업데이트 (BU_MON_PROFIT → 월별 증분)
-      const monthlyPnL = p.slice(0, 6).map((cum, i) => {
-        if (cum === null) return plD[i] ?? null;
-        const prev = i === 0 ? 0 : (p[i-1] ?? 0);
-        return parseFloat((cum - prev).toFixed(2));
+      // cDxPnL 차트 동적 업데이트 (BU_MON_PROFIT → 월별값 직접 사용)
+      const monthlyPnL = p.slice(0, 6).map((v, i) => {
+        if (v === null) return plD[i] ?? null;
+        return v;
       });
       if (MIS_CHARTS.dxPnL) {
         MIS_CHARTS.dxPnL.data.datasets[0].data = monthlyPnL;
@@ -5266,16 +5268,16 @@ async function syncFromSupabase() {
               cumSalesEl.innerHTML = cumS.toFixed(2) + '<span class="kpi-unit">억</span>';
             }
 
-            // Q3까지 누적 수익 = H1 영업이익 누적 + Q3 증분
+            // Q3까지 누적 수익 = H1 영업이익 합산 + Q3 월별 합산
             if (cumProfEl && BU_MON_PROFIT?.[profitKey]) {
               const pArr2 = BU_MON_PROFIT[profitKey];
-              const h1P   = pArr2[5] ?? null;  // 6월 누적 = H1 영업이익
+              // H1 = Jan~Jun 월별 합산 (누적→월별 변경 대응)
+              const h1Arr = pArr2.slice(0,6).filter(v=>v!==null);
+              const h1P   = h1Arr.length ? h1Arr.reduce((s,v)=>s+v,0) : null;
               if (h1P !== null) {
-                // Q3 실적(DB): profArr[6~8] 중 최신 누적값 → 증분 계산
-                let q3Inc = null;
-                for (let idx = 8; idx >= 6; idx--) {
-                  if (pArr2[idx] !== null) { q3Inc = pArr2[idx] - h1P; break; }
-                }
+                // Q3 실적(DB): 월 7~9 합산
+                const q3Arr = pArr2.slice(6,9).filter(v=>v!==null);
+                let q3Inc = q3Arr.length ? q3Arr.reduce((s,v)=>s+v,0) : null;
                 // Q3 실적 없으면 BU별 추정치 사용
                 const Q3EST = { '합계':1.00, DX:0.37, AD:0.10, FZ:0.05, DH:0.05 };
                 const q3Use = q3Inc !== null ? q3Inc : (Q3EST[profitKey] ?? 0.20);
