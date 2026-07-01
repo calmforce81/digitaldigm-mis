@@ -780,7 +780,7 @@ body.present .notif-panel { display: none !important; }
       <!-- KPI -->
       <div class="sh"><span class="sh-title">핵심 지표 — 2026 H1 누적</span><span class="sh-action" onclick="openHist('매출','전사 5개년 추이')">추이 분석</span></div>
       <div class="kpi-grid g6" style="margin-bottom:16px">
-        <div class="kpi" style="opacity:.55"><div class="kpi-lbl">취급고매출 — 누적</div><div class="kpi-val" id="kpi-sm-gross-val">—<span class="kpi-unit">억</span></div><div class="kpi-chg flat" id="kpi-sm-gross-chg">데이터 연동 준비중</div><button class="hist-btn" onclick="openHist('매출','취급고 5개년 추이')">📊 과거 데이터 보기</button></div>
+        <div class="kpi" style="opacity:.55"><div class="kpi-lbl">취급고매출 — 누적</div><div class="kpi-val" id="kpi-sm-gross-val">—<span class="kpi-unit">억</span></div><div class="kpi-chg flat" id="kpi-sm-gross-chg">데이터 연동 준비중</div><button class="hist-btn" onclick="openHist('취급고매출','취급고 5개년 추이')">📊 과거 데이터 보기</button></div>
         <div class="kpi accent"><div class="kpi-lbl">순매출 — 누적</div><div class="kpi-val" id="kpi-sm-rev-val">—<span class="kpi-unit">억</span></div><div class="kpi-chg up" id="kpi-sm-rev-chg">전년동기 대비</div><button class="hist-btn" onclick="openHist('매출','전사 월별 매출 5개년 추이')">📊 과거 데이터 보기</button></div>
         <div class="kpi" id="kpi-sm-profit-card"><div class="kpi-lbl">영업이익 — 누적</div><div class="kpi-val" id="kpi-sm-profit-val">—<span class="kpi-unit">억</span></div><div class="kpi-chg" id="kpi-sm-profit-chg">전년동기 대비</div><button class="hist-btn" onclick="openHist('수익','전사 손익 5개년 추이')">📊 과거 데이터 보기</button></div>
         <div class="kpi" id="kpi-sm-yoy-card"><div class="kpi-lbl">전년대비 증감률</div><div class="kpi-val" id="kpi-sm-yoy-val">—<span class="kpi-unit">%</span></div><div class="kpi-chg" id="kpi-sm-yoy-chg">순매출 기준</div><button class="hist-btn" onclick="openHistDual('매출','수익','전사 매출·손익 추이')">📊 매출·손익 보기</button></div>
@@ -2764,6 +2764,7 @@ const HIST={
   'AD수익':{yrs:[[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0]],insight:'AD 사업부 영업이익 누적(억원). 구조적 적자 해소가 전사 흑자 전환의 핵심 과제.'},
   'FZ수익':{yrs:[[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0]],insight:'FZ 사업부 영업이익 누적(억원). 2026 H1 목표 +0.56억.'},
   'DH수익':{yrs:[[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0]],insight:'DH 사업부 영업이익 누적(억원). 2026 H1 목표 +0.30억.'},
+  '취급고매출':{yrs:[[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0]],insight:'전사 취급고매출(H1 기준). 순매출과 달리 광고집행액 등 총 취급고 기준 매출. 동기화 버튼으로 Google Sheets 실측치를 로드하세요.'},
 };
 
 // ─── COLOR PALETTE (minimal) ───
@@ -3055,7 +3056,7 @@ if(qC) qData.forEach(q=>{
 
 // ─── HIST MODAL ───
 let hChart=null, curHistKey='매출', curHistKey2=null; // key2: dual(매출+수익) 뷰용
-const HIST_UNITS={'매출':'억원','DX매출':'억원','AD매출':'억원','PEZ매출':'억원','수익':'억원','DX수익':'억원','AD수익':'억원','FZ수익':'억원','DH수익':'억원','미수금':'억원','외주비':'억원','가동율':'%','AD가동율':'%','인원':'명','MM단가':'만원'};
+const HIST_UNITS={'매출':'억원','DX매출':'억원','AD매출':'억원','PEZ매출':'억원','취급고매출':'억원','수익':'억원','DX수익':'억원','AD수익':'억원','FZ수익':'억원','DH수익':'억원','미수금':'억원','외주비':'억원','가동율':'%','AD가동율':'%','인원':'명','MM단가':'만원'};
 
 function openHist(key,title){
   curHistKey=key; buViewOn=false;
@@ -4915,6 +4916,20 @@ async function syncFromSupabase() {
           valEl.closest('.kpi')?.style?.removeProperty('opacity');
         }
       });
+
+      // HIST['취급고매출'] 업데이트 (전 연도 — 합계행 우선, 없으면 BU합산)
+      YRS_NUM.forEach((yr, i) => {
+        if (!db.gross_sales?.[yr]) return;
+        HIST['취급고매출'].yrs[i] = H1.map((mo, mi) => {
+          const tot = getV('gross_sales', yr, '합계', mo);
+          if (tot !== null) return tot / 100;
+          const buSum = ['DX','AD','FZ','DH'].reduce((s, bu) => {
+            const v = getV('gross_sales', yr, bu, mo);
+            return s + (v !== null ? v / 100 : 0);
+          }, 0);
+          return buSum > 0 ? buSum : HIST['취급고매출'].yrs[i][mi];
+        });
+      });
     }
 
     // ── 4. HEADCOUNT: HIST['인원'] ──
@@ -5017,7 +5032,7 @@ async function syncFromSupabase() {
     const dxYoYBase = dx2025sum > 0 ? dx2025sum : DX_H1_2025;
     const dxYoY = (dxH1 - dxYoYBase) / dxYoYBase * 100;
     // SM 총괄 KPI — 누적 순매출
-    const curMonth = new Date().getMonth(); // 0-based, 6월=5
+    const curMonth = 5; // H1 고정: 6월(0-based=5) — 워크샵 7/7 반기결산 기준
     const smRevCum = BU_MON.DX.slice(0,curMonth+1).reduce((s,v)=>s+v,0)
                    + BU_MON.AD.slice(0,curMonth+1).reduce((s,v)=>s+v,0)
                    + BU_MON.PEZ.slice(0,curMonth+1).reduce((s,v)=>s+v,0)
