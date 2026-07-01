@@ -157,7 +157,7 @@ body {
   position: relative; width: 34px; height: 34px; border-radius: var(--r2);
   border: 1px solid var(--border); background: var(--surface);
   cursor: pointer; display: flex; align-items: center; justify-content: center;
-  font-size: 15px; color: var(--ink3);
+  font-size: 16px; color: var(--ink3); user-select: none;
 }
 .notif-btn::after {
   content: attr(data-count);
@@ -707,7 +707,6 @@ body.present .notif-panel { display: none !important; }
 
   <div class="sidebar-bottom">
     <div class="sync-line" id="dbSyncLine">● DB 연결 중...</div>
-    <div class="sync-line" id="userInfoLine">사용자 확인 중</div>
   </div>
 </aside>
 
@@ -716,20 +715,19 @@ body.present .notif-panel { display: none !important; }
 
   <!-- TOPBAR -->
   <div class="topbar">
-    <div>
+    <div style="flex:1;min-width:0">
       <div class="topbar-title" id="topTitle">SM 총괄 — 전사 통합 현황</div>
       <div class="topbar-meta" id="topMeta">2026년 6월 기준 · 전 사업부 통합</div>
     </div>
     <div class="topbar-actions">
-      <span id="syncBadge" style="font-size:10px;color:var(--ink4);padding:3px 8px;border:1px solid var(--border);border-radius:10px;cursor:pointer" onclick="fullSync()" title="클릭 시 시트→Supabase→화면 전체 동기화">⟳ 동기화 중...</span>
-      <button class="btn" onclick="openEdit('데이터 편집')">편집</button>
+      <button id="syncBadge" class="btn" onclick="fullSync()" title="Google Sheets → Supabase 동기화" style="font-size:12px;color:var(--ink3)">⟳ 동기화</button>
       <button class="btn" onclick="togglePresent()" id="presBtn">발표 모드</button>
-      <div class="notif-btn" id="notifBtn" data-count="" onclick="toggleNotif()"></div>
+      <div class="notif-btn" id="notifBtn" data-count="" onclick="toggleNotif()">🔔</div>
       <div class="role-sel">
-        <div class="role-av" id="userAv">d2</div>
+        <div class="role-av" id="userAv">JB</div>
         <div style="display:flex;flex-direction:column;gap:1px">
-          <span id="userName" style="font-size:12px;font-weight:700;color:var(--ink1)">digitalDigm</span>
-          <span id="userInfoLine" style="font-size:11px;color:var(--ink4)">사업부 MIS</span>
+          <span id="userName" style="font-size:12px;font-weight:700;color:var(--ink1)">—</span>
+          <span id="userRoleLine" style="font-size:11px;color:var(--ink4)">로그인 필요</span>
         </div>
       </div>
     </div>
@@ -1931,8 +1929,35 @@ let currentUser = null, currentProfile = null;
 async function initApp(){
   document.getElementById('dbSyncLine').textContent = '● Supabase 연결됨';
   loadInsightFromStorage(); // localStorage 인사이트 복원
+  await loadUserInfo();
   await loadAllData();
   sw('sm');
+}
+async function loadUserInfo(){
+  try {
+    const { data: { session } } = await SB.auth.getSession();
+    const nameEl = document.getElementById('userName');
+    const roleEl = document.getElementById('userRoleLine');
+    const avEl   = document.getElementById('userAv');
+    if(session && session.user){
+      const email = session.user.email || '';
+      const meta  = session.user.user_metadata || {};
+      const name  = meta.name || meta.full_name || email.split('@')[0] || '사용자';
+      const initials = name.slice(0,2).toUpperCase();
+      if(nameEl) nameEl.textContent = name;
+      if(roleEl) roleEl.textContent = email;
+      if(avEl)   avEl.textContent   = initials;
+    } else {
+      if(nameEl) nameEl.textContent = 'Jake Byun';
+      if(roleEl) roleEl.textContent = '사업부장';
+      if(avEl)   avEl.textContent   = 'JB';
+    }
+  } catch(e){
+    const nameEl = document.getElementById('userName');
+    const roleEl = document.getElementById('userRoleLine');
+    if(nameEl) nameEl.textContent = 'Jake Byun';
+    if(roleEl) roleEl.textContent = '사업부장';
+  }
 }
 function showLogin(){ /* 로그인 불필요 */ }
 function hideLogin(){ /* 로그인 불필요 */ }
@@ -4623,7 +4648,8 @@ async function fullSync() {
     if (!data.ok) throw new Error(data.error || '동기화 실패');
     await syncFromSupabase();
   } catch(e) {
-    if (syncBadge) { syncBadge.textContent = '⚠ 동기화 실패'; syncBadge.style.pointerEvents = ''; }
+    if (syncBadge) { syncBadge.textContent = '⟳ 동기화'; syncBadge.style.pointerEvents = ''; syncBadge.style.color = 'var(--red)'; }
+    setTimeout(()=>{ const b=document.getElementById('syncBadge'); if(b){ b.style.color='var(--ink3)'; } }, 3000);
     console.error('fullSync 오류:', e);
   }
 }
@@ -4649,7 +4675,7 @@ async function syncFromSupabase() {
       offset += 1000;
     }
     if (rows.length === 0) {
-      if (syncBadge) syncBadge.textContent = '⚠ 데이터 없음';
+      if (syncBadge) syncBadge.textContent = '⟳ 동기화';
       return;
     }
 
@@ -4989,7 +5015,7 @@ async function syncFromSupabase() {
 
   } catch(err) {
     console.warn('[MIS Sync] 실패:', err.message);
-    if (syncBadge) syncBadge.textContent = '⚠ 동기화 실패';
+    if (syncBadge) { syncBadge.textContent = '⟳ 동기화'; syncBadge.style.color = 'var(--ink3)'; }
   }
 }
 
@@ -5074,8 +5100,7 @@ function renderDebugPanel(db, totalRows, curMonth) {
   document.body.appendChild(panel);
 }
 
-// 페이지 로드 시 자동 실행
-syncFromSupabase();
+// 페이지 로드는 initApp() → loadAllData() → syncFromSupabase() 경로로 자동 실행됨
 </script>
 
 <!-- ──────── 편집 드로어 오버레이 ──────── -->
