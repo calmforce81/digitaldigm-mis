@@ -857,7 +857,7 @@ body.present .notif-panel { display: none !important; }
           <div class="bar-row"><div class="bar-lbl">DH</div><div class="bar-track"><div class="bar-fill" id="util-bar-DH" style="width:0%"></div></div><div class="bar-val" id="util-val-DH" style="color:var(--ink4)">—</div></div>
           <div style="border-top:1px solid var(--border2);margin-top:8px;padding-top:8px;display:flex;gap:6px">
             <button class="hist-btn" style="width:auto;flex:1;padding:3px 0;font-size:10px" onclick="openHist('인원','전사 인원 5개년 추이')">👥 인원 추이</button>
-            <button class="hist-btn" style="width:auto;flex:1;padding:3px 0;font-size:10px" onclick="openHist('MM단가','외주 MM단가 추이')">💰 MM단가 추이</button>
+            <button class="hist-btn" style="width:auto;flex:1;padding:3px 0;font-size:10px" onclick="openMmModal()">💰 사업부 MM단가</button>
           </div>
         </div>
         <div class="card">
@@ -911,7 +911,7 @@ body.present .notif-panel { display: none !important; }
           </table>
           <div style="margin-top:8px;display:flex;gap:6px">
             <button class="hist-btn" style="width:auto;flex:1;padding:3px 0;font-size:10px" onclick="openHist('인원','전사 인원 5개년 추이')">👥 인원 추이</button>
-            <button class="hist-btn" style="width:auto;flex:1;padding:3px 0;font-size:10px" onclick="openHist('MM단가','외주 MM단가 추이')">💰 MM단가 추이</button>
+            <button class="hist-btn" style="width:auto;flex:1;padding:3px 0;font-size:10px" onclick="openMmModal()">💰 사업부 MM단가</button>
           </div>
         </div>
         <div class="card">
@@ -3100,6 +3100,114 @@ function closeHist(){
   document.getElementById('histBg').classList.remove('open');
   if(hChart){hChart.destroy();hChart=null;}
   curHistKey2=null;
+}
+
+// ── 사업부별 MM단가 전용 모달 ──
+let MIS_MM_CHART = null;
+function openMmModal() {
+  const bg = document.getElementById('mmBg');
+  if (!bg) return;
+  bg.classList.add('open');
+  renderMmBuChart();
+}
+function closeMmModal() {
+  const bg = document.getElementById('mmBg');
+  if (bg) bg.classList.remove('open');
+  if (MIS_MM_CHART) { MIS_MM_CHART.destroy(); MIS_MM_CHART = null; }
+}
+function renderMmBuChart() {
+  const curYr = new Date().getFullYear();
+  const prevYr = curYr - 1;
+  const BUS = ['DX', 'AD', 'FZ'];
+  const toMan = v => (v && v > 0) ? Math.round(v / 10000) : null;
+
+  const rows = BUS.map(bu => ({
+    bu,
+    q1:     toMan(getV('mm_price', curYr,  bu, 1)),
+    q2:     toMan(getV('mm_price', curYr,  bu, 2)),
+    q1prev: toMan(getV('mm_price', prevYr, bu, 1)),
+    q2prev: toMan(getV('mm_price', prevYr, bu, 2)),
+  }));
+
+  const hasData = rows.some(d => d.q1 || d.q2);
+
+  // ── 차트 ──
+  const ctx = document.getElementById('cMmBu');
+  if (ctx) {
+    if (MIS_MM_CHART) { MIS_MM_CHART.destroy(); MIS_MM_CHART = null; }
+    const BU_CLR = ['#3B82F6', '#F59E0B', '#10B981'];
+    MIS_MM_CHART = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: BUS,
+        datasets: [
+          { label: 'Q1', data: rows.map(d => d.q1),
+            backgroundColor: BU_CLR.map(c => c + 'DD'), borderRadius: 5 },
+          { label: 'Q2', data: rows.map(d => d.q2),
+            backgroundColor: BU_CLR.map(c => c + '77'), borderRadius: 5 },
+          { label: prevYr + ' Q1 (전년)', data: rows.map(d => d.q1prev),
+            type: 'line', borderColor: '#9CA3AF', borderDash: [4,3],
+            borderWidth: 1.5, pointRadius: 3, fill: false,
+            backgroundColor: 'transparent' }
+        ]
+      },
+      options: {
+        ...BASE_OPT,
+        plugins: {
+          ...BASE_OPT.plugins,
+          legend: { display: true, position: 'top',
+            labels: { font: { size: 11, family: 'Inter' }, color: '#6B7280', boxWidth: 12, padding: 12 } },
+          tooltip: {
+            ...BASE_OPT.plugins.tooltip,
+            callbacks: { label: ctx => `${ctx.dataset.label}: ${ctx.raw != null ? ctx.raw + '만원/MM' : '—'}` }
+          }
+        },
+        scales: {
+          x: { ...BASE_OPT.scales.x },
+          y: { ...BASE_OPT.scales.y,
+            ticks: { ...BASE_OPT.scales.y.ticks, callback: v => v + '만' } }
+        }
+      }
+    });
+  }
+
+  // ── 테이블 ──
+  const tbl = document.getElementById('mmBuTable');
+  if (tbl) {
+    let html = `<table class="tbl" style="font-size:12px;margin-top:12px">
+      <thead><tr><th>BU</th><th>Q1 (${curYr})</th><th>Q2 (${curYr})</th><th>전년 Q1</th><th>YoY</th></tr></thead><tbody>`;
+    rows.forEach(d => {
+      const yoyN = (d.q1 && d.q1prev) ? (((d.q1 - d.q1prev) / d.q1prev) * 100).toFixed(1) : null;
+      const yoyStr = yoyN != null
+        ? `<span style="color:${parseFloat(yoyN)>=0?'var(--green)':'var(--red)'}">${parseFloat(yoyN)>=0?'+':''}${yoyN}%</span>`
+        : '—';
+      html += `<tr>
+        <td style="font-weight:700;color:var(--blue)">${d.bu}</td>
+        <td class="td-num">${d.q1 != null ? d.q1+'만' : '—'}</td>
+        <td class="td-num">${d.q2 != null ? d.q2+'만' : '—'}</td>
+        <td class="td-num" style="color:var(--ink4)">${d.q1prev != null ? d.q1prev+'만' : '—'}</td>
+        <td class="td-num">${yoyStr}</td>
+      </tr>`;
+    });
+    html += '</tbody></table>';
+    tbl.innerHTML = html;
+  }
+
+  // ── 인사이트 ──
+  const insEl = document.getElementById('mmBuInsight');
+  if (insEl) {
+    if (hasData) {
+      const allVals = rows.flatMap(d => [d.q1, d.q2]).filter(v => v != null);
+      const avg = allVals.length ? Math.round(allVals.reduce((s,v)=>s+v,0)/allVals.length) : null;
+      const maxR = rows.filter(d => d.q1).reduce((a,b) => (b.q1 > a.q1 ? b : a), rows[0]);
+      const minR = rows.filter(d => d.q1).reduce((a,b) => (b.q1 < a.q1 ? b : a), rows[0]);
+      insEl.innerHTML = `사업부 내부 M/M 단가 (Supabase 실측값). ${curYr}년 평균 <strong>${avg ? avg+'만원/MM' : '집계 중'}</strong>.`
+        + (maxR && minR && maxR.bu !== minR.bu ? ` 최고 ${maxR.bu} ${maxR.q1}만 · 최저 ${minR.bu} ${minR.q1}만 — 사업부 간 단가차 <strong>${maxR.q1 - minR.q1}만원</strong>.` : '')
+        + ` 단가 상승 추세에 따라 고부가가치 업무 집중 또는 내재화 확대 검토 필요.`;
+    } else {
+      insEl.innerHTML = '⚠️ Supabase에 mm_price 데이터 없음. Apps Script에서 syncAll을 실행하면 자동으로 채워집니다.';
+    }
+  }
 }
 function renderNumTable(filter){
   const d=HIST[curHistKey]; if(!d) return;
@@ -5533,6 +5641,21 @@ function renderDebugPanel(db, totalRows, curMonth) {
 </div><!-- /app -->
 
 <!-- ─── 5개년 추이 모달 ─── -->
+<!-- ── 사업부별 MM단가 전용 모달 ── -->
+<div class="hist-bg" id="mmBg" onclick="closeMmModal()">
+  <div class="hist-modal" onclick="event.stopPropagation()">
+    <div class="hist-modal-hd">
+      <span class="hist-modal-title">사업부별 M/M 단가</span>
+      <button class="hist-close-btn" onclick="closeMmModal()">✕</button>
+    </div>
+    <div class="hist-modal-scroll" style="padding-top:8px">
+      <div class="hist-canvas-wrap"><canvas id="cMmBu"></canvas></div>
+      <div id="mmBuTable"></div>
+      <div class="hist-insight-box" id="mmBuInsight" style="margin-top:12px"></div>
+    </div>
+  </div>
+</div>
+
 <div class="hist-bg" id="histBg" onclick="closeHist()">
   <div class="hist-modal" onclick="event.stopPropagation()">
     <div class="hist-modal-hd">
