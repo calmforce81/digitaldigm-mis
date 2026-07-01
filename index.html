@@ -409,7 +409,7 @@ body {
 .col-32 { grid-template-columns: 3fr 2fr; }
 
 /* ─────────── CHART ─────────── */
-.ch { position: relative; }
+.ch { position: relative; min-width: 0; overflow: hidden; }
 
 
 /* ─────────── AI 도입 근거 툴팁 ─────────── */
@@ -785,14 +785,14 @@ body.present .notif-panel { display: none !important; }
         <div class="kpi" id="kpi-sm-profit-card"><div class="kpi-lbl">영업이익 — 누적</div><div class="kpi-val" id="kpi-sm-profit-val">—<span class="kpi-unit">억</span></div><div class="kpi-chg" id="kpi-sm-profit-chg">전년동기 대비</div><button class="hist-btn" onclick="openHist('수익','전사 손익 5개년 추이')">📊 과거 데이터 보기</button></div>
         <div class="kpi" id="kpi-sm-yoy-card"><div class="kpi-lbl">전년대비 증감률</div><div class="kpi-val" id="kpi-sm-yoy-val">—<span class="kpi-unit">%</span></div><div class="kpi-chg" id="kpi-sm-yoy-chg">순매출 기준</div><button class="hist-btn" onclick="openHistDual('매출','수익','전사 매출·손익 추이')">📊 매출·손익 보기</button></div>
         <div class="kpi warn" id="kpi-sm-util"><div class="kpi-lbl">전사 가동율</div><div class="kpi-val"><span id="sm-util-val">76</span><span class="kpi-unit">%</span></div><div class="kpi-chg flat" id="sm-util-chg">목표 80% 대비 -4%p</div><button class="hist-btn" onclick="openHist('가동율','전사 가동율 5개년 추이')">📊 과거 데이터 보기</button></div>
-        <div class="kpi" id="kpi-sm-member"><div class="kpi-lbl">전체 인원</div><div class="kpi-val"><span id="sm-member-val">61</span><span class="kpi-unit">명</span></div><div class="kpi-chg flat" id="sm-member-chg">정규 57 · 계약 4</div><button class="hist-btn" onclick="openHist('인원','전사 인원 5개년 추이')">📊 과거 데이터 보기</button></div>
+        <div class="kpi" id="kpi-sm-member"><div class="kpi-lbl">전체 인원</div><div class="kpi-val"><span id="sm-member-val">61</span><span class="kpi-unit">명</span> <span id="sm-member-yoy" style="font-size:11px;color:var(--ink4);font-weight:400"></span></div><div class="kpi-chg flat" id="sm-member-chg">정규 57 · 계약 4</div><button class="hist-btn" onclick="openHist('인원','전사 인원 5개년 추이')">📊 과거 데이터 보기</button></div>
       </div>
       <!-- 3Q 예상 실적 -->
       <div class="sh" style="margin-top:4px"><span class="sh-title" style="font-size:12px;color:var(--ink3)">3Q 예상 실적 (7~9월)</span></div>
       <div class="kpi-grid g4" style="margin-bottom:16px">
         <div class="kpi" id="kpi-sm-3q-sales-card"><div class="kpi-lbl">3Q 분기 매출</div><div class="kpi-val" id="kpi-sm-3q-sales">25.98<span class="kpi-unit">억</span></div><div class="kpi-chg flat" id="kpi-sm-3q-sales-chg">취급고 목표 기준</div></div>
         <div class="kpi" id="kpi-sm-3q-profit-card"><div class="kpi-lbl">3Q 분기 수익</div><div class="kpi-val" id="kpi-sm-3q-profit"><span style="color:var(--green)">+1.00<span class="kpi-unit">억</span></span></div><div class="kpi-chg flat" id="kpi-sm-3q-profit-chg">전사 Q3 추정 (DX 주도)</div></div>
-        <div class="kpi" id="kpi-sm-3q-cum-sales-card"><div class="kpi-lbl">Q3까지 누적 매출</div><div class="kpi-val" id="kpi-sm-3q-cum-sales"><span style="font-size:15px" id="kpi-sm-3q-cum-sales-val">집계 중</span></div><div class="kpi-chg flat">H1 실적 + Q3 예상</div></div>
+        <div class="kpi" id="kpi-sm-3q-cum-sales-card"><div class="kpi-lbl">Q3까지 누적 취급고</div><div class="kpi-val" id="kpi-sm-3q-cum-sales" style="font-size:20px">집계 중</div><div style="font-size:11px;color:var(--ink4);margin-top:2px">순매출 H1 <span id="kpi-sm-3q-cum-net">—</span>억</div><div class="kpi-chg flat">H1+Q3 취급고 기준</div></div>
         <div class="kpi" id="kpi-sm-3q-cum-profit-card"><div class="kpi-lbl">Q3까지 누적 수익</div><div class="kpi-val" id="kpi-sm-3q-cum-profit"><span style="color:var(--green)">+4.87<span class="kpi-unit">억</span></span></div><div class="kpi-chg flat">H1 3.87억 + Q3 1.00억</div></div>
       </div>
 
@@ -809,23 +809,23 @@ body.present .notif-panel { display: none !important; }
         <!-- 리스크 탭 -->
         <div id="ins-pane-risk">
           <div id="ins-risk-view" class="insight-grid" style="margin-bottom:0">
-            <div class="insight ins-danger"><div class="ins-tag">손익 경고</div><div class="ins-title">2025 전사 연간 -16.9억 적자 · 5년 연속 악화</div><div class="ins-body">2021 +4.2억 → 2022 +2.6억 → 2023 -0.5억 → 2024 -2.4억 → 2025 -16.9억. 2026 DX H1 +3.87억 흑자 기록으로 반등 시작. 전사 흑자 전환을 위해 AD·FZ 수익성 개선 병행 필수.</div></div>
-            <div class="insight ins-warn"><div class="ins-tag">계약 만료</div><div class="ins-title">SKT 만료 · DX 11.88억 + AD 2.1억 동시 리스크</div><div class="ins-body">2026.06.30 만료. DX 디자인시스템(11.88억/년) + AD 캠페인(2.1억/년) 총 14억 규모 재계약 미확정. 하반기 매출 공백 최대 변수. 이번 주 협의 결론 필수.</div></div>
-            <div class="insight ins-green"><div class="ins-tag">DX 호조</div><div class="ins-title">DX H1 순매출 31.80억 · 목표 99.9% · YoY +20.7%</div><div class="ins-body">써브웨이 7.44억·삼성자산운용 5.37억·SKT 5.90억 상위 3사가 DX 매출 59% 담당. H1 영업이익 +1.58억. Q3(15.07억) 달성 시 연간 62억·전사 흑자 전환 가능.</div></div>
+            <div class="insight ins-danger"><div class="ins-tag">손익 경고</div><div class="ins-title">H1 손익 추이 — 2025 H1 -5.56억 → 2026 H1 +3.87억 반등</div><div class="ins-body">H1 기준 비교: 2022 +1.5억 → 2023 -0.2억 → 2024 -0.6억 → 2025 -5.6억 → 2026 +3.87억. DX 주도 흑자 전환. 전사 흑자 유지를 위해 AD·FZ H2 수익성 병행 관리 필수.</div></div>
+            <div class="insight ins-warn"><div class="ins-tag">H2 파이프라인</div><div class="ins-title">AD 하반기 신규 수주 공백 · FZ 낙찰률 유지 필요</div><div class="ins-body">롯데지주 완료 후 AD PD팀 유휴 발생 우려. FZ 공공사업 낙찰률 62% 유지가 연간 목표 달성의 핵심 변수. 신규 수주 파이프라인 즉시 점검 필요.</div></div>
+            <div class="insight ins-green"><div class="ins-tag">DX 호조</div><div class="ins-title">DX H1 순매출 31.80억 · H1목표 108.5% · YoY +20.7%</div><div class="ins-body">H1 순매출 목표(29.30억) 대비 +2.50억 초과달성. H1 영업이익 +3.87억 흑자 기록. Q3(15.07억 목표) 달성 시 전사 흑자 전환 가능.</div></div>
           </div>
           <textarea id="ins-risk-edit" style="display:none;width:100%;min-height:120px;font-size:13px;padding:10px;border:1px solid var(--border2);border-radius:6px;resize:vertical;font-family:inherit;line-height:1.6;box-sizing:border-box">• [손익 경고] 2025 전사 연간 -16.9억 적자 (5년 연속 악화) — 2026 DX H1 +3.87억으로 반등 개시, AD·FZ 수익성 개선 병행 필수
-• [계약 만료] SKT DX 11.88억 + AD 2.1억 동시 만료(2026.06.30) — 총 14억 재계약 미확정, 이번 주 결론 필수
-• [DX 호조] DX H1 순매출 31.80억·목표 99.9%·YoY +20.7% — Q3 15.07억 달성 시 연간 62억·전사 흑자 전환 가능</textarea>
+• [H2 파이프라인] AD 하반기 신규 수주 공백·FZ 낙찰률 유지 필요 — 롯데지주 완료 후 PD팀 유휴 우려, 수주 파이프라인 즉시 점검
+• [DX 호조] DX H1 순매출 31.80억·H1목표 108.5%·YoY +20.7% — Q3 15.07억 달성 시 연간 62억·전사 흑자 전환 가능</textarea>
         </div>
         <!-- 분기요약 탭 -->
         <div id="ins-pane-q" style="display:none">
           <div id="ins-q-view">
             <div class="insight ins-green"><div class="ins-tag">Q1 실적</div><div class="ins-title">Q1 DX 14.3억 달성 · 영업이익 +0.98억</div><div class="ins-body">삼성자산운용 KODEX TDF·이벤트 구축 착수, 재규어랜드로버 AS앱 개발 본격화. DX 기준 취급고매출 15.82억. Q1 영업이익 +0.98억으로 흑자 출발.</div></div>
-            <div class="insight ins-green"><div class="ins-tag">Q2 실적</div><div class="ins-title">Q2 DX 15.7억 달성 · H1 누적 30억 확정</div><div class="ins-body">6월 대형 납품 집중(6.05억). H1 영업이익 누적 +1.58억. DX H1 순매출 31.80억 = 연간 목표 59.5억의 53.4% 선행 달성. Q2 목표(14.53억) 대비 +1.17억 초과.</div></div>
+            <div class="insight ins-green"><div class="ins-tag">Q2 실적</div><div class="ins-title">Q2 DX 15.7억 달성 · H1 누적 31.80억 확정</div><div class="ins-body">6월 대형 납품 집중(6.05억). H1 영업이익 누적 +3.87억 흑자 기록. DX H1 순매출 31.80억 = H1 목표(29.30억) 대비 108.5% 초과달성. Q2 목표(14.53억) 대비 +1.17억 초과.</div></div>
             <div class="insight ins-warn"><div class="ins-tag">Q3 전망</div><div class="ins-title">Q3 목표 15.07억 · 8월 52% 집중 리스크</div><div class="ins-body">Q3 내 8월 목표 7.79억(Q3 비중 52%). SKT 8월 집행·iM뱅크 납기 연동이 핵심 변수. 목표 달성 시 DX 연간 62억·전사 흑자 전환 가능. 9월 목표 3.23억은 보수적으로 설정됨.</div></div>
           </div>
           <textarea id="ins-q-edit" style="display:none;width:100%;min-height:120px;font-size:13px;padding:10px;border:1px solid var(--border2);border-radius:6px;resize:vertical;font-family:inherit;line-height:1.6;box-sizing:border-box">• [Q1 실적] DX 14.3억 달성·영업이익 +0.98억 — 삼성자산운용 KODEX TDF 착수, 재규어 AS앱 개발 본격화
-• [Q2 실적] DX 15.7억 달성·H1 누적 30억 확정 — H1 영업이익 +1.58억, 연간 목표 53.4% 선행 달성
+• [Q2 실적] DX 15.7억 달성·H1 누적 31.80억 확정 — H1 영업이익 +3.87억, H1목표 108.5% 초과달성
 • [Q3 전망] 목표 15.07억·8월 52% 집중 리스크 — SKT 8월 집행·iM뱅크 납기가 핵심 변수</textarea>
         </div>
         <div id="ins-save-row" style="display:none;margin-top:10px;text-align:right">
@@ -837,7 +837,7 @@ body.present .notif-panel { display: none !important; }
       <!-- CHARTS ROW -->
       <div class="row col-21">
         <div class="card">
-          <div class="card-hd"><div><div class="card-title">월별 매출 추이 (2026)</div><div class="card-sub">단위: 억원</div></div><span class="bx bx-green">ERP 연동</span></div>
+          <div class="card-hd"><div><div class="card-title">월별 매출 추이 (2026)</div><div class="card-sub">단위: 억원 · 순매출 기준</div></div><span class="bx bx-blue">Supabase 연동</span></div>
           <div class="ch" style="height:170px"><canvas id="cSmRev"></canvas></div>
         </div>
         <div class="card">
@@ -869,8 +869,9 @@ body.present .notif-panel { display: none !important; }
               <div style="font-size:22px;font-weight:700;color:var(--ink1)">4<span style="font-size:13px">%</span></div>
             </div>
             <div style="flex:1;background:var(--bg2);border-radius:6px;padding:8px;text-align:center">
-              <div style="font-size:10px;color:var(--ink4);margin-bottom:2px">실행 (H1)</div>
-              <div style="font-size:22px;font-weight:700;color:var(--amber)" id="outsource-pct">—<span style="font-size:13px">%</span></div>
+              <div style="font-size:10px;color:var(--ink4);margin-bottom:2px">Q1 / Q2 외주비율</div>
+              <div style="font-size:16px;font-weight:700;color:var(--amber)" id="outsource-pct">—<span style="font-size:11px">%</span></div>
+              <div style="font-size:10px;color:var(--ink4);margin-top:1px" id="outsource-q-detail">Q1 —% · Q2 —%</div>
             </div>
           </div>
           <div class="f-label" style="margin-bottom:6px">년도별 외주비율 추이</div>
@@ -900,12 +901,12 @@ body.present .notif-panel { display: none !important; }
           <table class="tbl" style="font-size:12px">
             <thead><tr><th>사업부</th><th>인원</th><th>월고정비</th><th>M/M단가</th></tr></thead>
             <tbody>
-              <tr><td style="color:var(--blue);font-weight:700">DX</td><td>33명</td><td class="td-num">2.71억</td><td class="td-num">788만</td></tr>
-              <tr><td style="font-weight:700">AD</td><td>14명</td><td class="td-num">1.15억</td><td class="td-num">788만</td></tr>
-              <tr><td style="font-weight:700">FZ</td><td>4명</td><td class="td-num">0.33억</td><td class="td-num">788만</td></tr>
+              <tr><td style="color:var(--blue);font-weight:700">DX</td><td>33명</td><td class="td-num">2.71억</td><td class="td-num" id="mm-dx">Q1 —만<br><span style="font-size:9px;color:var(--ink4)">Q2 —만</span></td></tr>
+              <tr><td style="font-weight:700">AD</td><td>14명</td><td class="td-num">1.15억</td><td class="td-num" id="mm-ad">Q1 —만<br><span style="font-size:9px;color:var(--ink4)">Q2 —만</span></td></tr>
+              <tr><td style="font-weight:700">FZ</td><td>4명</td><td class="td-num">0.33억</td><td class="td-num" id="mm-fz">—</td></tr>
               <tr><td style="font-weight:700">DH</td><td>—</td><td class="td-num">—</td><td class="td-num">—</td></tr>
               <tr><td style="font-weight:700">SM</td><td>10명</td><td class="td-num">0.82억</td><td class="td-num">—</td></tr>
-              <tr style="background:var(--blue-tint)"><td style="color:var(--blue);font-weight:700">전사</td><td style="color:var(--blue)">61명</td><td class="td-num" style="color:var(--blue)">5.01억</td><td class="td-num" style="color:var(--blue)">788만</td></tr>
+              <tr style="background:var(--blue-tint)"><td style="color:var(--blue);font-weight:700">전사</td><td style="color:var(--blue)">61명</td><td class="td-num" style="color:var(--blue)">5.01억</td><td class="td-num" id="mm-avg" style="color:var(--blue)">—만</td></tr>
             </tbody>
           </table>
           <div style="margin-top:8px;display:flex;gap:6px">
@@ -916,13 +917,13 @@ body.present .notif-panel { display: none !important; }
         <div class="card">
           <div class="card-hd"><div class="card-title">분기별 목표 및 AI 예측</div></div>
           <table class="fc">
-            <thead><tr><th>분기</th><th>목표</th><th>AI 예상</th><th>Gap</th><th>상태</th></tr></thead>
+            <thead><tr><th>분기</th><th>실적</th><th>목표</th><th>Gap</th><th>상태</th></tr></thead>
             <tbody>
-              <tr><td>Q1 실적</td><td class="num" style="color:var(--ink2)">14.3억</td><td class="ai">목표 14.5억</td><td class="gap-down">-0.2억</td><td><span class="bx bx-gray">완료</span></td></tr>
-              <tr><td>Q2 실적</td><td class="num" style="color:var(--green)">15.7억</td><td class="ai">목표 14.5억</td><td class="gap-up">+1.2억</td><td><span class="bx bx-green">달성</span></td></tr>
-              <tr><td>Q3 예상</td><td class="num">15.1억</td><td class="ai">목표 15.07억</td><td class="gap-up">+0.0억</td><td><span class="bx bx-blue">예측</span></td></tr>
-              <tr><td>Q4 예상</td><td class="num">15.1억</td><td class="ai">목표 15.12억</td><td class="gap-up">+0.0억</td><td><span class="bx bx-blue">예측</span></td></tr>
-              <tr><td><strong>연간</strong></td><td class="num">59.5억</td><td class="ai">60.2억 예상</td><td class="gap-up">+0.7억</td><td><span class="bx bx-blue">예측</span></td></tr>
+              <tr><td>Q1 실적</td><td class="num" style="color:var(--green)" id="fc-dx-q1-actual">15.82억</td><td class="ai">14.77억</td><td class="gap-up" id="fc-dx-q1-gap">+1.05억</td><td><span class="bx bx-green">초과달성</span></td></tr>
+              <tr><td>Q2 실적</td><td class="num" style="color:var(--green)" id="fc-dx-q2-actual">15.98억</td><td class="ai">14.53억</td><td class="gap-up" id="fc-dx-q2-gap">+1.45억</td><td><span class="bx bx-green">초과달성</span></td></tr>
+              <tr><td>Q3 목표</td><td class="num" style="color:var(--ink4)">—</td><td class="ai">15.07억</td><td class="gap-up">집계 중</td><td><span class="bx bx-blue">진행</span></td></tr>
+              <tr><td>Q4 목표</td><td class="num" style="color:var(--ink4)">—</td><td class="ai">14.63억</td><td class="gap-up">미집계</td><td><span class="bx bx-blue">예정</span></td></tr>
+              <tr><td><strong>연간</strong></td><td class="num" id="fc-dx-annual">31.80억 (H1)</td><td class="ai">목표 60.5억</td><td class="gap-up">H2 28.7억 필요</td><td><span class="bx bx-amber">진행중</span></td></tr>
             </tbody>
           </table>
         </div>
@@ -932,10 +933,10 @@ body.present .notif-panel { display: none !important; }
       <div class="card" style="margin-bottom:12px">
         <div class="card-hd"><div class="card-title">리스크 현황</div><button class="btn" onclick="openEdit('리스크')">편집</button></div>
         <div class="alert-list">
-          <div class="alert danger"><div class="alert-tag">HIGH · SKT 계약</div><div class="alert-msg">SKT 계약 만료 D-8 (2026.06.30) — 연간 2.1억 재계약 미확정</div><div class="alert-detail">이번 주 협의 결론 필요. AD 사업부 Q3 매출 직결.</div></div>
-          <div class="alert danger"><div class="alert-tag">HIGH · 목표 미달</div><div class="alert-msg">DX 상반기 달성률 49.4% — 하반기 24.6억 추가 수주 필요</div><div class="alert-detail">현 파이프라인 Gap 약 8억. SKT 하반기 집행(8월) 확인 핵심.</div></div>
-          <div class="alert warn"><div class="alert-tag">MID · 일정</div><div class="alert-msg">iM뱅크 디자인시스템 8월 납기 지연 가능성</div><div class="alert-detail">외주비 0.3억 포함. PM 주간 점검 강화 권고.</div></div>
-          <div class="alert warn"><div class="alert-tag">MID · 외주비</div><div class="alert-msg">써브웨이 AWS(1.38억) + SKT 개발외주(0.86억) = H1 외주비 65% 집중</div></div>
+          <div class="alert danger"><div class="alert-tag">HIGH · AD 수주</div><div class="alert-msg">AD 하반기 신규 수주 파이프라인 부재 — PD팀 유휴 리스크</div><div class="alert-detail">롯데지주 완료 후 AD 주요 수주건 미확정. H2 매출 공백 최대 변수. 신규 수주 영업 즉시 착수 필요.</div></div>
+          <div class="alert warn"><div class="alert-tag">MID · 일정</div><div class="alert-msg">iM뱅크 디자인시스템 8월 납기 — 일정 관리 집중 필요</div><div class="alert-detail">납기 지연 시 Q3 수익성 직결. PM 주간 점검 강화 권고.</div></div>
+          <div class="alert warn"><div class="alert-tag">MID · 외주비</div><div class="alert-msg">써브웨이 AWS(1.38억) + SKT 개발외주(0.86억) = H1 외주비 65% 집중</div><div class="alert-detail">외주비 총 3.43억 중 65%가 2개 고객 집중. Q3 분산 필요.</div></div>
+          <div class="alert warn"><div class="alert-tag">MID · FZ</div><div class="alert-msg">FZ 공공사업 낙찰률 유지 필요 — H2 목표 직결</div><div class="alert-detail">FZ 연간 목표 달성은 H2 공공사업 낙찰에 의존. 입찰 일정 선제 관리 필요.</div></div>
           <div class="alert info"><div class="alert-tag">LOW · 미수금</div><div class="alert-msg">90일 초과 미수금 0.8억 — 7월 말 회수 예정</div></div>
         </div>
       </div>
@@ -947,7 +948,7 @@ body.present .notif-panel { display: none !important; }
           <thead><tr><th>고객사</th><th>사업부</th><th>유형</th><th>계약금액</th><th>만료일</th><th>상태</th></tr></thead>
           <tbody>
             <tr><td class="td-hi">삼성자산운용 (KODEX ETF)</td><td><span class="bx bx-blue">DX</span></td><td>플랫폼 운영·개발</td><td class="td-num">6.5억/년</td><td>2026.12.31</td><td><span class="bx bx-green">정상</span></td></tr>
-            <tr><td class="td-hi">SKT</td><td><span class="bx bx-blue">DX+AD</span></td><td>디자인시스템 + 캠페인</td><td class="td-num">11.88억 + 2.1억</td><td style="color:var(--red);font-weight:700">2026.06.30</td><td><span class="bx bx-red">만료임박</span></td></tr>
+            <tr><td class="td-hi">SKT</td><td><span class="bx bx-blue">DX</span></td><td>디자인시스템 운영</td><td class="td-num">11.88억/년</td><td>2026.12.31</td><td><span class="bx bx-green">정상</span></td></tr>
             <tr><td class="td-hi">써브웨이</td><td><span class="bx bx-blue">DX</span></td><td>온라인채널 운영·고도화</td><td class="td-num">11.33억/년</td><td>2027.01</td><td><span class="bx bx-green">정상</span></td></tr>
             <tr><td class="td-hi">재규어랜드로버</td><td><span class="bx bx-blue">DX+AD</span></td><td>AS앱·캠페인 운영</td><td class="td-num">9.27억</td><td>2026.12.31</td><td><span class="bx bx-green">정상</span></td></tr>
             <tr><td class="td-hi">iM뱅크</td><td><span class="bx bx-blue">DX</span></td><td>디자인시스템 구축</td><td class="td-num">2.78억</td><td style="color:var(--amber);font-weight:600">2026.08.31</td><td><span class="bx bx-amber">일정 주의</span></td></tr>
@@ -1118,9 +1119,9 @@ body.present .notif-panel { display: none !important; }
       </div>
 
       <div class="insight-grid">
-        <div class="insight ins-danger"><div class="ins-tag">D-8</div><div class="ins-title">SKT 계약 만료</div><div class="ins-body">2026.06.30 만료. 확정 시 연 <strong>2.1억</strong> 유지. 이번 주 내 확정 필요.</div></div>
-        <div class="insight ins-danger"><div class="ins-tag">손익 경고</div><div class="ins-title">2025 연간 손익 -9.9억</div><div class="ins-body">2024 -3.8억 → 2025 -9.9억 적자 급증. 2026 흑자 전환 목표. SKT 재계약·신규 수주가 핵심 변수.</div></div>
-        <div class="insight ins-ok"><div class="ins-tag">AI 전망</div><div class="ins-title">Q3 목표 달성 가능</div><div class="ins-body">SKT 재계약 확정 시 Q3 달성 확률 <strong>81%</strong> (AI 예측).</div></div>
+        <div class="insight ins-danger"><div class="ins-tag">수주 공백</div><div class="ins-title">AD H2 신규 수주 미확정 — PD팀 유휴 리스크</div><div class="ins-body">롯데지주 완료 후 대형 후속 수주 미확정. AHC·재규어 유지 외 신규 수주 파이프라인 확보가 H2 핵심 과제.</div></div>
+        <div class="insight ins-danger"><div class="ins-tag">손익 경고</div><div class="ins-title">2025 연간 손익 -9.9억</div><div class="ins-body">2024 -3.8억 → 2025 -9.9억 적자 급증. 2026 흑자 전환 목표. 신규 수주·마진 개선이 핵심 변수.</div></div>
+        <div class="insight ins-ok"><div class="ins-tag">유지 기반</div><div class="ins-title">재규어·AHC 안정 매출 기반 확보</div><div class="ins-body">재규어랜드로버(브랜드·AS앱), AHC 캠페인 유지로 Q3 기본 매출 확보. 신규 수주 성사 시 목표 달성 가능.</div></div>
       </div>
 
       <div class="row col-2">
@@ -1157,7 +1158,7 @@ body.present .notif-panel { display: none !important; }
         <table class="tbl">
           <thead><tr><th>프로젝트</th><th>고객사</th><th>계약금</th><th>투입비</th><th>마진</th><th>상태</th></tr></thead>
           <tbody>
-            <tr><td class="td-hi">SKT 하반기 캠페인</td><td>SKT</td><td class="td-num">0.8억</td><td>0.52억</td><td class="td-num" style="color:var(--green)">35%</td><td><span class="bx bx-red">만료 임박</span></td></tr>
+            <tr><td class="td-hi">SKT 하반기 캠페인</td><td>SKT</td><td class="td-num">0.8억</td><td>0.52억</td><td class="td-num" style="color:var(--green)">35%</td><td><span class="bx bx-blue">진행중</span></td></tr>
             <tr><td class="td-hi">재규어 브랜드</td><td>재규어랜드로버</td><td class="td-num">0.45억</td><td>0.31억</td><td class="td-num" style="color:var(--green)">31%</td><td><span class="bx bx-blue">진행중</span></td></tr>
             <tr><td class="td-hi">롯데지주 인하우스</td><td>롯데지주</td><td class="td-num">0.3억</td><td>0.22억</td><td class="td-num" style="color:var(--amber)">27%</td><td><span class="bx bx-gray">완료</span></td></tr>
             <tr><td class="td-hi">AHC 뷰티 캠페인</td><td>AHC</td><td class="td-num">0.35억</td><td>0.28억</td><td class="td-num" style="color:var(--red)">20%</td><td><span class="bx bx-amber">예산 주의</span></td></tr>
@@ -1801,7 +1802,7 @@ body.present .notif-panel { display: none !important; }
           <div class="card-hd"><div class="card-title">내부 메모</div></div>
           <div class="cfg-field">
             <div class="cfg-label">사업부장 메모 (비공개)</div>
-            <textarea class="cfg-textarea" style="min-height:120px" placeholder="내부 메모를 작성하세요. 본인만 열람 가능합니다.">- SKT 재계약 6/30 데드라인. 이번주 내 결론 필요.&#10;- iM뱅크 디자인시스템 8월 납기 지연 가능성 → PM 면담 예정&#10;- Q3 목표 달성을 위해 신규 수주 파이프라인 점검 필요 (갭 8억)</textarea>
+            <textarea class="cfg-textarea" style="min-height:120px" placeholder="내부 메모를 작성하세요. 본인만 열람 가능합니다.">- SKT DX 디자인시스템 운영 12월까지 정상 진행 중.&#10;- iM뱅크 디자인시스템 8월 납기 지연 가능성 → PM 면담 예정&#10;- AD 하반기 신규 수주 파이프라인 확보 시급 (롯데지주 완료 후 공백)</textarea>
           </div>
           <button class="btn btn-primary" onclick="alert('저장되었습니다')">저장</button>
         </div>
@@ -2736,13 +2737,13 @@ const HIST={
     [0.05, 0.04, 0.12,-0.25, 0.06,-0.22],   // 2023 H1 -0.20억
     [-0.10,-0.18, 0.08,-0.32, 0.14,-0.22],  // 2024 H1 -0.60억
     [-0.82,-0.95,-0.48,-1.18,-1.05,-1.08],  // 2025 H1 -5.56억
-    [0.15,-0.12, 0.35, 0.18,-0.08, 0.22]   // 2026 H1 +0.70억
-  ],insight:'전사 월별 손익(H1 기준). 2022 H1 +1.5억 흑자에서 2025 H1 -5.6억으로 급락. 2026 H1 +0.7억 흑자 전환 추세. DX 구조 개선(H1 누적 +1.58억) 및 고정비 절감 효과. AD 구조적 적자 해소가 연간 흑자 전환의 핵심 과제.'},
+    [0.15,-0.12, 0.35, 0.18,-0.08, 0.22]   // 2026 H1 초기값 (Supabase 동기화 시 3.87억으로 갱신)
+  ],insight:'전사 월별 손익(H1 기준 비교). 2022 H1 +1.51억 → 2023 H1 -0.20억 → 2024 H1 -0.60억 → 2025 H1 -5.56억 → 2026 H1 +3.87억 흑자 전환. 동기 대비(YoY H1) 기준으로 DX 구조 개선 효과가 뚜렷. AD 구조적 적자 해소가 연간 흑자 전환의 핵심 과제.'},
   가동율:{yrs:[[72,74,75,73,76,78],[75,76,77,75,78,79],[77,78,79,77,80,81],[79,80,80,79,81,82],[76,77,78,76,75,76]],insight:'가동율 2022~2025 꾸준 상승. 2026년 76%는 AD 유휴 인력 영향. 80% 달성을 위해 프로젝트 배분 최적화 필요.'},
   미수금:{yrs:[[1.2,1.0,0.8,1.1,0.9,1.0],[1.1,1.0,0.9,1.2,1.0,1.1],[1.3,1.2,1.0,1.3,1.1,1.2],[2.0,1.8,1.6,2.1,1.9,2.0],[3.0,2.8,2.6,3.1,3.0,3.2]],insight:'미수금 2025~2026 증가 추세. SKT·CJ프레시웨이 반복 지연 패턴. 90일 초과분 0.8억 즉시 대응 필요.'},
   인원:{yrs:[[102,100,99,99,97,97],[94,92,94,95,100,101],[96,96,96,96,96,96],[97,96,97,96,95,94],[61,61,62,61,61,61]],insight:'2022~2025 전사 인원 94~102명(외주 포함 FTE 기준). 2026년 61명은 사내 직원 기준으로 측정 방식 변경. 2024년 구조조정 이후 슬림화 진행.'},
   'DX매출':{yrs:[[3.54,3.60,4.75,3.00,4.90,5.52],[3.60,4.60,5.33,4.78,4.84,5.03],[4.15,4.01,4.95,3.13,3.33,7.80],[3.73,4.52,4.89,4.51,3.95,4.75],[3.46,5.07,7.29,6.24,3.69,6.05]],insight:'2026 H1 실적 31.80억. 순매출 목표(29.30억) 대비 108.5% 초과달성(+2.50억). 2025 H1 26.35억 대비 +20.7% 성장. 3월 7.29억·6월 6.05억 고점 기록. Q3 목표 15.07억. 2024년 6월 7.80억(SKT 착수)이 역대 최고.'},
-  'AD매출':{yrs:[[2.90,3.37,2.83,1.60,3.17,4.70],[1.74,2.07,1.55,2.50,2.15,1.91],[2.03,2.51,3.38,2.50,2.55,3.93],[1.47,2.16,2.87,2.42,2.90,2.48],[1.4,1.6,1.8,1.7,1.8,1.9]],insight:'AD 순매출 2022년 이후 구조적 하락. 2022 H1 18.6억 → 2025 H1 14.3억. 2025 연간 33.64억. 취급고 대비 순매출 비중 감소 추세.'},
+  'AD매출':{yrs:[[2.90,3.37,2.83,1.60,3.17,4.70],[1.74,2.07,1.55,2.50,2.15,1.91],[2.03,2.51,3.38,2.50,2.55,3.93],[1.47,2.16,2.87,2.42,2.90,2.48],[1.4,1.6,1.8,1.7,1.8,1.9]],insight:'AD 순매출 H1 기준 비교: 2022 H1 18.6억 → 2023 H1 10.0억 → 2024 H1 14.9억 → 2025 H1 14.3억 → 2026 H1 10.2억(추정). 롯데지주 완료 후 수주 공백 발생. H2 신규 수주 확보가 연간 목표 달성의 핵심.'},
   'AD가동율':{yrs:[[70,72,73,71,74,75],[73,74,75,73,76,77],[75,76,78,76,79,80],[77,78,79,77,80,80],[71,72,73,71,72,71]],insight:'AD 가동율 2025까지 상승 후 2026 하락. 롯데지주 완료 후 PD팀 유휴 발생. 신규 수주 연결 시급.'},
   'PEZ매출':{yrs:[[0.5,0.6,0.7,0.6,0.7,0.8],[0.6,0.7,0.8,0.7,0.9,1.0],[0.7,0.8,1.0,0.9,1.0,1.1],[0.8,0.9,1.1,1.0,1.2,1.3],[0.7,0.8,0.9,0.8,1.0,0.6]],insight:'FZ 사업부 안정적 성장. 낙찰률 62% 유지 시 연간 목표 13억 달성 가능.'},
   '외주비':{yrs:[
@@ -2773,7 +2774,23 @@ const C_BLUE_T='rgba(37,99,235,.08)', C_GREEN_T='rgba(22,163,74,.1)';
 
 const BASE_OPT={
   responsive:true, maintainAspectRatio:false,
-  plugins:{legend:{display:false}},
+  plugins:{
+    legend:{display:false},
+    tooltip:{
+      backgroundColor:'rgba(17,24,39,0.92)',
+      titleColor:'#F9FAFB',
+      bodyColor:'#E5E7EB',
+      footerColor:'#93C5FD',
+      titleFont:{size:12,weight:'600',family:'Inter'},
+      bodyFont:{size:12,family:'Inter'},
+      footerFont:{size:12,weight:'700',family:'Inter'},
+      padding:10,
+      cornerRadius:8,
+      boxPadding:4,
+      borderColor:'rgba(255,255,255,0.08)',
+      borderWidth:1
+    }
+  },
   scales:{
     x:{grid:{display:false},ticks:{font:{size:11,family:'Inter'},color:C_GRAY}},
     y:{grid:{color:'#F3F4F6'},ticks:{font:{size:11,family:'Inter'},color:C_GRAY}}
@@ -4196,7 +4213,7 @@ async function checkDbConnection(){
 // ─── 고객사 데이터 ───
 const CLIENT_DATA=[
   {name:'삼성자산운용',bu:'DX',type:'플랫폼 운영·개발',amt:'6.5억/년',contact:'김○○ 팀장',tel:'02-xxxx-xxxx',expire:'2026.12.31',memo:'KODEX ETF 운영. 안정적 장기 계약.',stat:'정상'},
-  {name:'SKT',bu:'DX+AD',type:'디자인시스템 + 캠페인',amt:'11.88억 + 2.1억',contact:'이○○ 차장',tel:'02-xxxx-xxxx',expire:'2026.06.30',memo:'만료 임박. 재계약 협의 중.',stat:'주의'},
+  {name:'SKT',bu:'DX',type:'디자인시스템 운영',amt:'11.88억/년',contact:'이○○ 차장',tel:'02-xxxx-xxxx',expire:'2026.12.31',memo:'디자인시스템 운영. 12월까지 정상 진행.',stat:'정상'},
   {name:'써브웨이',bu:'DX',type:'온라인채널 운영·고도화',amt:'11.33억/년',contact:'박○○ 팀장',tel:'02-xxxx-xxxx',expire:'2027.01',memo:'안정 운영 중. 고도화 추가 논의 예정.',stat:'정상'},
   {name:'재규어랜드로버',bu:'DX+AD',type:'AS앱·캠페인 운영',amt:'9.27억',contact:'최○○ 부장',tel:'02-xxxx-xxxx',expire:'2026.12.31',memo:'',stat:'정상'},
   {name:'iM뱅크',bu:'DX',type:'디자인시스템 구축',amt:'5.8억',contact:'정○○ 과장',tel:'02-xxxx-xxxx',expire:'2026.08',memo:'납기 지연 가능성. PM 면담 필요.',stat:'주의'},
@@ -4797,6 +4814,7 @@ async function syncFromSupabase() {
     const YRS_NUM = [2022, 2023, 2024, 2025, 2026];
     const curYear = new Date().getFullYear(); // 2026 — 함수 스코프 선언 (섹션 3b·5b 공유)
     const getV = (metric, yr, bu, p) => db[metric]?.[yr]?.[bu]?.[p] ?? null;
+    let SM_H1_GROSS = 0; // 섹션 3b에서 설정: H1 전사 취급고 합산 (section 9에서 Q3 누적 카드에 사용)
 
     // ── 2. SALES: BU_HIST_YRS + BU_MON + HIST 재계산 ──
     if (db.sales) {
@@ -4891,6 +4909,7 @@ async function syncFromSupabase() {
         gsEl.innerHTML = gsTot.toFixed(2) + '<span class="kpi-unit">억</span>';
         if (gsChgEl) gsChgEl.innerHTML = (gsYear !== curYear ? gsYear + '년 ' : '') + 'H1 누적 (1~6월) · 취급고';
         gsEl.closest('.kpi')?.style?.removeProperty('opacity');
+        SM_H1_GROSS = gsTot; // section 9 Q3 누적 카드용: H1 전사 취급고 합산 저장
       }
 
       // 사업부별 취급고 KPI 업데이트
@@ -4941,6 +4960,20 @@ async function syncFromSupabase() {
           return tot !== null ? Math.round(tot) : HIST['인원'].yrs[i][mi];
         });
       });
+      // YoY % 계산: 2026 H1 최신 vs 2025 동기간
+      const yoy2026 = HIST['인원'].yrs[4]; // 2026
+      const yoy2025 = HIST['인원'].yrs[3]; // 2025
+      const cur26 = yoy2026.filter(v=>v>0).slice(-1)[0];
+      const cur25 = yoy2025.filter(v=>v>0).slice(-1)[0];
+      if (cur26 && cur25 && cur25 > 0) {
+        const diff = cur26 - cur25;
+        const pct = ((diff / cur25) * 100).toFixed(1);
+        const yoyEl = document.getElementById('sm-member-yoy');
+        if (yoyEl) {
+          yoyEl.textContent = `YoY ${diff>=0?'+':''}${diff}명 (${diff>=0?'+':''}${pct}%)`;
+          yoyEl.style.color = diff > 0 ? 'var(--green)' : diff < 0 ? 'var(--red)' : 'var(--ink4)';
+        }
+      }
     }
 
     // ── 5. MM단가: HIST['MM단가'] (분기 Q1→월1-3, Q2→월4-6) ──
@@ -4957,6 +4990,32 @@ async function syncFromSupabase() {
         if (q1avg) { HIST['MM단가'].yrs[i][0]=q1avg; HIST['MM단가'].yrs[i][1]=q1avg; HIST['MM단가'].yrs[i][2]=q1avg; }
         if (q2avg) { HIST['MM단가'].yrs[i][3]=q2avg; HIST['MM단가'].yrs[i][4]=q2avg; HIST['MM단가'].yrs[i][5]=q2avg; }
       });
+      // 원가구조 테이블: 2026년 DX/AD 분기별 MM단가 업데이트
+      if (db.mm_price[curYear]) {
+        const dx1 = getV('mm_price',curYear,'DX',1), dx2 = getV('mm_price',curYear,'DX',2);
+        const ad1 = getV('mm_price',curYear,'AD',1), ad2 = getV('mm_price',curYear,'AD',2);
+        const fz1 = getV('mm_price',curYear,'FZ',1), fz2 = getV('mm_price',curYear,'FZ',2);
+        const mmEl = (id) => document.getElementById(id);
+        if (dx1 || dx2) {
+          const d = mmEl('mm-dx');
+          if (d) d.innerHTML = `Q1 ${dx1?Math.round(dx1/10000)+'만':'—'}<br><span style="font-size:9px;color:var(--ink4)">Q2 ${dx2?Math.round(dx2/10000)+'만':'—'}</span>`;
+        }
+        if (ad1 || ad2) {
+          const a = mmEl('mm-ad');
+          if (a) a.innerHTML = `Q1 ${ad1?Math.round(ad1/10000)+'만':'—'}<br><span style="font-size:9px;color:var(--ink4)">Q2 ${ad2?Math.round(ad2/10000)+'만':'—'}</span>`;
+        }
+        if (fz1 || fz2) {
+          const f = mmEl('mm-fz');
+          if (f) f.textContent = fz1 ? Math.round(fz1/10000)+'만' : '—';
+        }
+        // 전사 평균 (DX + AD)
+        const allQ = [dx1,dx2,ad1,ad2].filter(v=>v!=null);
+        if (allQ.length) {
+          const avg = Math.round(allQ.reduce((s,v)=>s+v,0)/allQ.length/10000);
+          const ag = mmEl('mm-avg');
+          if (ag) ag.textContent = avg+'만';
+        }
+      }
     }
 
     // ── 5b. outsource_ratio: 외주비율 KPI + HIST 업데이트 ──
@@ -4971,14 +5030,21 @@ async function syncFromSupabase() {
         const vals = [q1,q2,q3,q4].filter(v=>v!=null);
         if (vals.length) HIST['외주비'].yrs[i] = [vals.reduce((s,v)=>s+v,0)/vals.length];
       });
-      // 2026 H1 실행 외주비율 (Q1, Q2 평균)
-      const q1 = getV('outsource_ratio', curYear, '전사', 1);
-      const q2 = getV('outsource_ratio', curYear, '전사', 2);
-      const vals = [q1,q2].filter(v=>v!=null);
-      if (vals.length) {
-        const avg = Math.round(vals.reduce((s,v)=>s+v,0)/vals.length);
+      // 2026 Q1, Q2 분기별 외주비율 (분기별 표시)
+      const q1Out = getV('outsource_ratio', curYear, '전사', 1);
+      const q2Out = getV('outsource_ratio', curYear, '전사', 2);
+      const valsOut = [q1Out,q2Out].filter(v=>v!=null);
+      if (valsOut.length) {
+        const avg = Math.round(valsOut.reduce((s,v)=>s+v,0)/valsOut.length);
         const pctEl = document.getElementById('outsource-pct');
-        if (pctEl) pctEl.innerHTML = avg+'<span style="font-size:13px">%</span>';
+        if (pctEl) pctEl.innerHTML = avg+'<span style="font-size:11px">%</span>';
+        // 분기별 상세 표시
+        const detEl = document.getElementById('outsource-q-detail');
+        if (detEl) {
+          const q1Str = q1Out != null ? Math.round(q1Out)+'%' : '—%';
+          const q2Str = q2Out != null ? Math.round(q2Out)+'%' : '—%';
+          detEl.textContent = `Q1 ${q1Str} · Q2 ${q2Str}`;
+        }
         const barEl = document.getElementById('outsource-bar');
         const barValEl = document.getElementById('outsource-bar-val');
         if (barEl) barEl.style.width = Math.min(avg*5, 100)+'%';
@@ -5277,10 +5343,21 @@ async function syncFromSupabase() {
               ? ['DX','AD','PEZ','기타'].reduce((s,k) => s + BU_MON[k].reduce((a,v)=>a+v,0), 0)
               : BU_MON[buMonKeyOf(supaKeys[0])]?.reduce((s,v)=>s+v,0) ?? 0;
 
-            // Q3까지 누적 매출 = H1 순매출 + Q3 취급고(이미 계산된 q3Sales 재사용)
-            if (cumSalesEl && h1Sales > 0) {
-              const cumS = h1Sales + (hasSales ? q3Sales : 0);
-              cumSalesEl.innerHTML = cumS.toFixed(2) + '<span class="kpi-unit">억</span>';
+            // Q3까지 누적 매출 계산
+            if (cumSalesEl) {
+              if (supaKeys.length > 1) {
+                // SM 전사: 취급고 기준 H1+Q3 누적 / 순매출 H1 별도 표시
+                const h1Gross = SM_H1_GROSS > 0 ? SM_H1_GROSS : h1Sales; // 취급고 H1 (없으면 순매출 폴백)
+                const cumGross = h1Gross + (hasSales ? q3Sales : 0);
+                cumSalesEl.innerHTML = cumGross.toFixed(2) + '<span class="kpi-unit">억</span>';
+                // 순매출 H1 서브라벨 업데이트
+                const netEl = document.getElementById(idPrefix + '-cum-net');
+                if (netEl && h1Sales > 0) netEl.textContent = h1Sales.toFixed(2);
+              } else if (h1Sales > 0) {
+                // BU별: 순매출 H1 + Q3 취급고 (취급고/순매출 혼합이지만 BU 레벨은 참고용)
+                const cumS = h1Sales + (hasSales ? q3Sales : 0);
+                cumSalesEl.innerHTML = cumS.toFixed(2) + '<span class="kpi-unit">억</span>';
+              }
             }
 
             // Q3까지 누적 수익 = H1 영업이익 합산 + Q3 월별 합산
