@@ -933,11 +933,10 @@ body.present .notif-panel { display: none !important; }
       <div class="card" style="margin-bottom:12px">
         <div class="card-hd"><div class="card-title">리스크 현황</div><button class="btn" onclick="openEdit('리스크')">편집</button></div>
         <div class="alert-list">
-          <div class="alert danger"><div class="alert-tag">HIGH · AD 수주</div><div class="alert-msg">AD 하반기 신규 수주 파이프라인 부재 — PD팀 유휴 리스크</div><div class="alert-detail">롯데지주 완료 후 AD 주요 수주건 미확정. H2 매출 공백 최대 변수. 신규 수주 영업 즉시 착수 필요.</div></div>
-          <div class="alert warn"><div class="alert-tag">MID · 일정</div><div class="alert-msg">iM뱅크 디자인시스템 8월 납기 — 일정 관리 집중 필요</div><div class="alert-detail">납기 지연 시 Q3 수익성 직결. PM 주간 점검 강화 권고.</div></div>
-          <div class="alert warn"><div class="alert-tag">MID · 외주비</div><div class="alert-msg">써브웨이 AWS(1.38억) + SKT 개발외주(0.86억) = H1 외주비 65% 집중</div><div class="alert-detail">외주비 총 3.43억 중 65%가 2개 고객 집중. Q3 분산 필요.</div></div>
-          <div class="alert warn"><div class="alert-tag">MID · FZ</div><div class="alert-msg">FZ 공공사업 낙찰률 유지 필요 — H2 목표 직결</div><div class="alert-detail">FZ 연간 목표 달성은 H2 공공사업 낙찰에 의존. 입찰 일정 선제 관리 필요.</div></div>
-          <div class="alert info"><div class="alert-tag">LOW · 미수금</div><div class="alert-msg">90일 초과 미수금 0.8억 — 7월 말 회수 예정</div></div>
+          <div class="alert danger"><div class="alert-tag">HIGH · AD 수주</div><div class="alert-msg">AD 하반기 신규 수주 파이프라인 미확정 — PD팀 유휴 리스크</div><div class="alert-detail">롯데지주 완료 후 AD 주요 수주건 미확정. H2 매출 공백 최대 변수. 신규 수주 영업 즉시 착수 필요.</div></div>
+          <div class="alert warn"><div class="alert-tag">MID · 일정</div><div class="alert-msg">iM뱅크 디자인시스템 8월 납기 — PM 집중 관리 필요</div><div class="alert-detail">납기 지연 시 Q3 수익성 직결. PM 주간 점검 강화 권고.</div></div>
+          <div class="alert warn"><div class="alert-tag">MID · 외주비</div><div class="alert-msg">H1 외주비 3.43억 — 써브웨이 AWS(1.38억) + SKT 개발외주(0.86억) 2개 항목에 65% 집중</div><div class="alert-detail">Google Sheets 외주비 실측치 기준. 특정 고객 의존 구조 Q3 내 분산 필요.</div></div>
+          <div class="alert info"><div class="alert-tag">DATA</div><div class="alert-msg">FZ 가동율·미수금 등 일부 지표 미입력 — Apps Script 연동 후 자동 갱신 예정</div></div>
         </div>
       </div>
 
@@ -5084,6 +5083,25 @@ async function syncFromSupabase() {
         Math.round(buTotals.PEZ/grand*100), Math.round(buTotals.DH/grand*100)
       ];
       MIS_CHARTS.smPie.update('none');
+    }
+
+    // ── 6b. 분기별 목표 및 AI 예측 카드 — BU_MON 기반 동적 업데이트 ──
+    {
+      const dx = BU_MON.DX;
+      const q1act = dx[0]+dx[1]+dx[2]; // Q1 실적 (Jan~Mar)
+      const q2act = dx[3]+dx[4]+dx[5]; // Q2 실적 (Apr~Jun)
+      const q1tgt = 14.77, q2tgt = 14.53; // DX 분기 순매출 목표
+      const fcSet = (id, val) => { const e=document.getElementById(id); if(e)e.textContent=val; };
+      if (q1act > 0) {
+        fcSet('fc-dx-q1-actual', q1act.toFixed(2)+'억');
+        fcSet('fc-dx-q1-gap', (q1act-q1tgt>=0?'+':'')+( q1act-q1tgt).toFixed(2)+'억');
+      }
+      if (q2act > 0) {
+        fcSet('fc-dx-q2-actual', q2act.toFixed(2)+'억');
+        fcSet('fc-dx-q2-gap', (q2act-q2tgt>=0?'+':'')+(q2act-q2tgt).toFixed(2)+'억');
+      }
+      const h1act = q1act+q2act;
+      if (h1act > 0) fcSet('fc-dx-annual', h1act.toFixed(2)+'억 (H1 실적)');
     }
 
     // ── 7. KPI 카드 ──
