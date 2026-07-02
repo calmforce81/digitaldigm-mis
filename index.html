@@ -924,8 +924,8 @@ body.present .notif-panel { display: none !important; }
             <tbody>
               <tr><td>Q1</td><td class="ai" id="fc-sm-q1-tgt">—</td><td class="num" style="color:var(--green)" id="fc-sm-q1-actual">—</td><td class="ai" id="fc-sm-q1-profit-tgt">—</td><td class="num" id="fc-sm-q1-profit">—</td><td id="fc-sm-q1-status"><span class="bx bx-green">초과달성</span></td></tr>
               <tr><td>Q2</td><td class="ai" id="fc-sm-q2-tgt">—</td><td class="num" style="color:var(--green)" id="fc-sm-q2-actual">—</td><td class="ai" id="fc-sm-q2-profit-tgt">—</td><td class="num" id="fc-sm-q2-profit">—</td><td id="fc-sm-q2-status"><span class="bx bx-green">초과달성</span></td></tr>
-              <tr><td>Q3</td><td class="ai">집계 중</td><td class="num" style="color:var(--ink4)">—</td><td class="ai">—</td><td class="num" style="color:var(--ink4)">—</td><td><span class="bx bx-blue">진행</span></td></tr>
-              <tr><td>Q4</td><td class="ai">미집계</td><td class="num" style="color:var(--ink4)">—</td><td class="ai">—</td><td class="num" style="color:var(--ink4)">—</td><td><span class="bx bx-blue">예정</span></td></tr>
+              <tr><td>Q3</td><td class="ai" id="fc-sm-q3-tgt">—</td><td class="num" style="color:var(--ink4)">집계 중</td><td class="ai" id="fc-sm-q3-profit-tgt">—</td><td class="num" style="color:var(--ink4)">—</td><td id="fc-sm-q3-status"><span class="bx bx-blue">진행</span></td></tr>
+              <tr><td>Q4</td><td class="ai" id="fc-sm-q4-tgt">—</td><td class="num" style="color:var(--ink4)">미집계</td><td class="ai" id="fc-sm-q4-profit-tgt">—</td><td class="num" style="color:var(--ink4)">—</td><td id="fc-sm-q4-status"><span class="bx bx-blue">예정</span></td></tr>
               <tr><td><strong>연간</strong></td><td class="ai" id="fc-sm-annual-tgt">목표 —</td><td class="num" id="fc-sm-annual">— (H1)</td><td class="ai">—</td><td class="num">—</td><td id="fc-sm-annual-status"><span class="bx bx-amber">진행중</span></td></tr>
             </tbody>
           </table>
@@ -5381,8 +5381,12 @@ async function syncFromSupabase() {
       };
       const smQ1Tgt = sumTgt('sales_target', 1);
       const smQ2Tgt = sumTgt('sales_target', 2);
+      const smQ3Tgt = sumTgt('sales_target', 3);
+      const smQ4Tgt = sumTgt('sales_target', 4);
       const smQ1ProfTgt = sumTgt('profit_target', 1);
       const smQ2ProfTgt = sumTgt('profit_target', 2);
+      const smQ3ProfTgt = sumTgt('profit_target', 3);
+      const smQ4ProfTgt = sumTgt('profit_target', 4);
 
       // SM 분기 영업이익 실적: BU_MON_PROFIT.합계 사용
       const getProfArr = (from, to) => {
@@ -5418,9 +5422,9 @@ async function syncFromSupabase() {
         const c = smQ1Prof >= 0 ? 'var(--green)' : 'var(--red)';
         const sg = smQ1Prof >= 0 ? '+' : '';
         fcHtml('fc-sm-q1-profit', '<span style="color:'+c+'">'+sg+smQ1Prof.toFixed(2)+'억</span>');
-        if (smQ1ProfTgt !== null) {
-          fcSet('fc-sm-q1-profit-tgt', smQ1ProfTgt.toFixed(2)+'억');
-        }
+      }
+      if (smQ1ProfTgt !== null) { // 실적과 독립 — 목표는 항상 표시
+        fcSet('fc-sm-q1-profit-tgt', smQ1ProfTgt.toFixed(2)+'억');
       }
 
       // ─ Q2 매출 ─
@@ -5441,10 +5445,18 @@ async function syncFromSupabase() {
         const c = smQ2Prof >= 0 ? 'var(--green)' : 'var(--red)';
         const sg = smQ2Prof >= 0 ? '+' : '';
         fcHtml('fc-sm-q2-profit', '<span style="color:'+c+'">'+sg+smQ2Prof.toFixed(2)+'억</span>');
-        if (smQ2ProfTgt !== null) {
-          fcSet('fc-sm-q2-profit-tgt', smQ2ProfTgt.toFixed(2)+'억');
-        }
       }
+      if (smQ2ProfTgt !== null) { // 실적과 독립 — 목표는 항상 표시
+        fcSet('fc-sm-q2-profit-tgt', smQ2ProfTgt.toFixed(2)+'억');
+      }
+
+      // ─ Q3 목표 (실적 미집계, 목표만 표시) ─
+      if (smQ3Tgt !== null) fcSet('fc-sm-q3-tgt', smQ3Tgt.toFixed(2)+'억');
+      if (smQ3ProfTgt !== null) fcSet('fc-sm-q3-profit-tgt', smQ3ProfTgt.toFixed(2)+'억');
+
+      // ─ Q4 목표 (실적 미집계, 목표만 표시) ─
+      if (smQ4Tgt !== null) fcSet('fc-sm-q4-tgt', smQ4Tgt.toFixed(2)+'억');
+      if (smQ4ProfTgt !== null) fcSet('fc-sm-q4-profit-tgt', smQ4ProfTgt.toFixed(2)+'억');
 
       // ─ 연간 ─
       if (smH1 > 0) {
