@@ -919,16 +919,14 @@ body.present .notif-panel { display: none !important; }
         </div>
         <div class="card">
           <div class="card-hd"><div class="card-title">분기별 목표 및 AI 예측</div></div>
-          <table class="fc">
-            <thead><tr><th>분기</th><th>실적</th><th>목표</th><th>Gap</th><th>상태</th></tr></thead>
+          <table class="fc" style="font-size:11px">
+            <thead><tr><th>분기</th><th>매출목표</th><th>매출실적</th><th>수익목표</th><th>수익실적</th><th>상태</th></tr></thead>
             <tbody>
-              <tr><td>Q1 매출</td><td class="num" style="color:var(--green)" id="fc-sm-q1-actual">—</td><td class="ai" id="fc-sm-q1-tgt">—</td><td class="gap-up" id="fc-sm-q1-gap">—</td><td id="fc-sm-q1-status"><span class="bx bx-green">초과달성</span></td></tr>
-              <tr style="background:var(--ink8)"><td style="padding-left:14px;color:var(--ink3);font-size:11px">└ 수익</td><td class="num" id="fc-sm-q1-profit">—</td><td class="ai" id="fc-sm-q1-profit-tgt">—</td><td id="fc-sm-q1-profit-gap">—</td><td></td></tr>
-              <tr><td>Q2 매출</td><td class="num" style="color:var(--green)" id="fc-sm-q2-actual">—</td><td class="ai" id="fc-sm-q2-tgt">—</td><td class="gap-up" id="fc-sm-q2-gap">—</td><td id="fc-sm-q2-status"><span class="bx bx-green">초과달성</span></td></tr>
-              <tr style="background:var(--ink8)"><td style="padding-left:14px;color:var(--ink3);font-size:11px">└ 수익</td><td class="num" id="fc-sm-q2-profit">—</td><td class="ai" id="fc-sm-q2-profit-tgt">—</td><td id="fc-sm-q2-profit-gap">—</td><td></td></tr>
-              <tr><td>Q3 목표</td><td class="num" style="color:var(--ink4)">—</td><td class="ai">—</td><td>집계 중</td><td><span class="bx bx-blue">진행</span></td></tr>
-              <tr><td>Q4 목표</td><td class="num" style="color:var(--ink4)">—</td><td class="ai">—</td><td>미집계</td><td><span class="bx bx-blue">예정</span></td></tr>
-              <tr><td><strong>연간</strong></td><td class="num" id="fc-sm-annual">— (H1)</td><td class="ai" id="fc-sm-annual-tgt">목표 60.5억</td><td class="gap-up" id="fc-sm-annual-gap">계산 중</td><td><span class="bx bx-amber">진행중</span></td></tr>
+              <tr><td>Q1</td><td class="ai" id="fc-sm-q1-tgt">—</td><td class="num" style="color:var(--green)" id="fc-sm-q1-actual">—</td><td class="ai" id="fc-sm-q1-profit-tgt">—</td><td class="num" id="fc-sm-q1-profit">—</td><td id="fc-sm-q1-status"><span class="bx bx-green">초과달성</span></td></tr>
+              <tr><td>Q2</td><td class="ai" id="fc-sm-q2-tgt">—</td><td class="num" style="color:var(--green)" id="fc-sm-q2-actual">—</td><td class="ai" id="fc-sm-q2-profit-tgt">—</td><td class="num" id="fc-sm-q2-profit">—</td><td id="fc-sm-q2-status"><span class="bx bx-green">초과달성</span></td></tr>
+              <tr><td>Q3</td><td class="ai">집계 중</td><td class="num" style="color:var(--ink4)">—</td><td class="ai">—</td><td class="num" style="color:var(--ink4)">—</td><td><span class="bx bx-blue">진행</span></td></tr>
+              <tr><td>Q4</td><td class="ai">미집계</td><td class="num" style="color:var(--ink4)">—</td><td class="ai">—</td><td class="num" style="color:var(--ink4)">—</td><td><span class="bx bx-blue">예정</span></td></tr>
+              <tr><td><strong>연간</strong></td><td class="ai" id="fc-sm-annual-tgt">목표 —</td><td class="num" id="fc-sm-annual">— (H1)</td><td class="ai">—</td><td class="num">—</td><td id="fc-sm-annual-status"><span class="bx bx-amber">진행중</span></td></tr>
             </tbody>
           </table>
         </div>
@@ -5408,12 +5406,11 @@ async function syncFromSupabase() {
         if (smQ1Tgt !== null) {
           const gap = smQ1 - smQ1Tgt; // smQ1Tgt는 이미 억원 (이중 나눗셈 제거)
           fcSet('fc-sm-q1-tgt', smQ1Tgt.toFixed(2)+'억');
-          fcSet('fc-sm-q1-gap', (gap>=0?'+':'')+gap.toFixed(2)+'억');
           fcHtml('fc-sm-q1-status', gap>=0
-            ? '<span class="bx bx-green">초과달성</span>'
-            : '<span class="bx bx-red">미달</span>');
+            ? '<span class="bx bx-green">초과달성 +'+gap.toFixed(1)+'억</span>'
+            : '<span class="bx bx-red">미달 '+gap.toFixed(1)+'억</span>');
         } else {
-          fcSet('fc-sm-q1-gap', '목표 미입력');
+          fcHtml('fc-sm-q1-status', '<span class="bx bx-amber">목표 미입력</span>');
         }
       }
       // ─ Q1 수익 ─
@@ -5423,8 +5420,6 @@ async function syncFromSupabase() {
         fcHtml('fc-sm-q1-profit', '<span style="color:'+c+'">'+sg+smQ1Prof.toFixed(2)+'억</span>');
         if (smQ1ProfTgt !== null) {
           fcSet('fc-sm-q1-profit-tgt', smQ1ProfTgt.toFixed(2)+'억');
-          const pg = smQ1Prof - smQ1ProfTgt;
-          fcSet('fc-sm-q1-profit-gap', (pg>=0?'+':'')+pg.toFixed(2)+'억');
         }
       }
 
@@ -5434,12 +5429,11 @@ async function syncFromSupabase() {
         if (smQ2Tgt !== null) {
           const gap = smQ2 - smQ2Tgt; // 이중 나눗셈 제거
           fcSet('fc-sm-q2-tgt', smQ2Tgt.toFixed(2)+'억');
-          fcSet('fc-sm-q2-gap', (gap>=0?'+':'')+gap.toFixed(2)+'억');
           fcHtml('fc-sm-q2-status', gap>=0
-            ? '<span class="bx bx-green">초과달성</span>'
-            : '<span class="bx bx-red">미달</span>');
+            ? '<span class="bx bx-green">초과달성 +'+gap.toFixed(1)+'억</span>'
+            : '<span class="bx bx-red">미달 '+gap.toFixed(1)+'억</span>');
         } else {
-          fcSet('fc-sm-q2-gap', '목표 미입력');
+          fcHtml('fc-sm-q2-status', '<span class="bx bx-amber">목표 미입력</span>');
         }
       }
       // ─ Q2 수익 ─
@@ -5449,8 +5443,6 @@ async function syncFromSupabase() {
         fcHtml('fc-sm-q2-profit', '<span style="color:'+c+'">'+sg+smQ2Prof.toFixed(2)+'억</span>');
         if (smQ2ProfTgt !== null) {
           fcSet('fc-sm-q2-profit-tgt', smQ2ProfTgt.toFixed(2)+'억');
-          const pg = smQ2Prof - smQ2ProfTgt;
-          fcSet('fc-sm-q2-profit-gap', (pg>=0?'+':'')+pg.toFixed(2)+'억');
         }
       }
 
@@ -5459,7 +5451,7 @@ async function syncFromSupabase() {
         fcSet('fc-sm-annual', smH1.toFixed(2)+'억 (H1)');
         fcSet('fc-sm-annual-tgt', '목표 '+SM_ANNUAL_TGT.toFixed(1)+'억');
         const h2need = SM_ANNUAL_TGT - smH1;
-        fcSet('fc-sm-annual-gap', 'H2 '+h2need.toFixed(1)+'억 필요');
+        fcHtml('fc-sm-annual-status', '<span class="bx bx-amber">H2 '+h2need.toFixed(1)+'억 필요</span>');
       }
     }
 
